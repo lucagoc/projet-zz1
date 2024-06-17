@@ -2,76 +2,75 @@
 
 #include <stdio.h>
 
+#include <stdlib.h>
+
+#include <unistd.h>
+
+#include <math.h>
+
+
+
 #define WINDOW_WIDTH 100
 
 #define WINDOW_HEIGHT 100
 
-#define NUM_WINDOWS 5
+#define NUM_WINDOWS 8
 
 #define SCREEN_WIDTH 640
 
 #define SCREEN_HEIGHT 480
 
-int main(int argc, char *argv[]) {
+#define RADIUS 200
+
+
+
+void create_window(int x, int y, int id) {
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 
         printf("SDL_Init Error: %s\n", SDL_GetError());
 
-        return 1;
+        exit(1);
 
     }
-     SDL_Window *windows[NUM_WINDOWS];
 
-     SDL_Renderer *renderers[NUM_WINDOWS];
 
-     int window_positions[NUM_WINDOWS][2] = {
 
-          {SCREEN_WIDTH / 2 - WINDOW_WIDTH / 2, SCREEN_HEIGHT / 2 - WINDOW_HEIGHT / 2}, // Centre
+    char title[50];
 
-          {SCREEN_WIDTH / 2 - WINDOW_WIDTH / 2, SCREEN_HEIGHT / 2 - WINDOW_HEIGHT / 2 - WINDOW_HEIGHT}, // Haut
+    snprintf(title, sizeof(title), "SDL2 Window %d", id);
 
-          {SCREEN_WIDTH / 2 - WINDOW_WIDTH / 2, SCREEN_HEIGHT / 2 - WINDOW_HEIGHT / 2 + WINDOW_HEIGHT}, // Bas
+    
 
-          {SCREEN_WIDTH / 2 - WINDOW_WIDTH / 2 - WINDOW_WIDTH, SCREEN_HEIGHT / 2 - WINDOW_HEIGHT / 2}, // Gauche
+    SDL_Window *window = SDL_CreateWindow(title, x, y, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 
-          {SCREEN_WIDTH / 2 - WINDOW_WIDTH / 2 + WINDOW_WIDTH, SCREEN_HEIGHT / 2 - WINDOW_HEIGHT / 2} // Droite
+    if (window == NULL) {
 
-     };
+        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
 
-    // Créer les fenêtres et les rendus
+        SDL_Quit();
 
-    for (int i = 0; i < NUM_WINDOWS; i++) {
-
-        windows[i] = SDL_CreateWindow("SDL2 Window",
-
-                                      window_positions[i][0], window_positions[i][1],
-
-                                      WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-
-        if (windows[i] == NULL) {
-
-            printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
-
-            SDL_Quit();
-
-            return 1;
-
-        }
-
-        renderers[i] = SDL_CreateRenderer(windows[i], -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-        if (renderers[i] == NULL) {
-
-            printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
-
-            SDL_Quit();
-
-            return 1;
-
-        }
+        exit(1);
 
     }
+
+
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    if (renderer == NULL) {
+
+        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
+
+        SDL_DestroyWindow(window);
+
+        SDL_Quit();
+
+        exit(1);
+
+    }
+
+
 
     SDL_Event e;
 
@@ -79,44 +78,95 @@ int main(int argc, char *argv[]) {
 
     int color_change = 0;
 
+
+
     while (!quit) {
 
         while (SDL_PollEvent(&e)) {
 
             if (e.type == SDL_QUIT) {
 
-               quit = 1;
+                quit = 1;
 
             }
+
         }
 
-        // Animer les couleurs des fenêtres
+
 
         color_change = (color_change + 1) % 255;
 
-        for (int i = 0; i < NUM_WINDOWS; i++) {
 
-          SDL_SetRenderDrawColor(renderers[i], (color_change + i * 50) % 255, (color_change + i * 80) % 255, (color_change + i * 100) % 255, 255);
 
-          SDL_RenderClear(renderers[i]);
+        SDL_SetRenderDrawColor(renderer, (color_change + id * 50) % 255, (color_change + id * 80) % 255, (color_change + id * 100) % 255, 255);
 
-          SDL_RenderPresent(renderers[i]);
+        SDL_RenderClear(renderer);
 
-        }
+        SDL_RenderPresent(renderer);
+
+
 
         SDL_Delay(50); // Attendre 50 ms pour ralentir l'animation
 
     }
-    // Nettoyer les ressources
+
+
+
+    SDL_DestroyRenderer(renderer);
+
+    SDL_DestroyWindow(window);
+
+    SDL_Quit();
+
+    exit(0);
+
+}
+
+
+
+int main(int argc, char *argv[]) {
+
+    int center_x = SCREEN_WIDTH / 2;
+
+    int center_y = SCREEN_HEIGHT / 2;
+
+
+
     for (int i = 0; i < NUM_WINDOWS; i++) {
 
-        SDL_DestroyRenderer(renderers[i]);
+        double angle = 2 * M_PI * i / NUM_WINDOWS;
 
-        SDL_DestroyWindow(windows[i]);
+        int x = center_x + RADIUS * cos(angle) - WINDOW_WIDTH / 2;
+
+        int y = center_y + RADIUS * sin(angle) - WINDOW_HEIGHT / 2;
+
+
+
+        pid_t pid = fork();
+
+        if (pid == 0) {
+
+            create_window(x, y, i);
+
+        } else if (pid < 0) {
+
+            printf("Fork failed\n");
+
+            return 1;
+
+        }
 
     }
 
-    SDL_Quit();
+    // Attendre que tous les processus enfants se terminent
+
+    for (int i = 0; i < NUM_WINDOWS; i++) {
+
+        wait(NULL);
+
+    }
+
+
 
     return 0;
 

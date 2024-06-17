@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -g
 LIBS = -lSDL2 -lm
 
 # Liste des fichiers source
-SRCS = main.c
+SRCS = main.c window_go_round.c window_render.c
 
 # Liste des fichiers objet générés à partir des fichiers source
 OBJS = $(SRCS:.c=.o)

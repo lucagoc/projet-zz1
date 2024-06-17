@@ -76,13 +76,13 @@ void draw_snake(SDL_Renderer *renderer, int thickness, int number, int x, int y)
     {
         SDL_Rect rectangle;
         rectangle.x = x - number*thickness;        // x haut gauche du rectangle
-        rectangle.y = y;        // y haut gauche du rectangle
+        rectangle.y = y + 10*cos(x-number);        // y haut gauche du rectangle
         rectangle.w = thickness; // sa largeur (w = width)
         rectangle.h = thickness/2; // sa hauteur (h = height)
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderFillRect(renderer, &rectangle);
         rectangle.x = x - number*thickness;        // x haut gauche du rectangle
-        rectangle.y = y;        // y haut gauche du rectangle
+        rectangle.y = y + 10*cos(x-number);        // y haut gauche du rectangle
         rectangle.w = thickness-2; // sa largeur (w = width)
         rectangle.h = thickness/2-2; // sa hauteur (h = height)
         SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
@@ -140,7 +140,6 @@ int window_render()
     /*********************************************************************************************************************/
     /*                                     On dessine dans le renderer                                                   */
     /*********************************************************************************************************************/
-    /*             Cette partie pourrait avantageusement être remplacée par la boucle évènementielle                     */
 
     SDL_bool program_on = SDL_TRUE; // Booléen pour dire que le programme doit continuer
     SDL_Event event;                // c'est le type IMPORTANT !!

@@ -33,14 +33,8 @@ void create_window(int x, int y, int id) {
         exit(1);
 
     }
-
-
-
     char title[50];
-
     snprintf(title, sizeof(title), "SDL2 Window %d", id);
-
-    
 
     SDL_Window *window = SDL_CreateWindow(title, x, y, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 
@@ -53,8 +47,6 @@ void create_window(int x, int y, int id) {
         exit(1);
 
     }
-
-
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -70,15 +62,11 @@ void create_window(int x, int y, int id) {
 
     }
 
-
-
     SDL_Event e;
 
     int quit = 0;
 
     int color_change = 0;
-
-
 
     while (!quit) {
 
@@ -96,8 +84,6 @@ void create_window(int x, int y, int id) {
 
         color_change = (color_change + 1) % 255;
 
-
-
         SDL_SetRenderDrawColor(renderer, (color_change + id * 50) % 255, (color_change + id * 80) % 255, (color_change + id * 100) % 255, 255);
 
         SDL_RenderClear(renderer);
@@ -106,11 +92,9 @@ void create_window(int x, int y, int id) {
 
 
 
-        SDL_Delay(50); // Attendre 50 ms pour ralentir l'animation
+        SDL_Delay(30); // Attendre 50 ms pour ralentir l'animation
 
     }
-
-
 
     SDL_DestroyRenderer(renderer);
 
@@ -121,8 +105,6 @@ void create_window(int x, int y, int id) {
     exit(0);
 
 }
-
-
 
 int main(int argc, char *argv[]) {
 
@@ -139,8 +121,6 @@ int main(int argc, char *argv[]) {
         int x = center_x + RADIUS * cos(angle) - WINDOW_WIDTH / 2;
 
         int y = center_y + RADIUS * sin(angle) - WINDOW_HEIGHT / 2;
-
-
 
         pid_t pid = fork();
 
@@ -165,8 +145,6 @@ int main(int argc, char *argv[]) {
         wait(NULL);
 
     }
-
-
 
     return 0;
 

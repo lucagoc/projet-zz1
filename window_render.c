@@ -46,20 +46,48 @@ void end_sdl(char ok,            // fin normale : ok = 0 ; anormale ok = 1
 
 void draw_circle(SDL_Renderer *renderer, int radius, int thickness, int x, int y)
 {
+    int color_v = 0;
     for (int j = 0; j < thickness; j++)
     {
         for (float angle = 0; angle < 2 * M_PI; angle += M_PI / 4000)
         {
+            
             int alpha = 255 * j / thickness;
             SDL_SetRenderDrawColor(renderer,
-                                   (cos(angle * 2) + 1) * 255 / 2, // quantité de Rouge
-                                   (cos(angle * 5) + 1) * 255 / 2, //          de vert
-                                   (cos(angle) + 1) * 255 / 2,     //          de bleu
+                                   (cos(angle * 2 + color_v) + 1) * 255 / 2, // quantité de Rouge
+                                   (cos(angle * 5 + color_v) + 1) * 255 / 2, //          de vert
+                                   (cos(angle + color_v) + 1) * 255 / 2,     //          de bleu
                                    alpha);                         // opacité = opaque
             SDL_RenderDrawPoint(renderer,
                                 x + (radius + j) * cos(angle),  // coordonnée en x
                                 y + (radius + j) * sin(angle)); //            en y
+                                color_v = (color_v + 1)%3;
         }
+    }
+}
+
+void draw_snake(SDL_Renderer *renderer, int thickness, int number, int x, int y)
+{
+    if (number == 0)
+    {
+        return;
+    }
+    else
+    {
+        SDL_Rect rectangle;
+        rectangle.x = x - number*thickness;        // x haut gauche du rectangle
+        rectangle.y = y;        // y haut gauche du rectangle
+        rectangle.w = thickness; // sa largeur (w = width)
+        rectangle.h = thickness/2; // sa hauteur (h = height)
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(renderer, &rectangle);
+        rectangle.x = x - number*thickness;        // x haut gauche du rectangle
+        rectangle.y = y;        // y haut gauche du rectangle
+        rectangle.w = thickness-2; // sa largeur (w = width)
+        rectangle.h = thickness/2-2; // sa hauteur (h = height)
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+        SDL_RenderFillRect(renderer, &rectangle);
+        draw_snake(renderer, thickness, number - 1, x, y);
     }
 }
 
@@ -75,7 +103,8 @@ void draw(SDL_Renderer *renderer, SDL_DisplayMode screen, int frame)
     rectangle.h = screen.h;                         // sa hauteur (h = height)
     SDL_RenderFillRect(renderer, &rectangle);
 
-    draw_circle(renderer, 200 + frame, 10, 200, 200);
+    draw_circle(renderer, 200 + 2*frame, 20, 200, 200);
+    draw_snake(renderer, 20, 8, 200 + frame, 200);
 }
 
 int window_render()
@@ -133,8 +162,8 @@ int window_render()
                 break;
             }
         }
-        draw(renderer, screen, frame);   // appel de la fonction qui crée l'image
-        SDL_RenderPresent(renderer); // affichage
+        draw(renderer, screen, frame); // appel de la fonction qui crée l'image
+        SDL_RenderPresent(renderer);   // affichage
         SDL_Delay(10);
 
         frame++;

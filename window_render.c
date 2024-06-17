@@ -8,8 +8,6 @@
 /*                              Programme d'exemple de création de rendu + dessin                                    */
 /*********************************************************************************************************************/
 
-const float M_PI = 3.13;
-
 void end_sdl(char ok,            // fin normale : ok = 0 ; anormale ok = 1
              char const *msg,    // message à afficher
              SDL_Window *window, // fenêtre à fermer
@@ -46,44 +44,42 @@ void end_sdl(char ok,            // fin normale : ok = 0 ; anormale ok = 1
     }
 }
 
-void draw(SDL_Renderer *renderer)
-{ // Je pense que vous allez faire moins laid :)
-    SDL_Rect rectangle;
-
-    SDL_SetRenderDrawColor(renderer,
-                           50, 0, 0, // mode Red, Green, Blue (tous dans 0..255)
-                           255);     // 0 = transparent ; 255 = opaque
-    rectangle.x = 0;                 // x haut gauche du rectangle
-    rectangle.y = 0;                 // y haut gauche du rectangle
-    rectangle.w = 400;               // sa largeur (w = width)
-    rectangle.h = 400;               // sa hauteur (h = height)
-
-    SDL_RenderFillRect(renderer, &rectangle);
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,
-                       0, 0,      // x,y du point de la première extrémité
-                       400, 400); // x,y seconde extrémité
-
-    /* tracer un cercle n'est en fait pas trivial, voilà le résultat sans algo intelligent ... */
-    for (float angle = 0; angle < 2 * M_PI; angle += M_PI / 4000)
+void draw_circle(SDL_Renderer *renderer, int radius, int thickness, int x, int y)
+{
+    for (int j = 0; j < thickness; j++)
     {
-        SDL_SetRenderDrawColor(renderer,
-                               (cos(angle * 2) + 1) * 255 / 2, // quantité de Rouge
-                               (cos(angle * 5) + 1) * 255 / 2, //          de vert
-                               (cos(angle) + 1) * 255 / 2,     //          de bleu
-                               255);                           // opacité = opaque
-        SDL_RenderDrawPoint(renderer,
-                            200 + 100 * cos(angle),  // coordonnée en x
-                            200 + 150 * sin(angle)); //            en y
+        for (float angle = 0; angle < 2 * M_PI; angle += M_PI / 4000)
+        {
+            int alpha = 255 * j / thickness;
+            SDL_SetRenderDrawColor(renderer,
+                                   (cos(angle * 2) + 1) * 255 / 2, // quantité de Rouge
+                                   (cos(angle * 5) + 1) * 255 / 2, //          de vert
+                                   (cos(angle) + 1) * 255 / 2,     //          de bleu
+                                   alpha);                         // opacité = opaque
+            SDL_RenderDrawPoint(renderer,
+                                x + (radius + j) * cos(angle),  // coordonnée en x
+                                y + (radius + j) * sin(angle)); //            en y
+        }
     }
 }
 
-int main(int argc, char **argv)
-{
-    (void)argc;
-    (void)argv;
+void draw(SDL_Renderer *renderer, SDL_DisplayMode screen, int frame)
+{ // Je pense que vous allez faire moins laid :)
+    SDL_Rect rectangle;
 
+    // Background (Black)
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // R G B A
+    rectangle.x = 0;                                // x haut gauche du rectangle
+    rectangle.y = 0;                                // y haut gauche du rectangle
+    rectangle.w = screen.w;                         // sa largeur (w = width)
+    rectangle.h = screen.h;                         // sa hauteur (h = height)
+    SDL_RenderFillRect(renderer, &rectangle);
+
+    draw_circle(renderer, 200 + frame, 10, 200, 200);
+}
+
+int window_render()
+{
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
 
@@ -91,8 +87,6 @@ int main(int argc, char **argv)
 
     /*********************************************************************************************************************/
     /*                         Initialisation de la SDL  + gestion de l'échec possible                                   */
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        end_sdl(0, "ERROR SDL INIT", window, renderer);
 
     SDL_GetCurrentDisplayMode(0, &screen);
     printf("Résolution écran\n\tw : %d\n\th : %d\n",
@@ -101,9 +95,10 @@ int main(int argc, char **argv)
     /* Création de la fenêtre */
     window = SDL_CreateWindow("Premier dessin",
                               SDL_WINDOWPOS_CENTERED,
-                              SDL_WINDOWPOS_CENTERED, screen.w * 0.66,
-                              screen.h * 0.66,
+                              SDL_WINDOWPOS_CENTERED, screen.w,
+                              screen.h,
                               SDL_WINDOW_OPENGL);
+
     if (window == NULL)
         end_sdl(0, "ERROR WINDOW CREATION", window, renderer);
 
@@ -117,9 +112,33 @@ int main(int argc, char **argv)
     /*                                     On dessine dans le renderer                                                   */
     /*********************************************************************************************************************/
     /*             Cette partie pourrait avantageusement être remplacée par la boucle évènementielle                     */
-    draw(renderer);              // appel de la fonction qui crée l'image
-    SDL_RenderPresent(renderer); // affichage
-    SDL_Delay(1000);             // Pause exprimée en ms
+
+    SDL_bool program_on = SDL_TRUE; // Booléen pour dire que le programme doit continuer
+    SDL_Event event;                // c'est le type IMPORTANT !!
+
+    int frame = 0;
+    while (program_on)
+    { // Voilà la boucle des évènements
+
+        if (SDL_PollEvent(&event))
+        { // si la file d'évènements n'est pas vide : défiler l'élément en tête
+          // de file dans 'event'
+            switch (event.type)
+            {                           // En fonction de la valeur du type de cet évènement
+            case SDL_QUIT:              // Un évènement simple, on a cliqué sur la x de la fenêtre
+                program_on = SDL_FALSE; // Il est temps d'arrêter le programme
+                break;
+
+            default: // L'évènement défilé ne nous intéresse pas
+                break;
+            }
+        }
+        draw(renderer, screen, frame);   // appel de la fonction qui crée l'image
+        SDL_RenderPresent(renderer); // affichage
+        SDL_Delay(10);
+
+        frame++;
+    }
 
     /* on referme proprement la SDL */
     end_sdl(1, "Normal ending", window, renderer);

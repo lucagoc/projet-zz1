@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     }
 
     // window_go_round();
-    // window_render();
+    window_render();
 
     SDL_Quit(); // la SDL
 

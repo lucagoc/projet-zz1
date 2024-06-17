@@ -54,9 +54,11 @@ int main(int argc, char **argv)
         float rad = (2 * 3.14 / n);
         for (int i = 0; i < n; i++)
         {
+            window_size = (1.0 - fabs(sin(10 * rad + j * 0.1)))*300;
             int x = max_radius*(1.0 - fabs(sin(10 * rad + j * 0.1))) * sin(i * rad + j * 0.1) + centerX - window_size/2;
             int y = max_radius*(1.0 - fabs(sin(10 * rad + j * 0.1))) * cos(i * rad + j * 0.1) + centerY - window_size/2;
             SDL_SetWindowPosition(window_tab[i], x, y);
+            SDL_SetWindowSize(window_tab[i], window_size, window_size);
             SDL_Delay(3); // Pause exprimée  en ms
         }
     }

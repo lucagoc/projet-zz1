@@ -63,10 +63,14 @@ int main(int argc, char const *argv[])
                 program_on = SDL_FALSE;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                // Gestion du clic de la souris
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    int x = event.button.x;
+                    int y = event.button.y;
+                    printf("Clic en (%d, %d)\n", x, y);
+                }
                 break;
             }
-            
         }
 
         /* Mise à jour de l'affichage */
@@ -76,7 +80,7 @@ int main(int argc, char const *argv[])
     }
 
     
-    end_sdl(0, "[INFO] Le programme s'est terminé correctement", window, renderer);
+    end_sdl(0, "Le programme s'est terminé correctement", window, renderer);
 
     return 0;
 }

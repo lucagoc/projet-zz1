@@ -105,6 +105,11 @@ void draw(SDL_Renderer *renderer, SDL_DisplayMode screen, int frame)
 
     draw_circle(renderer, 200 + 2*frame, 20, 200, 200);
     draw_snake(renderer, 20, 8, 200 + frame, 200);
+    draw_snake(renderer, 20, 8, 400 + frame, 400);
+    draw_snake(renderer, 20, 8, 600 + frame, 600);
+    draw_snake(renderer, 20, 8, 100 + frame, 800);
+    draw_snake(renderer, 20, 8, 900 + frame, 750);
+    draw_snake(renderer, 20, 8, 250 + frame, 50);
 }
 
 int window_render()

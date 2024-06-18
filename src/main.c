@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "window_render.h"
-#include "window_go_round.h"
+#include "headers/window_render.h"
+#include "headers/window_go_round.h"
+#include "headers/window_texture.h"
 
 /********************************************/
 /*  exemple de création de fenêtres en roue */

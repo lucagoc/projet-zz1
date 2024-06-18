@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    SDL_Window* window = SDL_CreateWindow("Character Running Animation",
+    SDL_Window* window = SDL_CreateWindow("Animation de mouvement",
                                           SDL_WINDOWPOS_CENTERED,
                                           SDL_WINDOWPOS_CENTERED,
                                           WINDOW_WIDTH,
@@ -74,9 +74,9 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    SDL_Texture* background_texture = load_texture("background.png", renderer);
-    SDL_Texture* character_texture1 = load_texture("perso1.png", renderer);
-    SDL_Texture* character_texture2 = load_texture("perso2.png", renderer);
+    SDL_Texture* background_texture = load_texture("image/background.png", renderer);
+    SDL_Texture* character_texture1 = load_texture("image/perso1.png", renderer);
+    SDL_Texture* character_texture2 = load_texture("image/perso2.png", renderer);
 
     if (!background_texture || !character_texture1 || !character_texture2) {
         end_sdl(0, "Failed to load textures", window, renderer);

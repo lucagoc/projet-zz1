@@ -11,9 +11,12 @@ void draw_background(SDL_Renderer *renderer){
 /* Rendu d'une case : 
     type = 1
     type = 2
-    type = 3 */
-void draw_case(int type, int x, int y){
-    
+    type = 3 */ // x et y sont les coordonnées du haut à gauche de la case
+void draw_case(SDL_Renderer *renderer, int type, int x, int y){
+    // Si la case est de type 1, texture de case 1
+    SDL_Rect case_rect = {x, y, 95, 95};
+    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+    SDL_RenderFillRect(renderer, &case_rect);
     return;
 }
 
@@ -40,13 +43,16 @@ void draw_board(SDL_Renderer *renderer, int x, int y, int board_case[6][6], int 
     
     SDL_Rect board_rect = {x - 300, y - 300, 600, 600};
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &board_rect);
+    SDL_RenderFillRect(renderer, &board_rect);
+
+    int x_case = x - 300;
+    int y_case = y - 300;
 
     for (int i = 0; i < 6; i++)
     {
         for (int j = 0; j < 6; j++)
         {
-            draw_case(board_case[i][j], i, j);
+            draw_case(renderer, board_case[i][j], x_case + i*99 + 5, y_case + j*99 + 5);
             draw_piece(board_piece[i][j], i, j);
         }
     }

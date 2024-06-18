@@ -27,54 +27,54 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
     return my_texture;
 }
 
-void draw_texture(SDL_Renderer *renderer, bool jour, SDL_DisplayMode screen, int frame, SDL_Texture** textures, SDL_Texture *stars[3], SDL_Texture *cat, int cat_x)
+void draw_texture(SDL_Renderer *renderer, bool jour, SDL_DisplayMode screen, int frame, SDL_Texture **textures, SDL_Texture *stars[3], SDL_Texture *cat, int cat_x)
 {
     if (!jour)
+    {
+        SDL_Rect window = {0, 0, screen.w, screen.h};
+        SDL_RenderCopy(renderer, textures[1], NULL, &window);
+        for (int i = 0; i < 13; i++)
         {
-            SDL_Rect window = {0, 0, screen.w, screen.h};
-            SDL_RenderCopy(renderer, textures[1], NULL, &window);
-            for (int i = 0; i < 13; i++)
-            {
-                SDL_Rect star = {100 + i * 200, 100, 100, 100};
-                SDL_RenderCopy(renderer, stars[((frame/50) + i) % 3], NULL, &star);
-            }
-            for (int i = 0; i < 13; i++)
-            {
-                SDL_Rect star = {150 + i * 200, 300, 100, 100};
-                SDL_RenderCopy(renderer, stars[((frame/50) + i) % 3], NULL, &star);
-            }
+            SDL_Rect star = {100 + i * 200, 100, 100, 100};
+            SDL_RenderCopy(renderer, stars[((frame / 50) + i) % 3], NULL, &star);
         }
-        else
+        for (int i = 0; i < 13; i++)
         {
-            SDL_Rect window = {0, 0, screen.w, screen.h};
-            SDL_RenderCopy(renderer, textures[0], NULL, &window);
+            SDL_Rect star = {150 + i * 200, 300, 100, 100};
+            SDL_RenderCopy(renderer, stars[((frame / 50) + i) % 3], NULL, &star);
         }
+    }
+    else
+    {
+        SDL_Rect window = {0, 0, screen.w, screen.h};
+        SDL_RenderCopy(renderer, textures[0], NULL, &window);
+    }
 
-        int l_screen = screen.w;
-        int count = l_screen / 1000 + 2;
+    int l_screen = screen.w;
+    int count = l_screen / 1000 + 2;
 
-        for (int i = 0; i < count; i++)
-        {
-            SDL_Rect tree = {1000 * i - frame*2 % 1000, 800, 768, 768};
-            SDL_RenderCopy(renderer, textures[3], NULL, &tree);
-        }
+    for (int i = 0; i < count; i++)
+    {
+        SDL_Rect tree = {1000 * i - frame * 2 % 1000, 800, 768, 768};
+        SDL_RenderCopy(renderer, textures[3], NULL, &tree);
+    }
 
-        for (int i = 0; i < count; i++)
-        {
-            SDL_Rect dirt = {1000 * i - frame*4 % 1000, 1000, 1000, 707};
-            SDL_RenderCopy(renderer, textures[2], NULL, &dirt);
-        }
+    for (int i = 0; i < count; i++)
+    {
+        SDL_Rect dirt = {1000 * i - frame * 4 % 1000, 1000, 1000, 707};
+        SDL_RenderCopy(renderer, textures[2], NULL, &dirt);
+    }
 
-        /* Ajout d'un chat qui cours (spritesheet) */
-        int nb_frame = 6;
-        int w = 32;
-        int h = 32;
-        int x = (frame*2 % (nb_frame * w))/w * w;
-        SDL_Rect src = {x, 0, w, h};
-        SDL_Rect dest = {cat_x, 1355, w * 4, h * 4};
-        SDL_RenderCopy(renderer, cat, &src, &dest);
+    /* Ajout d'un chat qui cours (spritesheet) */
+    int nb_frame = 6;
+    int w = 32;
+    int h = 32;
+    int x = (frame * 2 % (nb_frame * w)) / w * w;
+    SDL_Rect src = {x, 0, w, h};
+    SDL_Rect dest = {cat_x, 1355, w * 4, h * 4};
+    SDL_RenderCopy(renderer, cat, &src, &dest);
 
-        return;
+    return;
 }
 
 int window_texture()
@@ -83,7 +83,7 @@ int window_texture()
     SDL_Renderer *renderer = NULL;
 
     SDL_DisplayMode screen;
-    
+
     SDL_GetCurrentDisplayMode(0, &screen);
     printf("Résolution écran\n\tw : %d\n\th : %d\n",
            screen.w, screen.h);

@@ -27,102 +27,9 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
     return my_texture;
 }
 
-
-int window_texture()
+void draw_texture(SDL_Texture *texture, SDL_Renderer *renderer, bool jour, SDL_DisplayMode screen, int frame, SDL_Texture** textures, SDL_Texture *stars[3], SDL_Texture *cat, int cat_x)
 {
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
-
-    SDL_DisplayMode screen;
-    
-    SDL_GetCurrentDisplayMode(0, &screen);
-    printf("Résolution écran\n\tw : %d\n\th : %d\n",
-           screen.w, screen.h);
-
-    window = SDL_CreateWindow("Deuxième dessin",
-                              SDL_WINDOWPOS_CENTERED,
-                              SDL_WINDOWPOS_CENTERED, screen.w,
-                              screen.h,
-                              SDL_WINDOW_OPENGL);
-
-    if (window == NULL)
-        end_sdl(0, "ERROR WINDOW CREATION", window, renderer);
-
-    renderer = SDL_CreateRenderer(window, -1,
-                                  SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (renderer == NULL)
-        end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
-
-    SDL_bool program_on = SDL_TRUE;
-    SDL_Event event;
-
-    /* Load des textures */
-    SDL_Texture *textures[4];
-    textures[0] = load_texture_from_image("assets/background.png", window, renderer);
-    textures[1] = load_texture_from_image("assets/background2.png", window, renderer);
-    textures[2] = load_texture_from_image("assets/dirt.png", window, renderer);
-    textures[3] = load_texture_from_image("assets/tree.png", window, renderer);
-
-    /* Load des sprites des étoiles */
-    SDL_Texture *stars[4];
-    stars[0] = load_texture_from_image("assets/stars/image0000.png", window, renderer);
-    stars[1] = load_texture_from_image("assets/stars/image0001.png", window, renderer);
-    stars[2] = load_texture_from_image("assets/stars/image0002.png", window, renderer);
-
-    SDL_Texture *cat = load_texture_from_image("assets/Cake_Run.png", window, renderer);
-
-    int frame = 0;
-    int cat_x = 0;
-    bool jour = false;
-    while (program_on)
-    {
-        if (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {                           // En fonction de la valeur du type de cet évènement
-            case SDL_QUIT:              // Un évènement simple, on a cliqué sur la x de la fenêtre
-                program_on = SDL_FALSE; // Il est temps d'arrêter le programme
-                break;
-
-            case SDL_KEYDOWN: // En cas d'appui d'une touche du clavier
-                switch (event.key.keysym.sym)
-                {
-                case SDLK_SPACE: // Si c'est la barre d'espace
-                    if (jour)
-                    {
-                        jour = false;
-                    }
-                    else
-                    {
-                        jour = true;
-                    }
-                    break;
-                case SDLK_ESCAPE: // Si c'est la touche échap
-                    program_on = SDL_FALSE;
-                    break;
-                case SDLK_PAGEUP:
-                    frame += 10;
-                    break;
-                case SDLK_PAGEDOWN:
-                    frame -= 10;
-                    break;
-                case SDLK_RIGHT:
-                    cat_x += 10;
-                    break;
-                case SDLK_LEFT:
-                    cat_x -= 10;
-                    break;
-                default:
-                    break;
-                }
-                break;
-
-            default: // L'évènement défilé ne nous intéresse pas
-                break;
-            }
-        }
-
-        if (!jour)
+    if (!jour)
         {
            
             SDL_Rect window = {0, 0, screen.w, screen.h};
@@ -164,10 +71,110 @@ int window_texture()
         int w = 32;
         int h = 32;
         int x = (frame*2 % (nb_frame * w))/w * w;
-
         SDL_Rect src = {x, 0, w, h};
         SDL_Rect dest = {cat_x, 1355, w * 4, h * 4};
         SDL_RenderCopy(renderer, cat, &src, &dest);
+
+        return;
+}
+
+int window_texture()
+{
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+
+    SDL_DisplayMode screen;
+    
+    SDL_GetCurrentDisplayMode(0, &screen);
+    printf("Résolution écran\n\tw : %d\n\th : %d\n",
+           screen.w, screen.h);
+
+    window = SDL_CreateWindow("Parralax & Spritesheet",
+                              SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED, screen.w,
+                              screen.h,
+                              SDL_WINDOW_OPENGL);
+
+    if (window == NULL)
+        end_sdl(0, "ERROR WINDOW CREATION", window, renderer);
+
+    renderer = SDL_CreateRenderer(window, -1,
+                                  SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer == NULL)
+        end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
+
+    SDL_bool program_on = SDL_TRUE;
+    SDL_Event event;
+
+    /* Load des textures */
+    SDL_Texture *textures[4];
+    textures[0] = load_texture_from_image("assets/background.png", window, renderer);
+    textures[1] = load_texture_from_image("assets/background2.png", window, renderer);
+    textures[2] = load_texture_from_image("assets/dirt.png", window, renderer);
+    textures[3] = load_texture_from_image("assets/tree.png", window, renderer);
+
+    /* Load des sprites des étoiles */
+    SDL_Texture *stars[4];
+    stars[0] = load_texture_from_image("assets/stars/image0000.png", window, renderer);
+    stars[1] = load_texture_from_image("assets/stars/image0001.png", window, renderer);
+    stars[2] = load_texture_from_image("assets/stars/image0002.png", window, renderer);
+
+    SDL_Texture *cat = load_texture_from_image("assets/Cake_Run.png", window, renderer);
+
+    int frame = 0;
+    int cat_x = 0;
+    bool jour = false;
+    while (program_on)
+    {
+        /* Traitement des inputs */
+        if (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {                           // En fonction de la valeur du type de cet évènement
+            case SDL_QUIT:              // Un évènement simple, on a cliqué sur la x de la fenêtre
+                program_on = SDL_FALSE; // Il est temps d'arrêter le programme
+                break;
+
+            case SDL_KEYDOWN: // En cas d'appui d'une touche du clavier
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_SPACE: // Si c'est la barre d'espace
+                    if (jour)
+                    {
+                        jour = false;
+                    }
+                    else
+                    {
+                        jour = true;
+                    }
+                    break;
+                case SDLK_ESCAPE:
+                    program_on = SDL_FALSE;
+                    break;
+                case SDLK_PAGEUP:
+                    frame += 10;
+                    break;
+                case SDLK_PAGEDOWN:
+                    frame -= 10;
+                    break;
+                case SDLK_RIGHT:
+                    cat_x += 10;
+                    break;
+                case SDLK_LEFT:
+                    cat_x -= 10;
+                    break;
+                default:
+                    break;
+                }
+                break;
+
+            default: // L'évènement défilé ne nous intéresse pas
+                break;
+            }
+        }
+
+        draw_texture(textures[0], renderer, jour, screen, frame, textures, stars, cat, cat_x);
+
         SDL_RenderPresent(renderer);
         SDL_Delay(10);
 

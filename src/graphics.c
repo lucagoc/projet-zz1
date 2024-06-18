@@ -13,7 +13,7 @@ void draw_background(SDL_Renderer *renderer){
     type = 2
     type = 3 */
 void draw_case(int type, int x, int y){
-
+    
     return;
 }
 

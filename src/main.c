@@ -6,6 +6,7 @@
 #include "headers/graphics.h"
 #include "headers/rules.h"
 #include "headers/opponent.h"
+#include "headers/sdl_common.h"
 
 /**
  * @file main.c
@@ -20,8 +21,6 @@ const int SCREEN_HEIGHT = 720;
 
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
-
-void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *renderer);
 
 
 int main(int argc, char const *argv[])
@@ -50,6 +49,9 @@ int main(int argc, char const *argv[])
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL)
         end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
+
+    /* Loading de toutes les textures */
+
 
     /* Initialisation du jeu */
     SDL_bool program_on = SDL_TRUE;
@@ -91,44 +93,4 @@ int main(int argc, char const *argv[])
     end_sdl(0, "Le programme s'est terminé correctement", window, renderer);
 
     return 0;
-}
-
-
-
-
-
-void end_sdl(char ok,            // fin normale : ok = 0 ; anormale ok = 1
-             char const *msg,    // message à afficher
-             SDL_Window *window, // fenêtre à fermer
-             SDL_Renderer *renderer)
-{
-    char msg_formated[255];
-    int l;
-
-    if (!ok)
-    {
-        strncpy(msg_formated, msg, 250);
-        l = strlen(msg_formated);
-        strcpy(msg_formated + l, " : %s\n");
-
-        SDL_Log(msg_formated, SDL_GetError());
-    }
-
-    if (renderer != NULL)
-    {                                  // Destruction si nécessaire du renderer
-        SDL_DestroyRenderer(renderer); // Attention : on suppose que les NULL sont maintenus !!
-        renderer = NULL;
-    }
-    if (window != NULL)
-    {                              // Destruction si nécessaire de la fenêtre
-        SDL_DestroyWindow(window); // Attention : on suppose que les NULL sont maintenus !!
-        window = NULL;
-    }
-
-    SDL_Quit();
-
-    if (!ok)
-    {
-        exit(EXIT_FAILURE);
-    }
 }

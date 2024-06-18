@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "headers/sdl_common.h"
 
@@ -26,13 +27,6 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
     return my_texture;
 }
 
-void draw_texture(SDL_Renderer *renderer, SDL_DisplayMode screen, SDL_Texture** textures, int frame){
-    
-    SDL_Texture* bg = textures[0];
-    SDL_Rect window = {0, 0, screen.w, screen.h};
-    SDL_RenderCopy(renderer, bg, NULL, &window);
-}
-
 
 int window_texture()
 {
@@ -43,7 +37,7 @@ int window_texture()
 
     /*********************************************************************************************************************/
     /*                         Initialisation de la SDL  + gestion de l'échec possible                                   */
-    
+
     SDL_GetCurrentDisplayMode(0, &screen);
     printf("Résolution écran\n\tw : %d\n\th : %d\n",
            screen.w, screen.h);
@@ -65,33 +59,89 @@ int window_texture()
     SDL_bool program_on = SDL_TRUE;
     SDL_Event event;
 
-    /* Load de la texture */
-    SDL_Texture* textures[4];
+    /* Load des textures */
+    SDL_Texture *textures[4];
     textures[0] = load_texture_from_image("assets/background.png", window, renderer);
+    textures[1] = load_texture_from_image("assets/background2.png", window, renderer);
+
+    /* Load des sprites des étoiles */
+    SDL_Texture *stars[4];
+    stars[0] = load_texture_from_image("assets/stars/image0000.png", window, renderer);
+    stars[1] = load_texture_from_image("assets/stars/image0001.png", window, renderer);
+    stars[2] = load_texture_from_image("assets/stars/image0002.png", window, renderer);
 
     int frame = 0;
+    bool jour = false;
     while (program_on)
     {
         if (SDL_PollEvent(&event))
-        { 
+        {
             switch (event.type)
             {                           // En fonction de la valeur du type de cet évènement
             case SDL_QUIT:              // Un évènement simple, on a cliqué sur la x de la fenêtre
                 program_on = SDL_FALSE; // Il est temps d'arrêter le programme
                 break;
 
+            case SDL_KEYDOWN: // En cas d'appui d'une touche du clavier
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_SPACE: // Si c'est la barre d'espace
+                    if (jour)
+                    {
+                        jour = false;
+                    }
+                    else
+                    {
+                        jour = true;
+                    }
+                    break;
+                default:
+                    break;
+                }
+                break;
+
             default: // L'évènement défilé ne nous intéresse pas
                 break;
             }
         }
-        draw_texture(renderer, screen, textures, frame); // appel de la fonction qui crée l'image
+
+        if (!jour)
+        {
+           
+            SDL_Rect window = {0, 0, screen.w, screen.h};
+            SDL_RenderCopy(renderer, textures[1], NULL, &window);
+            for (int i = 0; i < 13; i++)
+            {
+                SDL_Rect star = {100 + i * 200, 100, 100, 100};
+                SDL_RenderCopy(renderer, stars[((frame/50) + i) % 3], NULL, &star);
+            }
+            for (int i = 0; i < 13; i++)
+            {
+                SDL_Rect star = {150 + i * 200, 300, 100, 100};
+                SDL_RenderCopy(renderer, stars[((frame/50) + i) % 3], NULL, &star);
+            }
+        }
+        else
+        {
+            SDL_Rect window = {0, 0, screen.w, screen.h};
+            SDL_RenderCopy(renderer, textures[0], NULL, &window);
+
+            
+        }
+
         SDL_RenderPresent(renderer);
         SDL_Delay(10);
 
         frame++;
     }
 
-    SDL_DestroyTexture(textures[0]); // Ne pas oublier à la fin.
+    /* Destructions des textures */
+    SDL_DestroyTexture(textures[0]);
+    SDL_DestroyTexture(textures[1]);
+    SDL_DestroyTexture(stars[0]);
+    SDL_DestroyTexture(stars[1]);
+    SDL_DestroyTexture(stars[2]);
+
     IMG_Quit(); // Si on charge une librairie SDL, il faut penser à la décharger
 
     /* on referme proprement la SDL */

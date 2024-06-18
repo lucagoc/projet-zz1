@@ -66,6 +66,15 @@ int main(int argc, char const *argv[])
 
     int board_piece[6][6] = {0}; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
     int board_case[6][6]; // Matrice des cases du plateau (= 1, 2 ou 3)
+
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 6; j++)
+        {
+            board_case[i][j] = 1;
+        }
+    }
+    
     bool inPause = false;
 
     /* Boucle principal */
@@ -91,7 +100,7 @@ int main(int argc, char const *argv[])
         }
 
         /* Mise à jour de l'affichage */
-        draw(renderer, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, inPause);
+        draw(renderer, textures, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, inPause);
         SDL_RenderPresent(renderer);
         SDL_Delay(15); // ~ 60 FPS
     }

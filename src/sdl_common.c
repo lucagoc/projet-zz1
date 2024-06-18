@@ -91,9 +91,9 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
     textures[2] = load_texture_from_image("assets/pieces/rhonin_white.png", window, renderer);
     textures[3] = load_texture_from_image("assets/pieces/daimio_black.png", window, renderer);
     textures[4] = load_texture_from_image("assets/pieces/daimio_white.png", window, renderer);
-    // textures[5] = load_texture_from_image("assets/board/case1.png", window, renderer);
-    // textures[6] = load_texture_from_image("assets/board/case2.png", window, renderer);
-    // textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
+    textures[5] = load_texture_from_image("assets/board/case1.png", window, renderer);
+    textures[6] = load_texture_from_image("assets/board/case2.png", window, renderer);
+    textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
 
     return;
 }
@@ -109,4 +109,7 @@ void unload_textures(SDL_Texture *textures[10])
     SDL_DestroyTexture(textures[2]);
     SDL_DestroyTexture(textures[3]);
     SDL_DestroyTexture(textures[4]);
+    SDL_DestroyTexture(textures[5]);
+    SDL_DestroyTexture(textures[6]);
+    SDL_DestroyTexture(textures[7]);
 }

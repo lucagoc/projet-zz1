@@ -50,8 +50,9 @@ int main(int argc, char const *argv[])
     if (renderer == NULL)
         end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
 
-    /* Loading de toutes les textures */
-
+    /* Loading de toutes les textures dans un tableau */
+    SDL_Texture *textures[10];
+    load_textures(textures, renderer, window);
 
     /* Initialisation du jeu */
     SDL_bool program_on = SDL_TRUE;
@@ -89,7 +90,7 @@ int main(int argc, char const *argv[])
         SDL_Delay(15); // ~ 60 FPS
     }
 
-    
+    unload_textures(textures);
     end_sdl(0, "Le programme s'est terminé correctement", window, renderer);
 
     return 0;

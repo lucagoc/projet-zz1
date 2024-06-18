@@ -76,3 +76,41 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
 
     return my_texture;
 }
+
+/**
+ * @brief Charge toutes les textures du jeu
+ *
+ * @param textures Tableau de textures
+ * @param renderer Renderer SDL
+ * @param window Fenêtre SDL
+ */
+void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window *window)
+{
+    // textures[0] = load_texture_from_image("assets/board/board.png", window, renderer);
+    textures[1] = load_texture_from_image("assets/pieces/rhonin_black.png", window, renderer);
+    textures[2] = load_texture_from_image("assets/pieces/rhonin_white.png", window, renderer);
+    textures[3] = load_texture_from_image("assets/pieces/daimio_black.png", window, renderer);
+    textures[4] = load_texture_from_image("assets/pieces/daimio_white.png", window, renderer);
+    // textures[5] = load_texture_from_image("assets/board/case1.png", window, renderer);
+    // textures[6] = load_texture_from_image("assets/board/case2.png", window, renderer);
+    // textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
+
+    return;
+}
+
+/**
+ * @brief Décharge toutes les textures du jeu
+ *
+ * @param textures Tableau de textures
+ */
+void unload_textures(SDL_Texture *textures[10])
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (textures[i] != NULL)
+        {
+            SDL_DestroyTexture(textures[i]);
+            textures[i] = NULL;
+        }
+    }
+}

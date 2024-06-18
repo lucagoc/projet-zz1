@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < NUM_WINDOWS; i++) {
 
-        wait(NULL);
+        continue;
 
     }
 

@@ -1,7 +1,7 @@
 # Variables
 CC = gcc
 CFLAGS = -Wall -Werror
-LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_video -lm
+LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_imagean -lm
 OBJ = anime_sprite.o pave_serpent_saim.o x_fenetre_saim.o
 
 # Cibles

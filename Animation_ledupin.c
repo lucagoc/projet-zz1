@@ -81,6 +81,7 @@ void resetbackground(SDL_Texture *mare, SDL_Renderer *renderer, SDL_Window *wind
     SDL_RenderCopy(renderer, mare,
                    &source,
                    &destination); // Création de l'élément à afficher
+
 }
 
 void affichercanard(SDL_Texture *canard, SDL_Renderer *renderer, SDL_Window *window, int x, int y)
@@ -106,6 +107,7 @@ void affichercanard(SDL_Texture *canard, SDL_Renderer *renderer, SDL_Window *win
     SDL_RenderCopy(renderer, canard, // Préparation de l'affichage
                    &source,
                    &destination);
+    
 }
 
 void afficherherbes(SDL_Texture *herbe, SDL_Renderer *renderer, SDL_Window *window, int x, int y, float a, float b)
@@ -130,6 +132,7 @@ void afficherherbes(SDL_Texture *herbe, SDL_Renderer *renderer, SDL_Window *wind
     SDL_RenderCopy(renderer, herbe, // Préparation de l'affichage
                    &source,
                    &destination);
+
 }
 
 void drawviseur(SDL_Renderer *renderer, int xv, int yv)
@@ -298,15 +301,38 @@ int main()
                 break;
             }
 
-            angle += M_PI / 100;
-            if (angle >= 2 * M_PI)
+        } else {
+            resetbackground(mare, renderer, window);
+            if (angle < M_PI)
             {
-                angle = 0;
+
+                afficherherbes(herbe, renderer, window, angle * 15 - 200, -40, 1.2, 0.4);
+                afficherherbes(herbe, renderer, window, angle * 40 - 200, 500, 1.2, 1);
+
+                affichercanard(canarddte, renderer, window, 500 + 275 * cos(angle + M_PI), 100 + 90 * sin(angle + M_PI));
+                affichercanard(canard, renderer, window, 500 + 275 * cos(angle), 100 + 90 * sin(angle));
             }
+            else
+            {
+
+                afficherherbes(herbe, renderer, window, (angle - M_PI) * 15 - 200, -40, 1.2, 0.4);
+                afficherherbes(herbe, renderer, window, (angle - M_PI) * 40 - 200, 500, 1.2, 1);
+
+                affichercanard(canarddte, renderer, window, 500 + 250 * cos(angle), 100 + 75 * sin(angle));
+                affichercanard(canard, renderer, window, 500 + 275 * cos(angle + M_PI), 100 + 90 * sin(angle + M_PI));
+            }
+
             
-            SDL_RenderPresent(renderer); // Affichage            SDL_Delay(80); // Pause en ms
-            SDL_Delay(20); // Pause en ms
         }
+
+        angle += M_PI / 100;
+        if (angle >= 2 * M_PI)
+        {
+            angle = 0;
+        }
+        
+        SDL_RenderPresent(renderer); // Affichage            SDL_Delay(80); // Pause en ms
+        SDL_Delay(15); // Pause en ms
     }
     SDL_Delay(2000); // Pause en ms
 

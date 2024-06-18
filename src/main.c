@@ -22,7 +22,13 @@ const int SCREEN_HEIGHT = 720;
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
 
-
+/**
+ * @brief Fonction principale du jeu
+ *
+ * @param argc Nombre d'arguments
+ * @param argv Arguments
+ * @return int Code de retour
+ */
 int main(int argc, char const *argv[])
 {
     (void)argc;

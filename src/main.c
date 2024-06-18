@@ -7,7 +7,7 @@
 #include "headers/rules.h"
 #include "headers/opponent.h"
 
-const int SCREEN_WIDTH = 1280;
+const int SCREEN_WIDTH = 1280;  
 const int SCREEN_HEIGHT = 720;
 
 const int PLAYER_1 = 1;
@@ -47,7 +47,8 @@ int main(int argc, char const *argv[])
     SDL_bool program_on = SDL_TRUE;
     SDL_Event event;
 
-    int board[6][6] = {0};
+    int board_piece[6][6] = {0}; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
+    int board_case[6][6]; // Matrice des cases du plateau (= 1, 2 ou 3)
     bool inPause = false;
 
     /* Boucle principal */
@@ -69,7 +70,7 @@ int main(int argc, char const *argv[])
         }
 
         /* Mise à jour de l'affichage */
-        draw(renderer, SCREEN_WIDTH, SCREEN_HEIGHT, board, inPause);
+        draw(renderer, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, inPause);
         SDL_RenderPresent(renderer);
         SDL_Delay(15); // ~ 60 FPS
     }

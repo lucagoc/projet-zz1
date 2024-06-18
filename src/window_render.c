@@ -64,11 +64,7 @@ void draw(SDL_Renderer *renderer, SDL_DisplayMode screen, int frame)
 
     // Background (Black)
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // R G B A
-    rectangle.x = 0;                                // x haut gauche du rectangle
-    rectangle.y = 0;                                // y haut gauche du rectangle
-    rectangle.w = screen.w;                         // sa largeur (w = width)
-    rectangle.h = screen.h;                         // sa hauteur (h = height)
-    SDL_RenderFillRect(renderer, &rectangle);
+    SDL_RenderClear(renderer);
 
     draw_circle(renderer, 200 + 2*frame, 20, 200, 200);
     draw_snake(renderer, 20, 8, 200 + frame, 200);

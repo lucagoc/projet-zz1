@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g
 
 # Bibliotheques
-LIBS = -lSDL2 -lm
+LIBS = -lSDL2 -lm -lSDL2_image
 
 # Liste des fichiers source
 SRCS = $(wildcard src/*.c)

@@ -69,7 +69,10 @@ int window_texture()
     stars[1] = load_texture_from_image("assets/stars/image0001.png", window, renderer);
     stars[2] = load_texture_from_image("assets/stars/image0002.png", window, renderer);
 
+    SDL_Texture *cat = load_texture_from_image("assets/Cake_Run.png", window, renderer);
+
     int frame = 0;
+    int cat_x = 0;
     bool jour = false;
     while (program_on)
     {
@@ -93,6 +96,21 @@ int window_texture()
                     {
                         jour = true;
                     }
+                    break;
+                case SDLK_ESCAPE: // Si c'est la touche échap
+                    program_on = SDL_FALSE;
+                    break;
+                case SDLK_PAGEUP:
+                    frame += 10;
+                    break;
+                case SDLK_PAGEDOWN:
+                    frame -= 10;
+                    break;
+                case SDLK_RIGHT:
+                    cat_x += 10;
+                    break;
+                case SDLK_LEFT:
+                    cat_x -= 10;
                     break;
                 default:
                     break;
@@ -141,6 +159,15 @@ int window_texture()
             SDL_RenderCopy(renderer, textures[2], NULL, &dirt);
         }
 
+        /* Ajout d'un chat qui cours (spritesheet) */
+        int nb_frame = 6;
+        int w = 32;
+        int h = 32;
+        int x = (frame*2 % (nb_frame * w))/w * w;
+
+        SDL_Rect src = {x, 0, w, h};
+        SDL_Rect dest = {cat_x, 1355, w * 4, h * 4};
+        SDL_RenderCopy(renderer, cat, &src, &dest);
         SDL_RenderPresent(renderer);
         SDL_Delay(10);
 

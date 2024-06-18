@@ -27,11 +27,10 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
     return my_texture;
 }
 
-void draw_texture(SDL_Texture *texture, SDL_Renderer *renderer, bool jour, SDL_DisplayMode screen, int frame, SDL_Texture** textures, SDL_Texture *stars[3], SDL_Texture *cat, int cat_x)
+void draw_texture(SDL_Renderer *renderer, bool jour, SDL_DisplayMode screen, int frame, SDL_Texture** textures, SDL_Texture *stars[3], SDL_Texture *cat, int cat_x)
 {
     if (!jour)
         {
-           
             SDL_Rect window = {0, 0, screen.w, screen.h};
             SDL_RenderCopy(renderer, textures[1], NULL, &window);
             for (int i = 0; i < 13; i++)
@@ -173,7 +172,7 @@ int window_texture()
             }
         }
 
-        draw_texture(textures[0], renderer, jour, screen, frame, textures, stars, cat, cat_x);
+        draw_texture(renderer, jour, screen, frame, textures, stars, cat, cat_x);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(10);

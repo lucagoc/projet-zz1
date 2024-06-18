@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <SDL2/SDL_image.h>
+#define M_PI 3.14159265358979323846
 
 void end_sdl(char ok,            // fin normale : ok = 0 ; anormale ok = 1
              char const *msg,    // message à afficher
@@ -57,7 +58,7 @@ void resetbackground(    SDL_Texture *mare, SDL_Renderer *renderer, SDL_Window *
         source = {0},            // Rectangle définissant la zone de la texture à récupérer
         window_dimensions = {0}, // Rectangle définissant la fenêtre, on n'utilisera que largeur et hauteur
         destination = {0};       // Rectangle définissant où la zone_source doit être déposée dans le renderer
-
+    
     SDL_GetWindowSize(
         window, &window_dimensions.w,
         &window_dimensions.h); // Récupération des dimensions de la fenêtre
@@ -67,7 +68,6 @@ void resetbackground(    SDL_Texture *mare, SDL_Renderer *renderer, SDL_Window *
     SDL_QueryTexture(mare, NULL, NULL,
                      &source.w, &source.h); // Récupération des dimensions de l'image
 
-    SDL_RenderClear(renderer); // Effacer la fenêtre
     SDL_RenderCopy(renderer, mare,
                    &source,
                    &destination); // Création de l'élément à afficher
@@ -96,8 +96,6 @@ void affichercanard(SDL_Texture *canard, SDL_Renderer *renderer, SDL_Window *win
        SDL_RenderCopy(renderer, canard,     // Préparation de l'affichage  
               &source,
               &destination);            
-       SDL_RenderPresent(renderer);             
-       SDL_Delay(1000);                         
 }
 
 int main()
@@ -108,6 +106,7 @@ int main()
     SDL_DisplayMode screen;
     SDL_Texture *mare;
     SDL_Texture *canard;
+    SDL_Texture *canarddte;
 
 
     /*********************************************************************************************************************/
@@ -140,22 +139,53 @@ int main()
 
     /* On veut afficher la texture de façon à ce que l'image occupe la totalité de la fenêtre */
     
-    mare = IMG_LoadTexture(renderer, "./mare.jpg");
+    mare = IMG_LoadTexture(renderer, "./mare.xcf");
 
     canard = IMG_LoadTexture(renderer, "./canard.xcf");
-    
-    int x=500;
-    int y=500;
-    for (int i = 0; i < 500; i++)
-    {
-        resetbackground(mare, renderer, window);
-        affichercanard(canard, renderer, window, x, y);
+    canarddte = IMG_LoadTexture(renderer, "./canard2.xcf");
 
-        x++;
-        y++;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    int x=500;
+    int y=100;
+    for (float angle = 0; angle < 2 * M_PI; angle += M_PI / 100)    {
+
+        resetbackground(mare, renderer, window);
+        if(angle<M_PI){
+            affichercanard(canard, renderer, window, x+275*cos(angle), y+90*sin(angle));
+            affichercanard(canarddte, renderer, window, x+275*cos(angle+M_PI), y+90*sin(angle+M_PI));
+
+        } else {
+
+            affichercanard(canarddte, renderer, window, x+250*cos(angle), y+75*sin(angle));
+            affichercanard(canard, renderer, window, x+275*cos(angle+M_PI), y+90*sin(angle+M_PI));
+
+        }
+
+        SDL_Delay(20);             // Pause en ms
+        SDL_RenderPresent(renderer); // Affichage
     }
 
-    SDL_RenderPresent(renderer); // Affichage
     SDL_Delay(2000);             // Pause en ms
 
     IMG_Quit();

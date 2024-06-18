@@ -1,32 +1,38 @@
-# Nom du compilateur
-CC = gcc
+# Définir les répertoires
+SRC_DIR := src
+BUILD_DIR := build
+BIN_DIR := $(BUILD_DIR)/bin
+OBJ_DIR := $(BUILD_DIR)/obj
 
-# Options de compilation
-CFLAGS = -Wall -Wextra -g
-
-# Bibliotheques
-LIBS = -lSDL2 -lm -lSDL2_image
-
-# Liste des fichiers source
-SRCS = $(wildcard src/*.c)
-
-# Liste des fichiers objet générés à partir des fichiers source
-OBJS = $(SRCS:.c=.o)
+# Définir les fichiers sources et objets
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Nom de l'exécutable
-TARGET = main
+EXEC := $(BIN_DIR)/mana
 
-# Règle par défaut
-all: $(TARGET)
+# Compilateur et options de compilation
+CC := gcc
+CFLAGS := -Wall -Wextra -I$(SRC_DIR)
+LIBS := -lm -lSDL2 -lSDL2_image -lSDL2_ttf
 
-# Règle de compilation des fichiers source en fichiers objet
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Cible par défaut
+all: $(EXEC)
 
-# Règle de création de l'exécutable
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+# Règle pour créer l'exécutable
+$(EXEC): $(OBJS)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(OBJS) -o $@ $(LIBS)
 
-# Règle de nettoyage des fichiers objets et de l'exécutable
+# Règle pour créer les fichiers objets
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@ $(LIBS)
+
+# Règle pour nettoyer le projet
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -rf $(BUILD_DIR)
+
+# Règle pour lancer l'exécutable
+run: $(EXEC)
+	$(EXEC)

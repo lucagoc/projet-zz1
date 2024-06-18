@@ -52,7 +52,7 @@ Mkfile.old
 dkms.conf
 
 # Exec
-main
+build/
 
 # IDE settings
 .vscode/

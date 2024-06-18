@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 /**
  * @file sdl_common.c
@@ -86,6 +87,7 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
  */
 void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window *window)
 {
+    /* Assets d'images */
     // textures[0] = load_texture_from_image("assets/board/board.png", window, renderer);
     textures[1] = load_texture_from_image("assets/pieces/rhonin_black.png", window, renderer);
     textures[2] = load_texture_from_image("assets/pieces/rhonin_white.png", window, renderer);
@@ -94,6 +96,15 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
     textures[5] = load_texture_from_image("assets/board/case1.png", window, renderer);
     textures[6] = load_texture_from_image("assets/board/case2.png", window, renderer);
     textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
+
+    /* Assets de texte */
+    TTF_Font *metal_lord = TTF_OpenFont("assets/otf/metal_lord.otf", 100);
+    SDL_Color Black = {0, 0, 0, 255};
+    SDL_Surface *surfaceMessage = TTF_RenderText_Blended(metal_lord, "Mana", Black);
+    if(surfaceMessage == NULL)
+        end_sdl(0, "Erreur lors de la création de la surface de texte", window, renderer);
+    textures[8] = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
 
     return;
 }
@@ -112,4 +123,5 @@ void unload_textures(SDL_Texture *textures[10])
     SDL_DestroyTexture(textures[5]);
     SDL_DestroyTexture(textures[6]);
     SDL_DestroyTexture(textures[7]);
+    SDL_DestroyTexture(textures[8]);
 }

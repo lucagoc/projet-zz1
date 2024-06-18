@@ -2,37 +2,40 @@
 #include <stdbool.h>
 
 /* Rendu du fond */
-void draw_background(SDL_Renderer *renderer){
+void draw_background(SDL_Renderer *renderer)
+{
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // R G B A
     SDL_RenderClear(renderer);
     return;
 }
 
-/* Rendu d'une case : 
+/* Rendu d'une case :
     type = 1
     type = 2
-    type = 3 */ // x et y sont les coordonnées du haut à gauche de la case
-void draw_case(SDL_Renderer *renderer, SDL_Texture *textures[10], int type, int x, int y){
+    type = 3 */
+// x et y sont les coordonnées du haut à gauche de la case
+void draw_case(SDL_Renderer *renderer, SDL_Texture *textures[10], int type, int x, int y)
+{
     // Si la case est de type 1, texture de case 1
     SDL_Rect case_rect = {x, y, 95, 95};
-    SDL_RenderCopy(renderer, textures[type+4], NULL, &case_rect);
+    SDL_RenderCopy(renderer, textures[type + 4], NULL, &case_rect);
     return;
 }
 
-/* Rendu d'un rhonin ou daimio : 
+/* Rendu d'un rhonin ou daimio :
     rhonin player_1 -> 1
     rhonin player_2 -> 2
     daimio player_1 -> 3
     daimio player_2 -> 4 */
-void draw_piece(int joueur, int x, int y){
+void draw_piece(int joueur, int x, int y)
+{
 
     return;
 }
 
-
 /**
  * @brief Rendu du plateau
- * 
+ *
  * @param renderer Renderer SDL
  * @param textures Tableau de textures
  * @param board_case Matrice des cases du plateau
@@ -40,8 +43,9 @@ void draw_piece(int joueur, int x, int y){
  * @param x Coordonnée x du centre du plateau
  * @param y Coordonnée y du centre du plateau
  */
-void draw_board(SDL_Renderer *renderer, SDL_Texture *textures[10],int x, int y, int board_case[6][6], int board_piece[6][6]){
-    
+void draw_board(SDL_Renderer *renderer, SDL_Texture *textures[10], int x, int y, int board_case[6][6], int board_piece[6][6])
+{
+
     SDL_Rect board_rect = {x - 300, y - 300, 600, 600};
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &board_rect);
@@ -53,33 +57,41 @@ void draw_board(SDL_Renderer *renderer, SDL_Texture *textures[10],int x, int y, 
     {
         for (int j = 0; j < 6; j++)
         {
-            draw_case(renderer, textures, board_case[i][j], x_case + i*99 + 5, y_case + j*99 + 5);
+            draw_case(renderer, textures, board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
             draw_piece(board_piece[i][j], i, j);
         }
     }
-    
+
     return;
 }
 
 /* Rendu du menu */
-void draw_menu(){
+void draw_menu()
+{
 
     return;
 }
 
+void draw_logo(SDL_Renderer *renderer, SDL_Texture *textures[10])
+{
+
+
+    SDL_Rect Message_rect = {10, 0, 250, 100};
+    SDL_RenderCopy(renderer, textures[8], NULL, &Message_rect);
+}
 
 /* Rendu globale */
-void draw(SDL_Renderer *renderer, SDL_Texture *textures[10], int SCREEN_WIDTH, int SCREEN_HEIGHT, int board_case[6][6], int board_piece[6][6], bool inPause){
+void draw(SDL_Renderer *renderer, SDL_Texture *textures[10], int SCREEN_WIDTH, int SCREEN_HEIGHT, int board_case[6][6], int board_piece[6][6], bool inPause)
+{
     draw_background(renderer);
-    draw_board(renderer, textures, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, board_case, board_piece);
-    
+    draw_board(renderer, textures, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, board_case, board_piece);
+
     int count = 0; // Placeholder
-    
+
     for (int i = 0; i < count; i++)
     {
         /* code */
     }
-    
-    draw_menu();
-    return;
+
+    draw_logo(renderer, textures);
 }

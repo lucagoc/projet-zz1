@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "headers/graphics.h"
 #include "headers/rules.h"
@@ -55,6 +56,8 @@ int main(int argc, char const *argv[])
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL)
         end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
+    if (TTF_Init() < 0) 
+        end_sdl(0, "Couldn't initialize SDL TTF", window, renderer);
 
     /* Loading de toutes les textures dans un tableau */
     SDL_Texture *textures[10];

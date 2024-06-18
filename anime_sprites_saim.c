@@ -279,8 +279,8 @@ int main() {
         return 1;
     }
 
-    my_texture = load_texture_from_image("SampleA.png", window, renderer);
-    bg_texture = load_texture_from_image("tile_0004.png", window, renderer);
+    my_texture = load_texture_from_image("tile_0004.png", window, renderer);
+    bg_texture = load_texture_from_image("bg.png", window, renderer);
 
     if (!my_texture) {
         end_sdl(0, "Failed to load textures", window, renderer);

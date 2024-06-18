@@ -34,10 +34,7 @@ int window_texture()
     SDL_Renderer *renderer = NULL;
 
     SDL_DisplayMode screen;
-
-    /*********************************************************************************************************************/
-    /*                         Initialisation de la SDL  + gestion de l'échec possible                                   */
-
+    
     SDL_GetCurrentDisplayMode(0, &screen);
     printf("Résolution écran\n\tw : %d\n\th : %d\n",
            screen.w, screen.h);
@@ -63,6 +60,8 @@ int window_texture()
     SDL_Texture *textures[4];
     textures[0] = load_texture_from_image("assets/background.png", window, renderer);
     textures[1] = load_texture_from_image("assets/background2.png", window, renderer);
+    textures[2] = load_texture_from_image("assets/dirt.png", window, renderer);
+    textures[3] = load_texture_from_image("assets/tree.png", window, renderer);
 
     /* Load des sprites des étoiles */
     SDL_Texture *stars[4];
@@ -125,8 +124,21 @@ int window_texture()
         {
             SDL_Rect window = {0, 0, screen.w, screen.h};
             SDL_RenderCopy(renderer, textures[0], NULL, &window);
+        }
 
-            
+        int l_screen = screen.w;
+        int count = l_screen / 1000 + 2;
+
+        for (int i = 0; i < count; i++)
+        {
+            SDL_Rect tree = {1000 * i - frame*2 % 1000, 800, 768, 768};
+            SDL_RenderCopy(renderer, textures[3], NULL, &tree);
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            SDL_Rect dirt = {1000 * i - frame*4 % 1000, 1000, 1000, 707};
+            SDL_RenderCopy(renderer, textures[2], NULL, &dirt);
         }
 
         SDL_RenderPresent(renderer);
@@ -138,6 +150,8 @@ int window_texture()
     /* Destructions des textures */
     SDL_DestroyTexture(textures[0]);
     SDL_DestroyTexture(textures[1]);
+    SDL_DestroyTexture(textures[2]);
+    SDL_DestroyTexture(textures[3]);
     SDL_DestroyTexture(stars[0]);
     SDL_DestroyTexture(stars[1]);
     SDL_DestroyTexture(stars[2]);

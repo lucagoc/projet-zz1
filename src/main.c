@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     // window_go_round();
     // window_render();
-     window_texture();
+    window_texture();
 
     SDL_Quit(); // la SDL
 

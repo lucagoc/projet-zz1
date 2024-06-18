@@ -1,0 +1,1 @@
+#define OPPONENT_H

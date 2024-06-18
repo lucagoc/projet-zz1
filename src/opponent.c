@@ -1,0 +1,1 @@
+// Principalement là où sera utilisé min-max pour calculer le prochain coup.

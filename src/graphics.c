@@ -8,12 +8,6 @@ void draw_background(SDL_Renderer *renderer){
     return;
 }
 
-/* Rendu du plateau */
-void draw_board(int board_case[6][6], int board_piece[6][6]){
-
-    return;
-}
-
 /* Rendu d'une case : 
     type = 1
     type = 2
@@ -28,8 +22,23 @@ void draw_case(int type, int x, int y){
     rhonin player_2 -> 2
     daimio player_1 -> 3
     daimio player_2 -> 4 */
-void draw_piece(int joueur){
+void draw_piece(int joueur, int x, int y){
 
+    return;
+}
+
+
+/* Rendu du plateau */
+void draw_board(int board_case[6][6], int board_piece[6][6]){
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 6; j++)
+        {
+            draw_case(board_case[i][j], i, j);
+            draw_piece(board_piece[i][j], i, j);
+        }
+    }
+    
     return;
 }
 

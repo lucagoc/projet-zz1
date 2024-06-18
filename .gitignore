@@ -56,3 +56,6 @@ main
 
 # IDE settings
 .vscode/
+
+# Compiled doxygen output
+doc/

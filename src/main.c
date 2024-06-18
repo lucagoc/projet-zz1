@@ -7,6 +7,14 @@
 #include "headers/rules.h"
 #include "headers/opponent.h"
 
+/**
+ * @file main.c
+ * @brief Programme principal du jeu Mana
+ * @version 1.0
+ * @date 2023-06-18
+ * @author Team 21
+ */
+
 const int SCREEN_WIDTH = 1280;  
 const int SCREEN_HEIGHT = 720;
 

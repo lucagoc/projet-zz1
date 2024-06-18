@@ -4,6 +4,7 @@
         "chrono": "c",
         "cmath": "c",
         "string.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "sdl_image.h": "c"
     }
 }

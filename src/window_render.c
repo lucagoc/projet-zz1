@@ -10,6 +10,7 @@
 /*                              Programme d'exemple de création de rendu + dessin                                    */
 /*********************************************************************************************************************/
 
+#define M_PI 3.14159265358979323846
 
 void draw_circle(SDL_Renderer *renderer, int radius, int thickness, int x, int y)
 {
@@ -58,10 +59,8 @@ void draw_snake(SDL_Renderer *renderer, int thickness, int number, int x, int y)
     }
 }
 
-void draw(SDL_Renderer *renderer, SDL_DisplayMode screen, int frame)
-{ // Je pense que vous allez faire moins laid :)
-    SDL_Rect rectangle;
-
+void draw(SDL_Renderer *renderer, int frame)
+{ 
     // Background (Black)
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // R G B A
     SDL_RenderClear(renderer);
@@ -129,7 +128,7 @@ int window_render()
                 break;
             }
         }
-        draw(renderer, screen, frame); // appel de la fonction qui crée l'image
+        draw(renderer, frame); // appel de la fonction qui crée l'image
         SDL_RenderPresent(renderer);   // affichage
         SDL_Delay(10);
 

@@ -1,5 +1,5 @@
 #include <SDL2/SDL_image.h>
-  #include <SDL2/SDL_ttf.h>   
+#include <SDL2/SDL_ttf.h>   
 
 void end_sdl(char ok, char const* msg, SDL_Window* window, SDL_Renderer* renderer) {
     char msg_formated[255];
@@ -38,22 +38,35 @@ SDL_Texture* load_texture_from_image(char* file_image_name, SDL_Window* window, 
     return my_texture;
 }
 
-void play_with_texture_1(SDL_Texture* my_texture, SDL_Window* window, SDL_Renderer* renderer) {
-    SDL_Rect source = {0}, window_dimensions = {0}, destination = {0};
+  void play_with_texture_1(SDL_Texture *my_texture, SDL_Window *window,
+               SDL_Renderer *renderer) {
+    SDL_Rect 
+        source = {0},                         // Rectangle définissant la zone de la texture à récupérer
+        window_dimensions = {0},              // Rectangle définissant la fenêtre, on n'utilisera que largeur et hauteur
+        destination = {0};                    // Rectangle définissant où la zone_source doit être déposée dans le renderer
 
-    SDL_GetWindowSize(window, &window_dimensions.w, &window_dimensions.h);
-    SDL_QueryTexture(my_texture, NULL, NULL, &source.w, &source.h);
+    SDL_GetWindowSize(
+    window, &window_dimensions.w,
+    &window_dimensions.h);                    // Récupération des dimensions de la fenêtre
+    SDL_QueryTexture(my_texture, NULL, NULL,
+             &source.w, &source.h);       // Récupération des dimensions de l'image
 
-    destination = window_dimensions;
+    destination = window_dimensions;              // On fixe les dimensions de l'affichage à  celles de la fenêtre
 
-    SDL_RenderCopy(renderer, my_texture, &source, &destination);
-    SDL_RenderPresent(renderer);
-    SDL_Delay(2000);
+    /* On veut afficher la texture de façon à ce que l'image occupe la totalité de la fenêtre */
 
-    SDL_RenderClear(renderer);
-}
+    SDL_RenderCopy(renderer, my_texture,
+           &source,
+           &destination);                 // Création de l'élément à afficher
+    SDL_RenderPresent(renderer);                  // Affichage
+    SDL_Delay(2000);                              // Pause en ms
 
-void play_with_texture_2(SDL_Texture* my_texture,
+    SDL_RenderClear(renderer);                    // Effacer la fenêtre
+  }
+
+
+
+  void play_with_texture_2(SDL_Texture* my_texture,
                   SDL_Window* window,
                   SDL_Renderer* renderer) {
        SDL_Rect 
@@ -84,7 +97,8 @@ void play_with_texture_2(SDL_Texture* my_texture,
        SDL_RenderClear(renderer);               // Effacer la fenêtre
      }
 
-void play_with_texture_3(SDL_Texture* my_texture,
+
+  void play_with_texture_3(SDL_Texture* my_texture,
                SDL_Window* window,
                SDL_Renderer* renderer) {
     SDL_Rect 
@@ -100,7 +114,7 @@ void play_with_texture_3(SDL_Texture* my_texture,
              &source.h);                    // Récupération des dimensions de l'image
                                 
     /* On décide de déplacer dans la fenêtre         cette image */
-    float zoom = 0.25;                              // Facteur de zoom entre l'image source et l'image affichée
+    float zoom = 0.5;                              // Facteur de zoom entre l'image source et l'image affichée
                                 
     int nb_it = 200;                                // Nombre d'images de l'animation
     destination.w = source.w * zoom;                // On applique le zoom sur la largeur
@@ -123,9 +137,9 @@ void play_with_texture_3(SDL_Texture* my_texture,
       SDL_Delay(30);                                // Pause en ms
     }                               
     SDL_RenderClear(renderer);                      // Effacer la fenêtre une fois le travail terminé
-}
-
-void play_with_texture_4(SDL_Texture* my_texture,
+  }
+  
+    void play_with_texture_4(SDL_Texture* my_texture,
                SDL_Window* window,
                SDL_Renderer* renderer) {
      SDL_Rect 
@@ -144,7 +158,7 @@ void play_with_texture_4(SDL_Texture* my_texture,
      /* Mais pourquoi prendre la totalité de l'image, on peut n'en afficher qu'un morceau, et changer de morceau :-) */
 
      int nb_images = 8;                     // Il y a 8 vignette dans la ligne de l'image qui nous intéresse
-     float zoom = 2;                        // zoom, car ces images sont un peu petites
+     float zoom = 4;                        // zoom, car ces images sont un peu petites
      int offset_x = source.w / nb_images,   // La largeur d'une vignette de l'image, marche car la planche est bien réglée
          offset_y = source.h / 4;           // La hauteur d'une vignette de l'image, marche car la planche est bien réglée
        
@@ -171,69 +185,77 @@ void play_with_texture_4(SDL_Texture* my_texture,
        SDL_RenderCopy(renderer, my_texture, // Préparation de l'affichage
               &state,
               &destination);  
-       SDL_RenderPresent(renderer);         // Affichage
-       SDL_Delay(80);                       // Pause en ms
+       //SDL_RenderPresent(renderer);         // Affichage
+       //SDL_Delay(80);                       // Pause en ms
      }
      SDL_RenderClear(renderer);             // Effacer la fenêtre avant de rendre la main
        }
 
-void play_with_texture_5(SDL_Texture *bg_texture,
+
+    void play_with_texture_5(SDL_Texture *bg_texture,
                  SDL_Texture *my_texture,
                  SDL_Window *window,
                  SDL_Renderer *renderer) {
     SDL_Rect
-      source = {0},
-      window_dimensions = {0},
-      destination = {0};
+      source = {0},                             // Rectangle définissant la zone de la texture à récupérer
+      window_dimensions = {0},                  // Rectangle définissant la fenêtre, on  n'utilisera que largeur et hauteur
+      destination = {0};                        // Rectangle définissant où la zone_source doit être déposée dans le renderer
 
-    SDL_GetWindowSize(window, &window_dimensions.w, &window_dimensions.h); 
-    SDL_QueryTexture(my_texture, NULL, NULL, &source.w, &source.h); 
+    SDL_GetWindowSize(window,                   // Récupération des dimensions de la fenêtre
+              &window_dimensions.w, 
+              &window_dimensions.h); 
+    SDL_QueryTexture(my_texture, NULL, NULL,    // Récupération des dimensions de l'image
+             &source.w, &source.h); 
 
-    int nb_images = 40;
-    int nb_images_animation = 1 * nb_images;
-    float zoom = 2;
-    int offset_x = source.w / 4,
-    offset_y = source.h / 5;
-    SDL_Rect state[40];
+    int nb_images = 40;                         //  Il y a 8 vignette dans la ligne qui nous intéresse
+    int nb_images_animation = 1 * nb_images;    // 
+    float zoom = 10;                             // zoom, car ces images sont un peu petites
+    int offset_x = source.w / 4,                // La largeur d'une vignette de l'image
+    offset_y = source.h / 5;                // La hauteur d'une vignette de l'image
+    SDL_Rect state[40];                         // Tableau qui stocke les vignettes dans le bon ordre pour l'animation
 
+    /* construction des différents rectangles autour de chacune des vignettes de la planche */
     int i = 0;                                   
     for (int y = 0; y < source.h ; y += offset_y) {
       for (int x = 0; x < source.w; x += offset_x) {
-        state[i].x = x;
-        state[i].y = y;
-        state[i].w = offset_x;
-        state[i].h = offset_y;
-        ++i;
+    state[i].x = x;
+    state[i].y = y;
+    state[i].w = offset_x;
+    state[i].h = offset_y;
+    ++i;
       }
     }
+                                                // ivaut 20 en sortie de boucle
+    state[15]  = state[14]                      // on fabrique des images 14 et 15 en reprenant la 13  
+              = state[13];                      // donc state[13 à 15] ont la même image, le monstre ne bouge pas   
 
-    state[15]  = state[14] = state[13]; 
-
-    for(; i< nb_images ; ++i){                  
-      state[i] = state[39-i];                   
+    for(; i< nb_images ; ++i){                  // reprise du début de l'animation en sens inverse  
+      state[i] = state[39-i];                   // 20 == 19 ; 21 == 18 ; ... 39 == 0  
     }
 
-    destination.w = offset_x * zoom;
-    destination.h = offset_y * zoom;
-    destination.x = window_dimensions.w * 0.75;
-    destination.y = window_dimensions.h * 0.7;
+    destination.w = offset_x * zoom;            // Largeur du sprite à l'écran
+    destination.h = offset_y * zoom;            // Hauteur du sprite à l'écran
+    destination.x = window_dimensions.w * 0.75; // Position en x pour l'affichage du sprite
+    destination.y = window_dimensions.h * 0.7;  // Position en y pour l'affichage du sprite
 
     i = 0;
     for (int cpt = 0; cpt < nb_images_animation ; ++cpt) {
-      play_with_texture_1(bg_texture, window, renderer); 
-      SDL_RenderCopy(renderer, my_texture, &state[i], &destination);
-      i = (i + 1) % nb_images;
-      SDL_RenderPresent(renderer);
-      SDL_Delay(100);
+      play_with_texture_3(bg_texture,           // identique à play_with_texture_1, où on a enlevé l'affichage et la pause
+                window, renderer); 
+      SDL_RenderCopy(renderer,                  // Préparation de l'affichage
+             my_texture, &state[i], &destination);
+      i = (i + 1) % nb_images;                  // Passage à l'image suivante, le modulo car l'animation est cyclique 
+      SDL_RenderPresent(renderer);              // Affichage
+      SDL_Delay(100);                           // Pause en ms
     }
-    SDL_RenderClear(renderer);
-}
+    SDL_RenderClear(renderer);                  // Effacer la fenêtre avant de rendre la main
+  }
+
 
 int main() {
     SDL_Texture* my_texture = NULL;
     SDL_Texture* bg_texture = NULL;
 
-    // Initialize SDL, create window and renderer here...
         if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
         return 1;
@@ -257,37 +279,39 @@ int main() {
         return 1;
     }
 
-    // Load textures here...
-    my_texture = load_texture_from_image("my_image.png", window, renderer);
-    bg_texture = load_texture_from_image("bg_image.png", window, renderer);
+    my_texture = load_texture_from_image("SampleA.png", window, renderer);
+    bg_texture = load_texture_from_image("tile_0004.png", window, renderer);
 
-    if (!my_texture || !bg_texture) {
+    if (!my_texture) {
         end_sdl(0, "Failed to load textures", window, renderer);
         return 1;
+    }
+
+    if (!bg_texture)
+    {
+      end_sdl(0, "Failed to load textures", window, renderer);
+      return 1;
     }
 
     SDL_Event event;
     int running = 1;
     while (running) {
-        while (SDL_PollEvent(&event)) {
+        while (!SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = 0;
+                SDL_DestroyTexture(my_texture);
+                SDL_DestroyTexture(bg_texture);
+                SDL_DestroyRenderer(renderer);
+                SDL_DestroyWindow(window);
+                SDL_Quit();
             }
-            // Handle other events here...
+            
         }
+        
+    play_with_texture_5(bg_texture, my_texture, window, renderer); 
 
-        // Call your functions here...
-        play_with_texture_1(my_texture, window, renderer);
-        play_with_texture_2(my_texture, window, renderer);
-        play_with_texture_3(my_texture, window, renderer);
-        play_with_texture_4(my_texture, window, renderer);
-        play_with_texture_5(bg_texture, my_texture, window, renderer);
-
-        SDL_RenderPresent(renderer);
-        SDL_Delay(1000);  // Delay for 1 second
     }
 
-    // Clean up and quit SDL here...
     SDL_DestroyTexture(my_texture);
     SDL_DestroyTexture(bg_texture);
     SDL_DestroyRenderer(renderer);

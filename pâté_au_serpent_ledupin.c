@@ -159,7 +159,7 @@ void drawgoutte(SDL_Renderer *renderer, int xg, int yg)
         }
 
     }
-    SDL_RenderPresent(renderer); // affichage
+    //          SDL_RenderPresent(renderer); // affichage
 
 }
 
@@ -237,6 +237,7 @@ int main()
                             SDL_GetMouseState(&mouseX, &mouseY);
 
                             drawgoutte(renderer, mouseX, mouseY + anim*30);
+                            SDL_RenderPresent(renderer); // affichage
 
                             SDL_Delay(100); // Pause exprimée en ms
 
@@ -252,6 +253,8 @@ int main()
                 SDL_GetMouseState(&mouseX, &mouseY);
 
                 drawgoutte(renderer, mouseX, mouseY);
+                SDL_RenderPresent(renderer); // affichage
+
                 break;
             default: // L'évènement défilé ne nous intéresse pas
                 break;
@@ -261,10 +264,10 @@ int main()
             {
                 for (int k = 0; k < 50; k+=5)
                 {
+                    
                     draw(renderer, k, mouseX, mouseY +150); // appel de la fonction qui crée l'image
-
                     SDL_RenderPresent(renderer); // affichage
-                
+
                     SDL_Delay(100); // Pause exprimée en ms
 
                 }

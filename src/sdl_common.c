@@ -105,12 +105,8 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
  */
 void unload_textures(SDL_Texture *textures[10])
 {
-    for (int i = 0; i < 10; i++)
-    {
-        if (textures[i] != NULL)
-        {
-            SDL_DestroyTexture(textures[i]);
-            textures[i] = NULL;
-        }
-    }
+    SDL_DestroyTexture(textures[1]);
+    SDL_DestroyTexture(textures[2]);
+    SDL_DestroyTexture(textures[3]);
+    SDL_DestroyTexture(textures[4]);
 }

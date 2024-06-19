@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+#define BOARD_SIZE 6
+
 /* Rendu du fond */
 void draw_background(SDL_Renderer *renderer)
 {
@@ -51,9 +53,9 @@ void draw_board(SDL_Renderer *renderer, SDL_Texture *textures[10], int x, int y,
     int x_case = x - 300;
     int y_case = y - 300;
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < BOARD_SIZE; i++)
     {
-        for (int j = 0; j < 6; j++)
+        for (int j = 0; j < BOARD_SIZE; j++)
         {
             draw_case(renderer, textures, board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
             draw_piece(renderer, textures, board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);

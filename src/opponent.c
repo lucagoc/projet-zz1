@@ -4,13 +4,16 @@
 
 // Principalement là où sera utilisé min-max pour calculer le prochain coup.
 
+
+#define BOARD_SIZE 6
+
 /**
  * @brief Copie un plateau
  * 
  * @param board Plateau à copier
  * @return int* Plateau copié
  */
-int** copy_board(int board[6][6])
+int** copy_board(int board[BOARD_SIZE][BOARD_SIZE])
 {
     int** new_board = malloc(6 * sizeof(int *));
     for (int i = 0; i < 6; i++)

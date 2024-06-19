@@ -9,6 +9,25 @@
 #include "headers/opponent.h"
 #include "headers/sdl_common.h"
 
+struct ui_s
+{
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    SDL_Texture *textures[10];
+    int SCREEN_WIDTH;
+    int SCREEN_HEIGHT;
+};
+typedef struct ui_s ui_t;
+
+struct game_s
+{
+    int board_case[6][6];
+    int board_piece[6][6];
+    int playing_player;
+    bool inPause;
+};
+typedef struct game_s game_t;
+
 /**
  * @file main.c
  * @brief Programme principal du jeu Mana
@@ -17,8 +36,10 @@
  * @author Team 21
  */
 
-const int SCREEN_WIDTH = 1280;  
+const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
+
+#define BOARD_SIZE 6
 
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
@@ -30,11 +51,15 @@ const int PLAYER_2 = 2;
  * @param argv Arguments
  * @return int Code de retour
  */
+
 int main(int argc, char const *argv[])
 {
     (void)argc;
     (void)argv;
 
+    /* Initialisation de la SDL */
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
     /* Initialisation SDL */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -43,8 +68,6 @@ int main(int argc, char const *argv[])
     }
 
     /* Création de la fenêtre et du renderer */
-    SDL_Renderer *renderer = NULL;
-    SDL_Window *window = NULL;
     window = SDL_CreateWindow("Mana (pre-alpha)",
                               SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED,
@@ -56,7 +79,7 @@ int main(int argc, char const *argv[])
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL)
         end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
-    if (TTF_Init() < 0) 
+    if (TTF_Init() < 0)
         end_sdl(0, "Couldn't initialize SDL TTF", window, renderer);
 
     /* Loading de toutes les textures dans un tableau */
@@ -67,18 +90,18 @@ int main(int argc, char const *argv[])
     SDL_bool program_on = SDL_TRUE;
     SDL_Event event;
 
-    int board_piece[6][6] = {0}; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
-    int board_case[6][6]; // Matrice des cases du plateau (= 1, 2 ou 3)
+    int board_piece[BOARD_SIZE][BOARD_SIZE] = {0}; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
+    int board_case[BOARD_SIZE][BOARD_SIZE];        // Matrice des cases du plateau (= 1, 2 ou 3)
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < BOARD_SIZE; i++)
     {
-        for (int j = 0; j < 6; j++)
+        for (int j = 0; j < BOARD_SIZE; j++)
         {
             board_case[i][j] = 1;
             board_piece[i][j] = 1;
         }
     }
-    
+
     bool inPause = false;
 
     /* Boucle principal */

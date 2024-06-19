@@ -51,6 +51,10 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     }
 }
 
+void init_sdl(SDL_Renderer *renderer, SDL_Window *window, int SCREEN_WIDTH, int SCREEN_HEIGHT){
+    
+}
+
 /**
  * @brief Charge une texture à partir d'une image
  *

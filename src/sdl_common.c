@@ -189,14 +189,24 @@ SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color c
     }
     return texture;
 }
+
+pos_t cord2grid(ui_t *ui, int x, int y)
+{
+    pos_t pos;
+    pos.x = (x - (ui->SCREEN_WIDTH/2 - ui->BOARD_SIZE/2))/ 100;
+    pos.y = (y - (ui->SCREEN_HEIGHT/2 - ui->BOARD_SIZE/2))/ 100;
+    return pos;
+}
+
  /*
  * @brief Fonction pour récupérer les événements
  *
  * @param game Structure de l'état du jeu
  */
-void get_input(game_t *game)
+void get_input(ui_t *ui, game_t *game)
 {
     /* Gestion des événements */
+    
     while (SDL_PollEvent(&game->event))
     {
         switch (game->event.type)
@@ -210,6 +220,8 @@ void get_input(game_t *game)
                 int x = game->event.button.x;
                 int y = game->event.button.y;
                 printf("Clic en (%d, %d)\n", x, y);
+                pos_t case_grid = cord2grid(ui, x, y);
+                printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
             }
             break;
         }

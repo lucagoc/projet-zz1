@@ -11,11 +11,27 @@
 // Possibilité par la suite de rajouter un moyen d'enregistrer les scores, les parties, etc. (Si on a trop de temps).
 // Ajouter la descriptions des positions comme échec peut être pas mal aussi (A8, B4 etc.).
 
-bool is_mouse_over_button(SDL_Rect button, int mouse_x, int mouse_y) {                                                                          //Fonction permet de détecter si la souris est pas loin du bouton
+
+/**
+ *@brief  Test de coordonnée du curseur
+ *  
+ *@param button L'emplacement du bouton
+ *@param mouse_x Coordonnée en x du curseur 
+ *@param mouse_y Coordonnée en y du curseur
+ */
+bool is_mouse_over_button(SDL_Rect button, int mouse_x, int mouse_y) {                                                                          
     return mouse_x > button.x && mouse_x < (button.x + button.w) && mouse_y > button.y && mouse_y < (button.y + button.h);
 }
 
-bool load_resources(SDL_Renderer* renderer, SDL_Texture** background_texture, SDL_Window *window ,SDL_Texture** continue_text, SDL_Texture** quit_text) {           //
+/**
+ * @brief Charge les ressources avec des ressources préenregistrer
+ * 
+ * @param background_texture L'arrière plan
+ * @param window fenêtre SDL
+ * @param continue_text texte écrit "continue"
+ * @param quit_text texte écrit "quit"
+ */
+bool load_resources(SDL_Renderer* renderer, SDL_Texture** background_texture, SDL_Window *window ,SDL_Texture** continue_text, SDL_Texture** quit_text) {           
     *background_texture = load_texture_from_image("image_menu/menu_pause.png", window , renderer); 
     if (!*background_texture) {
         return false;
@@ -40,8 +56,16 @@ bool load_resources(SDL_Renderer* renderer, SDL_Texture** background_texture, SD
     return true;
 }
 
-
-void handle_events(SDL_Event* event, bool* running, bool* show_menu, SDL_Rect continue_button_rect, SDL_Rect quit_button_rect) {        //Fonction qui permet de d'afficher le menu pause
+/**
+ * @brief Boucle évènement pour la boucle pause
+ * 
+ * @param event Evènement SDL2
+ * @param running Booléen qui détermine l'état de la boucle (True : le jeu est encore, False sinon)
+ * @param show_menu Booléen affiche menu
+ * @param continue_button_rect Bouton "continue"
+ * @param quit_button_rect Bouton "quit"
+ */
+void handle_events(SDL_Event* event, bool* running, bool* show_menu, SDL_Rect continue_button_rect, SDL_Rect quit_button_rect) {        
     while (SDL_PollEvent(event)) {
         if (event->type == SDL_QUIT) {
             *running = false;
@@ -66,6 +90,8 @@ void handle_events(SDL_Event* event, bool* running, bool* show_menu, SDL_Rect co
     }
 }
 
+
+/*rendu du menu pause*/
 void draw_menu_pause(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Texture* continue_text, SDL_Texture* quit_text) {               //Fonction dessine le menu de pause
     int text_width, text_height;
 

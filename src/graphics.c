@@ -16,10 +16,8 @@ void draw_background(SDL_Renderer *renderer)
 // x et y sont les coordonnées du haut à gauche de la case
 void draw_case(SDL_Renderer *renderer, SDL_Texture *textures[10], int type, int x, int y)
 {
-    // Si la case est de type 1, texture de case 1
     SDL_Rect case_rect = {x, y, 95, 95};
     SDL_RenderCopy(renderer, textures[type + 4], NULL, &case_rect);
-    return;
 }
 
 /* Rendu d'un rhonin ou daimio :
@@ -27,10 +25,10 @@ void draw_case(SDL_Renderer *renderer, SDL_Texture *textures[10], int type, int 
     rhonin player_2 -> 2
     daimio player_1 -> 3
     daimio player_2 -> 4 */
-void draw_piece(int joueur, int x, int y)
+void draw_piece(SDL_Renderer *renderer, SDL_Texture *textures[10], int player, int x, int y)
 {
-
-    return;
+    SDL_Rect piece_rect = {x, y, 95, 95};
+    SDL_RenderCopy(renderer, textures[player], NULL, &piece_rect);
 }
 
 /**
@@ -58,7 +56,7 @@ void draw_board(SDL_Renderer *renderer, SDL_Texture *textures[10], int x, int y,
         for (int j = 0; j < 6; j++)
         {
             draw_case(renderer, textures, board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
-            draw_piece(board_piece[i][j], i, j);
+            draw_piece(renderer, textures, board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
         }
     }
 

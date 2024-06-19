@@ -75,6 +75,7 @@ int main(int argc, char const *argv[])
         for (int j = 0; j < 6; j++)
         {
             board_case[i][j] = 1;
+            board_piece[i][j] = 1;
         }
     }
     

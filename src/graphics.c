@@ -96,3 +96,5 @@ void draw(SDL_Renderer *renderer, SDL_Texture *textures[10], int SCREEN_WIDTH, i
 
     draw_logo(renderer, textures);
 }
+
+

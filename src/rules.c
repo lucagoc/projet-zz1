@@ -2,7 +2,6 @@
 
 void initialise_plateau(int board[6][6])
 {
-
     board[0][0] = 1;
     board[0][1] = 2;
     board[0][2] = 2;

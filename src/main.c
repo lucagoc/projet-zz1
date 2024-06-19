@@ -52,8 +52,11 @@ void init_game(game_t *game)
 
     game->selected_case->x = -1;
     game->selected_case->y = -1;
-
+    
     game->case_is_selected = false;
+    game->bird_is_selected = false;
+    
+    game->last_case_value = 0;
 }
 
 /**
@@ -80,6 +83,9 @@ int main(int argc, char const *argv[])
     init_game(game);
 
     initialise_plateau(board->board_case);
+    board->bird = malloc(sizeof(pos_t));
+    board->bird->x = -1; // position de l'oiseau en dehors du plateau
+    board->bird->y = -1;
     initialise_pieces(board->board_piece, 1, 1);
 
     /* Boucle principal */

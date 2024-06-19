@@ -459,7 +459,6 @@ bool is_movement_valid(game_t *game, board_t *board, pos_t destination)
     }
     else if(board->board_piece[x][y] == 0)
     {
-        
         return true;
     }
     else
@@ -525,4 +524,61 @@ void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int
             predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}, step - 1);
         }
     }
+}
+
+void bird_predictions_calculations(game_t *game, board_t *board)
+{
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            if(board->board_piece[i][j] == 0 && (board->board_case[i][j] == game->last_case_value))
+            {
+                game->predictions[i][j] = 1;
+            }
+            else
+            {
+                game->predictions[i][j] = -1;
+            }
+            printf("%d ", game->predictions[i][j]);
+        }
+        printf("\n");
+        
+    }
+}
+
+/* 0 si personne, 1 si joueur_1, 2 si joueur_2 */
+int who_wins(board_t *board){
+
+    bool found_black_daimio = false;
+    bool found_white_daimio = false;
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            if(board->board_piece[i][j] == 2)
+            {
+                found_black_daimio = true;
+            }
+            else if(board->board_piece[i][j] == 4)
+            {
+                found_white_daimio = true;
+            }
+        }
+        
+    }
+
+    if(found_black_daimio && found_white_daimio)
+    {
+        return 0;
+    }
+    else if(found_black_daimio)
+    {
+        return 1;
+    }
+    else
+    {
+        return 2;
+    }
+    
 }

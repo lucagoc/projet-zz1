@@ -48,5 +48,7 @@ struct game_s
     pos_t* selected_case;
     bool case_is_selected;
     int predictions[6][6];
+    int last_case_value;
+    bool bird_is_selected;
 };
 typedef struct game_s game_t;

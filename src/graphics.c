@@ -58,7 +58,7 @@ void draw_selected_case(ui_t *ui, board_t *board, game_t *game)
 void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
 {
     SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
-    SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
     SDL_RenderFillRect(ui->renderer, &prediction_rect);
 }
 
@@ -79,7 +79,36 @@ void draw_all_predictions(ui_t *ui, board_t *board, game_t *game)
                 draw_prediction(ui, board, game, i, j);
             }
         }
-        
+    }
+}
+
+void draw_bird_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
+{
+    SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
+    SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 128);
+    SDL_RenderFillRect(ui->renderer, &prediction_rect);
+}
+
+void draw_all_bird_predictions(ui_t *ui, board_t *board, game_t *game)
+{
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            if (game->predictions[i][j] == 1)
+            {
+                draw_bird_prediction(ui, board, game, i, j);
+            }
+        }
+    }
+}
+
+void draw_bird(ui_t *ui, board_t *board)
+{
+    if (board->bird->x != -1 && board->bird->y != -1)
+    {
+        SDL_Rect bird_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
+        SDL_RenderCopy(ui->renderer, ui->textures[9], NULL, &bird_rect);
     }
 }
 
@@ -118,6 +147,12 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
         draw_selected_case(ui, board, game);
         draw_all_predictions(ui, board, game);
     }
+    else if (game->bird_is_selected)
+    {
+        draw_all_bird_predictions(ui, board, game);
+    }
+
+    draw_bird(ui, board);
 
     return;
 }

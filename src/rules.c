@@ -147,55 +147,127 @@ bool is_valid_move(int valid, int number_moves, int occuped_cases[8][8], int xin
     }
 }
 
-bool can_play(int player, int valid, int number_moves, int occuped_cases[8][8], int xinit, int yinit,int xprev, int yprev, int xdesti, int ydesti)
+
+/**
+ * @brief Regarde si le joueur peut jouer (0 ou 1)
+ *
+ * @param occuped_cases int occuped_cases[8][8]=occuped_cases_def(pieces_position); tableau de 0 = inoccupé et 1 si case occupée
+ * 
+ * @param player joueur: 0 = noir, 1 = blanc
+ *  
+ * @param possible_move utile à la récursion, initialisé à 0
+ *   
+ * @param number_moves nombre de coups à jouer (1 2 3): pieces_position[OMx][OMy]==pieces_position[xinit][yinit] au départ si non avantage
+ * @param xinit position initiale de la pièce jouée
+ * @param yinit position initiale de la pièce jouée
+ * 
+ * @param xprev utile à la récursion, initialisé à xinit
+ * @param yprev utile à la récursion, initialisé à yinit
+ * 
+*/
+
+bool can_play(int player, int possible_move, int number_moves, int occuped_cases[8][8], int xinit, int yinit,int xprev, int yprev)
 {
 
     if (number_moves==0){
         //plus aucun mouvement à effectuer
-            int possible_move=0;
-
-            //teste si on est sur la bonne case (on ne peut y arriver que si elle est vide)
-            if (player==0){
-
-                if (occuped_cases[xinit][yinit]==0 || occuped_cases[xinit][yinit]==2 || occuped_cases[xinit][yinit]==4){
-                    possible_move=1;
-                }
-            } else {
-                if (occuped_cases[xinit][yinit]==0 || occuped_cases[xinit][yinit]==1 || occuped_cases[xinit][yinit]==3){
-                    possible_move=1;
-                }
-            }
-            return possible_move; 
+            return 0;
+        //on ne doit pas arriver ici, normalement
 
     } else {
         //1 ou plusieurs mouvements restants
+        if (number_moves==1){
+            if (player==0){
+                
+                // si on ne revient pas sur la case prec, si la case à droite est libre
+                if((xinit+1 != xprev && yinit != yprev) && (occuped_cases[xinit+1][yinit]==0 || occuped_cases[xinit+1][yinit]==2 ||occuped_cases[xinit+1][yinit]==4)){
 
-        if((xinit+1 != xprev && yinit != yprev) && occuped_cases[xinit+1][yinit]==0){
+                    possible_move= 1;
+                            
+                    //valid = 1 si on arrive sur la bonne case
 
-            valid= is_valid_move(0,number_moves-1,occuped_cases,xinit+1 ,yinit,xinit ,yinit , xdesti, ydesti );
+                }        
+                if(possible_move==0 && (xinit-1 != xprev && yinit != yprev) && (occuped_cases[xinit-1][yinit]==0 || occuped_cases[xinit-1][yinit]==2 ||occuped_cases[xinit-1][yinit]==4)){
+                    possible_move= 1;
+                
+                    //possible_move = 1 si on arrive sur la bonne case
+
+                }
+                if(possible_move==0 && (xinit != xprev && yinit+1 != yprev) &&  (occuped_cases[xinit][yinit+1]==0 || occuped_cases[xinit][yinit+1]==2 ||occuped_cases[xinit][yinit+1]==4)){
+                    possible_move= 1;
                     
-            //valid = 1 si on arrive sur la bonne case
+                    //valid = 1 si on arrive sur la bonne case
 
-        }        
-        if(valid==0 && (xinit-1 != xprev && yinit != yprev) && occuped_cases[xinit-1][yinit]==0){
-            valid=  is_valid_move(0,number_moves-1,occuped_cases,xinit-1 ,yinit,xinit ,yinit , xdesti, ydesti );
-        
-            //valid = 1 si on arrive sur la bonne case
+                }
 
-        }
-        if(valid==0 && (xinit != xprev && yinit+1 != yprev) && occuped_cases[xinit][yinit+1]==0){
-            valid=  is_valid_move(0,number_moves-1,occuped_cases,xinit+1 ,yinit+1,xinit ,yinit , xdesti, ydesti );
+                if(possible_move==0 && (xinit != xprev && yinit-1 != yprev) && (occuped_cases[xinit][yinit-1]==0 || occuped_cases[xinit][yinit-1]==2 ||occuped_cases[xinit][yinit-1]==4)){
+                    possible_move= 1;
+                
+                    //possible_move = 1 si on arrive sur la bonne case
+
+                }
+            }else {
+
+                // si on ne revient pas sur la case prec, si la case à droite est libre
+                if((xinit+1 != xprev && yinit != yprev) && (occuped_cases[xinit+1][yinit]==0 || occuped_cases[xinit+1][yinit]==1 ||occuped_cases[xinit+1][yinit]==3)){
+
+                    possible_move= 1;
+                            
+                    //valid = 1 si on arrive sur la bonne case
+
+                }        
+                if(possible_move==0 && (xinit-1 != xprev && yinit != yprev) && (occuped_cases[xinit-1][yinit]==0 || occuped_cases[xinit-1][yinit]==1 ||occuped_cases[xinit-1][yinit]==3)){
+                    possible_move= 1;
+                
+                    //possible_move = 1 si on arrive sur la bonne case
+
+                }
+                if(possible_move==0 && (xinit != xprev && yinit+1 != yprev) &&  (occuped_cases[xinit][yinit+1]==0 || occuped_cases[xinit][yinit+1]==1 ||occuped_cases[xinit][yinit+1]==3)){
+                    possible_move= 1;
+                    
+                    //valid = 1 si on arrive sur la bonne case
+
+                }
+
+                if(possible_move==0 && (xinit != xprev && yinit-1 != yprev) && (occuped_cases[xinit][yinit-1]==0 || occuped_cases[xinit][yinit-1]==1 ||occuped_cases[xinit][yinit-1]==3)){
+                    possible_move= 1;
+                
+                    //possible_move = 1 si on arrive sur la bonne case
+
+                }
+            }
+            return possible_move;
+        } else {
+
+            // si on ne revient pas sur la case prec, si la case à droite est libre
+            if((xinit+1 != xprev && yinit != yprev) && occuped_cases[xinit+1][yinit]==0){
+
+                possible_move= can_play(player, 0,number_moves-1,occuped_cases,xinit+1 ,yinit,xinit ,yinit);
+                        
+                //valid = 1 si on arrive sur la bonne case
+
+            }        
+            if(possible_move==0 && (xinit-1 != xprev && yinit != yprev) && occuped_cases[xinit-1][yinit]==0){
+                possible_move=  can_play(player, 0,number_moves-1,occuped_cases,xinit-1 ,yinit,xinit ,yinit);
             
-            //valid = 1 si on arrive sur la bonne case
+                //possible_move = 1 si on arrive sur la bonne case
 
-        }
-        if(valid==0 && (xinit != xprev && yinit-1 != yprev) && occuped_cases[xinit][yinit-1]==0){
-            valid=  is_valid_move(0,number_moves-1,occuped_cases,xinit+1 ,yinit-1,xinit ,yinit , xdesti, ydesti );
-        
-            //valid = 1 si on arrive sur la bonne case
+            }
+            if(possible_move==0 && (xinit != xprev && yinit+1 != yprev) && occuped_cases[xinit][yinit+1]==0){
+                possible_move=  can_play(player, 0,number_moves-1,occuped_cases,xinit+1 ,yinit+1,xinit ,yinit);
+                
+                //valid = 1 si on arrive sur la bonne case
 
+            }
+
+            if(possible_move==0 && (xinit != xprev && yinit-1 != yprev) && occuped_cases[xinit][yinit-1]==0){
+                possible_move=  can_play(player, 0,number_moves-1,occuped_cases,xinit+1 ,yinit-1,xinit ,yinit);
+            
+                //possible_move = 1 si on arrive sur la bonne case
+
+            }
         }
-        return valid;
+        return possible_move;
     }
 }
 

@@ -3,6 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "headers/struct.h"
+#include "headers/rules.h"
 
 /**
  * @file sdl_common.c
@@ -204,7 +205,7 @@ pos_t cord2grid(ui_t *ui, int x, int y)
 
 void play_the_game(game_t *game, pos_t case_grid)
 {
-    /*
+   /* 
     if (is_case_valid(game, case_grid))
     {
         // Jouer le coup

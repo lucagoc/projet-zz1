@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include "headers/sdl_common.h"
 
-#define SCREEN_WIDTH 620
-#define SCREEN_HEIGHT 400
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 // fonctions qui affiche le menu de sélection de la partie (joueur vs joueur, joueur vs IA, IA vs IA)
 // Possibilité par la suite de rajouter un moyen d'enregistrer les scores, les parties, etc. (Si on a trop de temps).
@@ -32,12 +32,12 @@ bool is_mouse_over_button(SDL_Rect button, int mouse_x, int mouse_y) {
  * @param quit_text texte écrit "quit"
  */
 bool load_resources(SDL_Renderer* renderer, SDL_Texture** background_texture, SDL_Window *window ,SDL_Texture** continue_text, SDL_Texture** quit_text) {           
-    *background_texture = load_texture_from_image("image_menu/menu_pause.png", window , renderer); 
+    *background_texture = load_texture_from_image("src/image_menu/menu_pause.png", window , renderer); 
     if (!*background_texture) {
         return false;
     }
 
-    const char* font_path = "image_menu/metal_lord.ttf"; 
+    const char* font_path = "src/image_menu/metal_lord.ttf"; 
     SDL_Color text_color = {204, 136, 80, 255}; 
 
     *continue_text = render_text("Continue", font_path, text_color, 24, renderer);
@@ -91,13 +91,13 @@ void handle_events(SDL_Event* event, bool* running, bool* show_menu, SDL_Rect co
 }
 
 /*rendu du menu pause*/
-void draw_menu_pause(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Texture* continue_text, SDL_Texture* quit_text) {               //Fonction dessine le menu de pause
+void draw_menu_pause(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Texture* continue_text, SDL_Texture* quit_text) {
     int text_width, text_height;
 
-    // La taille et le position du bouton "continue" et "quit"
+    // La taille et la position du bouton "continue" et "quit"
 
     SDL_QueryTexture(continue_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect continue_text_rect = {SCREEN_WIDTH / 2 - text_width / 2 - 5, 200, text_width, text_height};
+    SDL_Rect continue_text_rect = {SCREEN_WIDTH / 2 - text_width / 2 - 5, 250, text_width, text_height}; // Déplacement vers le bas
     SDL_Rect continue_button_rect = {SCREEN_WIDTH / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
 
     SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
@@ -109,12 +109,12 @@ void draw_menu_pause(SDL_Renderer* renderer, SDL_Texture* background_texture, SD
     // Activer le mode de mélange pour la transparence
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    // Dessiner un rectangle semi-transparent qui permet de créer de transparent lors du pause
-    SDL_SetRenderDrawColor(renderer,134, 182, 240, 100); 
+    // Dessiner un rectangle semi-transparent pour l'effet de pause
+    SDL_SetRenderDrawColor(renderer, 134, 182, 240, 100); 
     SDL_Rect semi_transparent_rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     SDL_RenderFillRect(renderer, &semi_transparent_rect);
 
-    // Dessiner le fond
+    // Dessiner l'arrière-plan
     SDL_RenderCopy(renderer, background_texture, NULL, NULL);
 
     // Dessiner le bouton "Continue"

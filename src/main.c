@@ -9,6 +9,7 @@
 //#include "headers/rules.h"
 #include "headers/opponent.h"
 #include "headers/sdl_common.h"
+#include "headers/menu.h"
 
 /**
  * @file main.c
@@ -48,78 +49,68 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
 
+    // Allocation et initialisation des structures
     board_t *board = malloc(sizeof(board_t));
     ui_t *ui = malloc(sizeof(ui_t));
+    game_t *game = malloc(sizeof(game_t));
+    
     ui->SCREEN_WIDTH = SCREEN_WIDTH;
     ui->SCREEN_HEIGHT = SCREEN_HEIGHT;
     ui->BOARD_SIZE = BOARD_SIZE;
+
     init_sdl(ui);
-
-    /* Initialisation du jeu */
-    game_t *game = malloc(sizeof(game_t));
     init_game(game);
-
     initialise_plateau(board->board_case);
     initialise_pieces(board->board_piece, 1, 1);
 
-    /*Initilisation textures et events*/
-    SDL_Texture* background_texture;
-    SDL_Texture* continue_text;
-    SDL_Texture* quit_text;
-    SDL_Event *event;
-    bool show_menu = false;
+    // Charger les ressources pour le menu pause
+    SDL_Texture *background_texture = NULL;
+    SDL_Texture *continue_text = NULL;
+    SDL_Texture *quit_text = NULL;
 
+    if (!load_resources(ui->renderer, &background_texture, ui->window, &continue_text, &quit_text)) {
+        // Gestion de l'échec du chargement des ressources
+        SDL_Log("Échec du chargement des ressources");
+        free(game);
+        free(board);
+        unload_textures(ui->textures);
+        end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
+        free(ui);
+        return -1;
+    }
+
+    // Définitions des rectangles des boutons pour le menu pause
     int text_width, text_height;
+
     SDL_QueryTexture(continue_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect continue_text_rect = {SCREEN_WIDTH / 2 - text_width / 2 - 5, 200, text_width, text_height};
-    SDL_Rect continue_button_rect = {SCREEN_WIDTH / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
+    SDL_Rect continue_button_rect = {ui->SCREEN_WIDTH / 2 - 100 - 5, 250, 200, text_height + 20};
 
     SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect quit_text_rect = {SCREEN_WIDTH / 2 - text_width / 2, SCREEN_HEIGHT - 200, text_width, text_height};
-    SDL_Rect quit_button_rect = {SCREEN_WIDTH / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
+    SDL_Rect quit_button_rect = {ui->SCREEN_WIDTH / 2 - 100, ui->SCREEN_HEIGHT - 200 - 10, 200, text_height + 20};
 
-    /* Boucle principal */
-    while (game->program_on)
-    {
-        get_input(ui, game);
-        draw(ui, board);
-        SDL_RenderPresent(ui->renderer);
-        SDL_Delay(15); // ~ 60 FPS
+    // Boucle principale
+    while (game->program_on) {
+        // Gestion des événements
+        handle_events(&game->event, &game->program_on, &game->inPause, continue_button_rect, quit_button_rect);
 
-        if (show_menu){
+        if (game->inPause) {
+            // Afficher le menu pause
             draw_menu_pause(ui->renderer, background_texture, continue_text, quit_text);
-            }
-
-        if (event->type == SDL_Quit){
-            game->program_on = false;
-        }
-        else if (event->type == SDL_KEYDOWN){
-            if (event->key.keysym.sym == SDLK_ESCAPE){
-                show_menu = !show_menu;
-                
-            }
-            } else if (event->type == SDL_MOUSEBUTTONDOWN) {
-                int mouse_x, mouse_y;
-                SDL_GetMouseState(&mouse_x, &mouse_y);
-
-                if (is_mouse_over_button(continue_button_rect, mouse_x, mouse_y)) {
-                    SDL_Log("Continue button clicked!");
-                    show_menu = false;
-                    // Ajoutez ici le code pour continuer le jeu
-                    get_input(ui, game);
-                    draw(ui, board);
-                    SDL_RenderPresent(ui->renderer);
-                    SDL_Delay(15); // ~ 60 FPS
-
-            }   else if (is_mouse_over_button(quit_button_rect, mouse_x, mouse_y)) {
-                    SDL_Log("Quit button clicked!");
-                    game->program_on = false;
-            }
-
+        } else {
+            // Afficher le plateau de jeu
+            get_input(ui, game);
+            draw(ui, board);
+            SDL_RenderPresent(ui->renderer);
         }
 
+        SDL_Delay(15); // ~ 60 FPS
     }
-    
+
+    // Libération des ressources et nettoyage
+    SDL_DestroyTexture(background_texture);
+    SDL_DestroyTexture(continue_text);
+    SDL_DestroyTexture(quit_text);
+
     free(game);
     free(board);
     unload_textures(ui->textures);
@@ -128,4 +119,3 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
-

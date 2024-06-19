@@ -27,3 +27,10 @@ struct game_s
     bool program_on;
 };
 typedef struct game_s game_t;
+
+struct pos_s
+{
+    int x;
+    int y;
+};
+typedef struct pos_s pos_t;

@@ -88,13 +88,5 @@ void draw(ui_t *ui, board_t *board, game_t *game)
 {
     draw_background(ui);
     draw_board(ui, board);
-
-    int count = 0; // Placeholder
-
-    for (int i = 0; i < count; i++)
-    {
-        /* code */
-    }
-
     draw_logo(ui);
 }

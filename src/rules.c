@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include "headers/struct.h"
 
 #define GRID_SIZE 6
 
@@ -66,7 +67,6 @@ void initialise_pieces(int pieces_position[GRID_SIZE][GRID_SIZE], int king_black
         {
             pieces_position[i][j] = 0;
         }
-        
     }
 
     // ronin noir 1 ronin blanc 2 daimyo noir 3 daimyo blanc 4
@@ -155,9 +155,12 @@ void initialise_pieces(int pieces_position[GRID_SIZE][GRID_SIZE], int king_black
  */
 bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][GRID_SIZE], int xinit, int yinit, int xprev, int yprev, int xdesti, int ydesti)
 {
-    if (xinit<0 || yinit<0 ||  xinit>5 || yinit>5 ){
+    if (xinit < 0 || yinit < 0 || xinit > 5 || yinit > 5)
+    {
         return 0;
-    } else {
+    }
+    else
+    {
         if (number_moves == 0)
         {
             // plus aucun mouvement à effectuer
@@ -170,26 +173,26 @@ bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][G
         {
             // 1 ou plusieurs mouvements restants
 
-            if (xinit<5 && (xinit + 1 != xprev && yinit != yprev) && pieces_position[xinit + 1][yinit] == 0)
+            if (xinit < 5 && (xinit + 1 != xprev && yinit != yprev) && pieces_position[xinit + 1][yinit] == 0)
             {
 
                 valid = is_valid_move(0, number_moves - 1, pieces_position, xinit + 1, yinit, xinit, yinit, xdesti, ydesti);
 
                 // valid = 1 si on arrive sur la bonne case
             }
-            if (xinit>0 && valid == 0 && (xinit - 1 != xprev && yinit != yprev) && pieces_position[xinit - 1][yinit] == 0)
+            if (xinit > 0 && valid == 0 && (xinit - 1 != xprev && yinit != yprev) && pieces_position[xinit - 1][yinit] == 0)
             {
                 valid = is_valid_move(0, number_moves - 1, pieces_position, xinit - 1, yinit, xinit, yinit, xdesti, ydesti);
 
                 // valid = 1 si on arrive sur la bonne case
             }
-            if (yinit<5 && valid == 0 && (xinit != xprev && yinit + 1 != yprev) && pieces_position[xinit][yinit + 1] == 0)
+            if (yinit < 5 && valid == 0 && (xinit != xprev && yinit + 1 != yprev) && pieces_position[xinit][yinit + 1] == 0)
             {
                 valid = is_valid_move(0, number_moves - 1, pieces_position, xinit + 1, yinit + 1, xinit, yinit, xdesti, ydesti);
 
                 // valid = 1 si on arrive sur la bonne case
             }
-            if (xinit>0 && valid == 0 && (xinit != xprev && yinit - 1 != yprev) && pieces_position[xinit][yinit - 1] == 0)
+            if (xinit > 0 && valid == 0 && (xinit != xprev && yinit - 1 != yprev) && pieces_position[xinit][yinit - 1] == 0)
             {
                 valid = is_valid_move(0, number_moves - 1, pieces_position, xinit + 1, yinit - 1, xinit, yinit, xdesti, ydesti);
 
@@ -197,7 +200,6 @@ bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][G
             }
             return valid;
         }
-
     }
 }
 
@@ -222,11 +224,13 @@ bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][G
 bool can_play(int player, int possible_move, int number_moves, int position_piece[GRID_SIZE][GRID_SIZE], int xinit, int yinit, int xprev, int yprev)
 {
 
-
-    if (xinit<0 || yinit<0 ||  xinit>5 || yinit>5 ){
+    if (xinit < 0 || yinit < 0 || xinit > 5 || yinit > 5)
+    {
         return 0;
-    } else {
-            
+    }
+    else
+    {
+
         if (number_moves == 0)
         {
             // plus aucun mouvement à effectuer
@@ -242,27 +246,27 @@ bool can_play(int player, int possible_move, int number_moves, int position_piec
                 {
 
                     // si on ne revient pas sur la case prec, si la case à droite est libre
-                    if (xinit<5 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 2 || position_piece[xinit + 1][yinit] == 4))
+                    if (xinit < 5 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 2 || position_piece[xinit + 1][yinit] == 4))
                     {
 
                         possible_move = 1;
 
                         // valid = 1 si on arrive sur la bonne case
                     }
-                    if (xinit>0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 2 || position_piece[xinit - 1][yinit] == 4))
+                    if (xinit > 0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 2 || position_piece[xinit - 1][yinit] == 4))
                     {
                         possible_move = 1;
 
                         // possible_move = 1 si on arrive sur la bonne case
                     }
-                    if (yinit<5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 2 || position_piece[xinit][yinit + 1] == 4))
+                    if (yinit < 5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 2 || position_piece[xinit][yinit + 1] == 4))
                     {
                         possible_move = 1;
 
                         // valid = 1 si on arrive sur la bonne case
                     }
 
-                    if (yinit>0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 2 || position_piece[xinit][yinit - 1] == 4))
+                    if (yinit > 0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 2 || position_piece[xinit][yinit - 1] == 4))
                     {
                         possible_move = 1;
 
@@ -273,27 +277,27 @@ bool can_play(int player, int possible_move, int number_moves, int position_piec
                 {
 
                     // si on ne revient pas sur la case prec, si la case à droite est libre
-                    if (xinit<5 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 1 || position_piece[xinit + 1][yinit] == 3))
+                    if (xinit < 5 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 1 || position_piece[xinit + 1][yinit] == 3))
                     {
 
                         possible_move = 1;
 
                         // valid = 1 si on arrive sur la bonne case
                     }
-                    if (xinit>0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 1 || position_piece[xinit - 1][yinit] == 3))
+                    if (xinit > 0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 1 || position_piece[xinit - 1][yinit] == 3))
                     {
                         possible_move = 1;
 
                         // possible_move = 1 si on arrive sur la bonne case
                     }
-                    if (yinit<5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 1 || position_piece[xinit][yinit + 1] == 3))
+                    if (yinit < 5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 1 || position_piece[xinit][yinit + 1] == 3))
                     {
                         possible_move = 1;
 
                         // valid = 1 si on arrive sur la bonne case
                     }
 
-                    if (yinit>0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 1 || position_piece[xinit][yinit - 1] == 3))
+                    if (yinit > 0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 1 || position_piece[xinit][yinit - 1] == 3))
                     {
                         possible_move = 1;
 
@@ -306,27 +310,27 @@ bool can_play(int player, int possible_move, int number_moves, int position_piec
             {
 
                 // si on ne revient pas sur la case prec, si la case à droite est libre
-                if (xinit<5 && (xinit + 1 != xprev && yinit != yprev) && position_piece[xinit + 1][yinit] == 0)
+                if (xinit < 5 && (xinit + 1 != xprev && yinit != yprev) && position_piece[xinit + 1][yinit] == 0)
                 {
 
                     possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit, xinit, yinit);
 
                     // valid = 1 si on arrive sur la bonne case
                 }
-                if (xinit>0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && position_piece[xinit - 1][yinit] == 0)
+                if (xinit > 0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && position_piece[xinit - 1][yinit] == 0)
                 {
                     possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit - 1, yinit, xinit, yinit);
 
                     // possible_move = 1 si on arrive sur la bonne case
                 }
-                if (yinit<5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && position_piece[xinit][yinit + 1] == 0)
+                if (yinit < 5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && position_piece[xinit][yinit + 1] == 0)
                 {
                     possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit + 1, xinit, yinit);
 
                     // valid = 1 si on arrive sur la bonne case
                 }
 
-                if (yinit>0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && position_piece[xinit][yinit - 1] == 0)
+                if (yinit > 0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && position_piece[xinit][yinit - 1] == 0)
                 {
                     possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit - 1, xinit, yinit);
 
@@ -378,7 +382,7 @@ bool playing_move(int player, int *victory, int *captured_black_piece, int *capt
 
             if (pieces_position[xdesti][ydesti] == 2)
             {
-                *captured_white_piece+=1;
+                *captured_white_piece += 1;
             }
             else if (pieces_position[xdesti][ydesti] == 4)
             {
@@ -389,7 +393,7 @@ bool playing_move(int player, int *victory, int *captured_black_piece, int *capt
         {
             if (pieces_position[xdesti][ydesti] == 1)
             {
-                *captured_black_piece+=1;
+                *captured_black_piece += 1;
             }
             else if (pieces_position[xdesti][ydesti] == 3)
             {
@@ -445,442 +449,51 @@ bool respawn_piece(int player, int captured_white_piece, int captured_black_piec
 }
 
 /**
- * brief Regarde si le joueur peut jouer ou non (0 ou 1)
+ * @brief Calcule les prédictions de déplacement possibles pour une pièce, step doit être égale à 0 pour que la case soit prise en compte
+ * @param game Structure de l'état du jeu
+ * @param board Structure du plateau
+ * @param piece_pos Position de la pièce
+ * @param step Nombre de déplacements possibles
+ * @param player Joueur actuel
  *
- * param player 0 si on est sur le joueur noir ou 1 si le joueur blanc
- * param board contient le tableau initial avec les valeurs des cases
-
- * param OMx position de l'oiseau marseillais posé précédemment
-
- * param OMy position de l'oiseau marseillais posé précédemment
-
- * param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
-
+ * @return Liste des déplacements possibles
  */
-
-/*bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position[6][6])
+void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int step, int player)
 {
-
-    int possible_move = 1;
-    int number_moves = board[OMx][OMy]; // 1 2 3 coups à jouer selon l'oiseau posé précédemment
-
-    // pour gérer les bords du plateau: matrice 0 si case inoccupee et 1 si occupee
-
-    int ** occuped_cases=occuped_cases_def(player, pieces_position);
-
-    for (int x = 0; x < 6; x++)
+    fprintf(stderr, "ENTRER DANS PREDICTIONS\n");
+    if (piece_pos.x < 0 || piece_pos.y < 0 || piece_pos.x > 5 || piece_pos.y > 5)
     {
-        for (int y = 0; y < 6; y++)
+        fprintf(stderr, "Position invalide : %d %d\n", piece_pos.x, piece_pos.y);
+        return;
+    }
+    else if(step == 0 && board->board_piece[piece_pos.x][piece_pos.y] == 0)
+    {
+        fprintf(stderr, "Position valide : %d %d\n", piece_pos.x, piece_pos.y);
+        game->predictions[piece_pos.x][piece_pos.y] = 1;
+    }
+    else
+    {
+        fprintf(stderr, "Position chemin : %d %d\n", piece_pos.x, piece_pos.y);
+        if(piece_pos.x < 5 && board->board_piece[piece_pos.x + 1][piece_pos.y] == 0 && game->predictions[piece_pos.x + 1][piece_pos.y] == 0)
         {
-            if (board[x][y] == number_moves)
-            {
-                // on teste une case avec le bon nombre de coups à jouer
-
-                if (player == 0)
-                {
-                    if (pieces_position[x][y] == 1 || pieces_position[x][y] == 3)
-                    {
-                        // on teste une case avec une pièce noire qui doit jouer
-
-                        // si on a une case occupée a gauche, une a droite, une en haut, une en bas
-                        if (occuped_cases[x + 1][y] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x + 2][y] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x + 3][y] == 0 || occuped_cases[x + 2][y + 1] == 0 || occuped_cases[x + 2][y - 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x + 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 1][y + 2] == 0 || occuped_cases[x + 2][y + 1] == 0 || occuped_cases[x][y + 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x + 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 1][y - 2] == 0 || occuped_cases[x + 2][y - 1] == 0 || occuped_cases[x][y - 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-
-                        if (x < 7 && occuped_cases[x][y + 1] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x][y + 2] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x][y + 3] == 0 || occuped_cases[x + 1][y + 2] == 0 || occuped_cases[x - 1][y + 2] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x + 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 2][y + 1] == 0 || occuped_cases[x + 1][y + 2] == 0 || occuped_cases[x + 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x - 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 2][y + 1] == 0 || occuped_cases[x - 1][y + 2] == 0 || occuped_cases[x - 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-                        if (x < 7 && occuped_cases[x - 1][y] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x - 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x - 2][y + 1] == 0 || occuped_cases[x][y + 1] == 0 || occuped_cases[x - 1][y + 2] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x - 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 2][y - 1] == 0 || occuped_cases[x][y - 1] == 0 || occuped_cases[x - 1][y - 2] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x - 2][y] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 3][y] == 0 || occuped_cases[x - 2][y + 1] == 0 || occuped_cases[x - 2][y - 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-                        if (x < 7 && occuped_cases[x][y - 1] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x][y - 2] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x + 1][y - 2] == 0 || occuped_cases[x - 1][y - 2] == 0 || occuped_cases[x][y - 3] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x + 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 2][y - 1] == 0 || occuped_cases[x + 1][y - 2] == 0 || occuped_cases[x + 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x - 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 1][y - 2] == 0 || occuped_cases[x - 2][y - 1] == 0 || occuped_cases[x - 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-                    }
-
-                    // si on a plusieurs coups: on teste puis on recommence avec une case libre mais avec la case
-                    // précédente occupée
-                }
-                else
-                {
-                    if (pieces_position[x][y] == 2 || pieces_position[x][y] == 4)
-                    {
-                        // on teste une case avec une pièce blanche qui doit jouer
-
-                        // on teste une case avec une pièce noire qui doit jouer
-
-                        // si on a une case occupée a gauche, une a droite, une en haut, une en bas
-                        if (occuped_cases[x + 1][y] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x + 2][y] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x + 3][y] == 0 || occuped_cases[x + 2][y + 1] == 0 || occuped_cases[x + 2][y - 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x + 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 1][y + 2] == 0 || occuped_cases[x + 2][y + 1] == 0 || occuped_cases[x][y + 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x + 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 1][y - 2] == 0 || occuped_cases[x + 2][y - 1] == 0 || occuped_cases[x][y - 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-
-                        if (x < 7 && occuped_cases[x][y + 1] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x][y + 2] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x][y + 3] == 0 || occuped_cases[x + 1][y + 2] == 0 || occuped_cases[x - 1][y + 2] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x + 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 2][y + 1] == 0 || occuped_cases[x + 1][y + 2] == 0 || occuped_cases[x + 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                if (x < 7 && occuped_cases[x - 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 2][y + 1] == 0 || occuped_cases[x - 1][y + 2] == 0 || occuped_cases[x - 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-                        if (x < 7 && occuped_cases[x - 1][y] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x - 1][y + 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x - 2][y + 1] == 0 || occuped_cases[x][y + 1] == 0 || occuped_cases[x - 1][y + 2] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x - 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 2][y - 1] == 0 || occuped_cases[x][y - 1] == 0 || occuped_cases[x - 1][y - 2] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x - 2][y] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 3][y] == 0 || occuped_cases[x - 2][y + 1] == 0 || occuped_cases[x - 2][y - 1] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-                        if (x < 7 && occuped_cases[x][y - 1] == 0)
-                        {
-
-                            if (number_moves > 1)
-                            {
-
-                                if (occuped_cases[x][y - 2] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-
-                                        if (occuped_cases[x + 1][y - 2] == 0 || occuped_cases[x - 1][y - 2] == 0 || occuped_cases[x][y - 3] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x + 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x + 2][y - 1] == 0 || occuped_cases[x + 1][y - 2] == 0 || occuped_cases[x + 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                                else if (occuped_cases[x - 1][y - 1] == 0)
-                                {
-                                    if (number_moves > 2)
-                                    {
-                                        if (occuped_cases[x - 1][y - 2] == 0 || occuped_cases[x - 2][y - 1] == 0 || occuped_cases[x - 1][y] == 0)
-                                        {
-                                            x = 7;
-                                            y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                x = 7;
-                                y = 7;
-                            }
-                        }
-                    }
-                }
-            }
+            game->predictions[piece_pos.x + 1][piece_pos.y] = -1;
+            predictions_calculations(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}, step - 1, player);
+        }
+        if(piece_pos.x > 0 && board->board_piece[piece_pos.x - 1][piece_pos.y] == 0 && game->predictions[piece_pos.x - 1][piece_pos.y] == 0)
+        {
+            game->predictions[piece_pos.x - 1][piece_pos.y] = -1;
+            predictions_calculations(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}, step - 1, player);
+        }
+        if(piece_pos.y < 5 && board->board_piece[piece_pos.x][piece_pos.y + 1] == 0 && game->predictions[piece_pos.x][piece_pos.y + 1] == 0)
+        {
+            game->predictions[piece_pos.x][piece_pos.y + 1] = -1;
+            predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}, step - 1, player);
+        }
+        if(piece_pos.y > 0 && board->board_piece[piece_pos.x][piece_pos.y - 1] == 0 && game->predictions[piece_pos.x][piece_pos.y - 1] == 0)
+        {
+            game->predictions[piece_pos.x][piece_pos.y - 1] = -1;
+            predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}, step - 1, player);
         }
     }
 
-    return possible_move;
 }
-*/

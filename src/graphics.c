@@ -37,11 +37,49 @@ void draw_piece(ui_t *ui, int player, int x, int y)
     }
 }
 
-void draw_selected_case(ui_t *ui, board_t *board, game_t *game){
-    if(game->selected_case->x != -1 && game->selected_case->y != -1){
+void draw_selected_case(ui_t *ui, board_t *board, game_t *game)
+{
+    if (game->selected_case->x != -1 && game->selected_case->y != -1)
+    {
         SDL_Rect selected_rect = {ui->SCREEN_WIDTH / 2 - 300 + game->selected_case->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + game->selected_case->y * 99 + 5, 95, 95};
         SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
         SDL_RenderFillRect(ui->renderer, &selected_rect);
+    }
+}
+
+/**
+ * @brief Affiche un rectangle rouge autour de la case prédite
+ *
+ * @param ui Interface utilisateur
+ * @param board Plateau de jeu
+ * @param x Coordonnée x de la prédiction
+ * @param y Coordonnée y de la prédiction
+ */
+void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
+{
+    SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
+    SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
+    SDL_RenderFillRect(ui->renderer, &prediction_rect);
+}
+
+/**
+ * @brief Affiche toutes les cases possibles depuis le pion sélectionné
+ *
+ */
+void draw_all_predictions(ui_t *ui, board_t *board, game_t *game)
+{
+    fprintf(stderr, "draw_all_predictions\n");
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            fprintf(stderr, "predictions[%d][%d] = %d\n", i, j, game->predictions[i][j]);
+            if (game->predictions[i][j] == 1)
+            {
+                draw_prediction(ui, board, game, i, j);
+            }
+        }
+        
     }
 }
 
@@ -75,7 +113,11 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
         }
     }
 
-    draw_selected_case(ui, board, game);
+    if (game->case_is_selected)
+    {
+        draw_selected_case(ui, board, game);
+        draw_all_predictions(ui, board, game);
+    }
 
     return;
 }
@@ -91,32 +133,6 @@ void draw_logo(ui_t *ui)
 {
     SDL_Rect logo_rect = {10, 10, 250, 100};
     SDL_RenderCopy(ui->renderer, ui->textures[8], NULL, &logo_rect);
-}
-
-/**
- * @brief Affiche un rectangle rouge autour de la case prédite
- * 
- * @param ui Interface utilisateur
- * @param board Plateau de jeu
- * @param x Coordonnée x de la prédiction
- * @param y Coordonnée y de la prédiction
- */
-void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y){
-    SDL_Rect prediction_rect = {x, y, 95, 95};
-    SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
-    SDL_RenderDrawRect(ui->renderer, &prediction_rect);
-}
-
-/**
- * @brief Affiche toutes les cases possibles depuis le pion sélectionné
- * 
- */
-void draw_all_predictions(ui_t *ui, board_t *board, game_t *game, list_t *predictions){
-    list_t *current = predictions;
-    while(current != NULL){
-        draw_prediction(ui, board, game, current->pos.x, current->pos.y);
-        current = current->next;
-    }
 }
 
 /* Rendu globale */

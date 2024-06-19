@@ -3,6 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "headers/struct.h"
+#include "headers/rules.h"
 #define GRID_SIZE 6
 
 /**
@@ -203,26 +204,37 @@ pos_t cord2grid(ui_t *ui, int x, int y)
     return pos;
 }
 
-void play_the_game(game_t *game, pos_t case_grid)
+void move_piece_to(game_t *game, board_t *board, pos_t destination)
 {
-    /*
-    if (is_valid_move(0, 3, 3, , case_grid.x, case_grid.y))
-    {
-        // Jouer le coup
-        )
-        
-        // Demander de placer l'oiseau
+    int tmp = board->board_piece[game->selected_case->x][game->selected_case->y];
+    board->board_piece[game->selected_case->x][game->selected_case->y] = 0;
+    board->board_piece[destination.x][destination.y] = tmp;
+}
 
-        // Augmenter le round;
-        game->round++;
-        // Changer de joueur
-        game->playing_player = (game->playing_player == 1) ? 2 : 1;
-    }*/
+void print_list(list_t *list)
+{
+    list_t *tmp = list;
+    while (tmp != NULL)
+    {
+        printf("(%d, %d)\n", tmp->pos.x, tmp->pos.y);
+        tmp = tmp->next;
+    }
+}
+
+void free_list(list_t *list)
+{
+    list_t *tmp = list;
+    while (tmp != NULL)
+    {
+        list_t *next = tmp->next;
+        free(tmp);
+        tmp = next;
+    }
 }
 
 bool can_be_selected(game_t *game, board_t *board, pos_t pos_grid)
 {
-    return board->board_piece[pos_grid.x][pos_grid.y]%2 == game->playing_player;
+    return board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player;
 }
 
 /*
@@ -251,23 +263,47 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                 // Cliquer dans le plateau
                 if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
                 {
-                    if(can_be_selected(game, board, case_grid)){
+                    if (game->case_is_selected)
+                    {
+                        if (game->predictions[case_grid.x][case_grid.y] == 1)
+                        {
+                            // Déplacer le pion sur la case
+                            move_piece_to(game, board, case_grid);
+                            game->case_is_selected = false;
+                            game->selected_case->x = -1;
+                            game->selected_case->y = -1;
+                            
+                            // Changement de joueur
+                            game->playing_player = (game->playing_player == 1) ? 2 : 1;
+                        }
+                    }
+                    else if (can_be_selected(game, board, case_grid))
+                    {
                         printf("Case sélectionnée\n");
                         game->selected_case->x = case_grid.x;
                         game->selected_case->y = case_grid.y;
+                        game->case_is_selected = true;
+
+                        for (int i = 0; i < GRID_SIZE; i++)
+                        {
+                            for (int j = 0; j < GRID_SIZE; j++)
+                            {
+                                game->predictions[i][j] = 0;
+                            }
+                        }
+                        predictions_calculations(game, board, *game->selected_case, board->board_case[game->selected_case->x][game->selected_case->y], game->playing_player);
                     }
                     else
                     {
                         game->selected_case->x = -1;
                         game->selected_case->y = -1;
+                        game->case_is_selected = false;
                         printf("Case non sélectionnée\n");
                     }
                 }
 
                 printf("Clic en (%d, %d)\n", x, y);
                 printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
-
-                play_the_game(game, case_grid);
             }
             break;
         }

@@ -35,7 +35,16 @@ void init_game(game_t *game)
     game->program_on = true;
     game->round = 0;
     game->selected_case = malloc(sizeof(pos_t));
-
+    
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            game->predictions[i][j] = 0;
+        }
+        
+    }
+    
     if(game->selected_case == NULL){
         fprintf(stderr, "Erreur d'allocation de mémoire\n");
         exit(EXIT_FAILURE);
@@ -43,6 +52,8 @@ void init_game(game_t *game)
 
     game->selected_case->x = -1;
     game->selected_case->y = -1;
+
+    game->case_is_selected = false;
 }
 
 /**

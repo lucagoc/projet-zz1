@@ -3,6 +3,22 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+
+struct pos_s
+{
+    int x;
+    int y;
+};
+typedef struct pos_s pos_t;
+
+// Liste de positions
+struct list_s
+{
+    pos_t pos;
+    struct list_s *next;
+};
+typedef struct list_s list_t;
+
 struct ui_s
 {
     SDL_Window *window;
@@ -13,13 +29,6 @@ struct ui_s
     int BOARD_SIZE;
 };
 typedef struct ui_s ui_t;
-
-struct pos_s
-{
-    int x;
-    int y;
-};
-typedef struct pos_s pos_t;
 
 struct board_s
 {
@@ -37,13 +46,7 @@ struct game_s
     bool inPause;
     bool program_on;
     pos_t* selected_case;
+    bool case_is_selected;
+    int predictions[6][6];
 };
 typedef struct game_s game_t;
-
-// Liste de positions
-struct list_s
-{
-    pos_t pos;
-    struct list_s *next;
-};
-typedef struct list_s list_t;

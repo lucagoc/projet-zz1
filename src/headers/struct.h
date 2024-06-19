@@ -12,10 +12,18 @@ struct ui_s
 };
 typedef struct ui_s ui_t;
 
+struct pos_s
+{
+    int x;
+    int y;
+};
+typedef struct pos_s pos_t;
+
 struct board_s
 {
     int board_case[6][6];
     int board_piece[6][6];
+    pos_t *bird; // Position de l'oiseau
 };
 typedef struct board_s board_t;
 
@@ -28,9 +36,3 @@ struct game_s
 };
 typedef struct game_s game_t;
 
-struct pos_s
-{
-    int x;
-    int y;
-};
-typedef struct pos_s pos_t;

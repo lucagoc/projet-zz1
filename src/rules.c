@@ -145,7 +145,7 @@ int **occuped_cases_def(int pieces_position[6][6])
         {
             if (j == 0 || k == 0 || j == 7 || k == 7)
             {
-                occuped_cases[j][k] = 1;
+                occuped_cases[j][k] = 6;
             }
             else
             {

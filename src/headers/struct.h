@@ -1,4 +1,5 @@
 #define STRUCT_H
+
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
@@ -9,6 +10,7 @@ struct ui_s
     SDL_Texture *textures[10];
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
+    int BOARD_SIZE;
 };
 typedef struct ui_s ui_t;
 

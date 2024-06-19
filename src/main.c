@@ -20,8 +20,9 @@
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
+const int BOARD_SIZE = 600;
 
-#define BOARD_SIZE 6
+#define GRID_SIZE 6
 
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
@@ -50,6 +51,7 @@ int main(int argc, char const *argv[])
     ui_t *ui = malloc(sizeof(ui_t));
     ui->SCREEN_WIDTH = SCREEN_WIDTH;
     ui->SCREEN_HEIGHT = SCREEN_HEIGHT;
+    ui->BOARD_SIZE = BOARD_SIZE;
     init_sdl(ui);
 
     /* Initialisation du jeu */
@@ -58,9 +60,9 @@ int main(int argc, char const *argv[])
 
     initialise_plateau(board->board_case);
 
-    for (int i = 0; i < BOARD_SIZE; i++)
+    for (int i = 0; i < GRID_SIZE; i++)
     {
-        for (int j = 0; j < BOARD_SIZE; j++)
+        for (int j = 0; j < GRID_SIZE; j++)
         {
             board->board_piece[i][j] = 0;
         }
@@ -69,7 +71,7 @@ int main(int argc, char const *argv[])
     /* Boucle principal */
     while (game->program_on)
     {
-        get_input(game);
+        get_input(ui, game);
         draw(ui, board);
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS

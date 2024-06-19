@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "headers/struct.h"
 
-#define BOARD_SIZE 6
+#define GRID_SIZE 6
 
 /* Rendu du fond */
 void draw_background(ui_t *ui)
@@ -58,9 +58,9 @@ void draw_board(ui_t *ui, board_t *board)
     int x_case = x - 300;
     int y_case = y - 300;
 
-    for (int i = 0; i < BOARD_SIZE; i++)
+    for (int i = 0; i < GRID_SIZE; i++)
     {
-        for (int j = 0; j < BOARD_SIZE; j++)
+        for (int j = 0; j < GRID_SIZE; j++)
         {
             draw_case(ui, board->board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
             draw_piece(ui, board->board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);

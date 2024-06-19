@@ -1,6 +1,8 @@
 #include <stdbool.h>
 
-void initialise_plateau(int board[6][6])
+# define GRID_SIZE 6
+
+void initialise_plateau(int board[GRID_SIZE][GRID_SIZE])
 {
     board[0][0] = 1;
     board[0][1] = 2;
@@ -41,7 +43,7 @@ void initialise_plateau(int board[6][6])
 }
 
 /* Vérifie si le pion peut être placé sur cette case */
-bool is_valid_move(int pieces_position[6][6], int x, int y)
+bool is_valid_move(int pieces_position[GRID_SIZE][GRID_SIZE], int x, int y)
 {
 
     return (pieces_position[x][y] == 0);

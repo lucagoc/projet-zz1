@@ -9,6 +9,14 @@
 #include "headers/opponent.h"
 #include "headers/sdl_common.h"
 
+/**
+ * @file main.c
+ * @brief Programme principal du jeu Mana
+ * @version 1.0
+ * @date 2023-06-18
+ * @author Team 21
+ */
+
 struct ui_s
 {
     SDL_Window *window;
@@ -19,22 +27,21 @@ struct ui_s
 };
 typedef struct ui_s ui_t;
 
-struct game_s
+struct board_s
 {
     int board_case[6][6];
     int board_piece[6][6];
+};
+typedef struct board_s board_t;
+
+struct game_s
+{
+    SDL_Event event;
     int playing_player;
     bool inPause;
+    bool program_on;
 };
 typedef struct game_s game_t;
-
-/**
- * @file main.c
- * @brief Programme principal du jeu Mana
- * @version 1.0
- * @date 2023-06-18
- * @author Team 21
- */
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -51,6 +58,28 @@ const int PLAYER_2 = 2;
  * @param argv Arguments
  * @return int Code de retour
  */
+
+void get_input(game_t *game)
+{
+    /* Gestion des événements */
+    while (SDL_PollEvent(&game->event))
+    {
+        switch (game->event.type)
+        {
+        case SDL_QUIT:
+            game->program_on = SDL_FALSE;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (game->event.button.button == SDL_BUTTON_LEFT)
+            {
+                int x = game->event.button.x;
+                int y = game->event.button.y;
+                printf("Clic en (%d, %d)\n", x, y);
+            }
+            break;
+        }
+    }
+}
 
 int main(int argc, char const *argv[])
 {
@@ -87,11 +116,13 @@ int main(int argc, char const *argv[])
     load_textures(textures, renderer, window);
 
     /* Initialisation du jeu */
-    SDL_bool program_on = SDL_TRUE;
-    SDL_Event event;
+    game_t *game = malloc(sizeof(game_t));
+    game->program_on = true;
+    game->inPause = false;
+    game->playing_player = PLAYER_1;
 
     int board_piece[BOARD_SIZE][BOARD_SIZE]; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
-    int board_case[BOARD_SIZE][BOARD_SIZE];        // Matrice des cases du plateau (= 1, 2 ou 3)
+    int board_case[BOARD_SIZE][BOARD_SIZE];  // Matrice des cases du plateau (= 1, 2 ou 3)
 
     initialise_plateau(board_case);
 
@@ -102,40 +133,20 @@ int main(int argc, char const *argv[])
             board_piece[i][j] = 0;
         }
     }
-    
-
-    bool inPause = false;
 
     /* Boucle principal */
-    while (program_on)
+    while (game->program_on)
     {
-        /* Gestion des événements */
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                program_on = SDL_FALSE;
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_LEFT)
-                {
-                    int x = event.button.x;
-                    int y = event.button.y;
-                    printf("Clic en (%d, %d)\n", x, y);
-                }
-                break;
-            }
-        }
-
-        /* Mise à jour de l'affichage */
-        draw(renderer, textures, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, inPause);
+        get_input(game);
+        draw(renderer, textures, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, game->inPause);
         SDL_RenderPresent(renderer);
         SDL_Delay(15); // ~ 60 FPS
     }
 
+    free(game);
     unload_textures(textures);
     end_sdl(0, "Le programme s'est terminé correctement", window, renderer);
 
     return 0;
 }
+

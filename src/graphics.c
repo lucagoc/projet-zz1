@@ -72,8 +72,6 @@ void draw_menu()
 
 void draw_logo(SDL_Renderer *renderer, SDL_Texture *textures[10])
 {
-
-
     SDL_Rect Message_rect = {10, 0, 250, 100};
     SDL_RenderCopy(renderer, textures[8], NULL, &Message_rect);
 }

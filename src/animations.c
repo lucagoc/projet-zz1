@@ -1,0 +1,1 @@
+// Fonctions d'animations d'une pièce, du plateau et du menu

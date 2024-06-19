@@ -26,32 +26,6 @@ const int SCREEN_HEIGHT = 720;
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
 
-/**
- * @brief Fonction pour récupérer les événements
- *
- * @param game Structure de l'état du jeu
- */
-void get_input(game_t *game)
-{
-    /* Gestion des événements */
-    while (SDL_PollEvent(&game->event))
-    {
-        switch (game->event.type)
-        {
-        case SDL_QUIT:
-            game->program_on = SDL_FALSE;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            if (game->event.button.button == SDL_BUTTON_LEFT)
-            {
-                int x = game->event.button.x;
-                int y = game->event.button.y;
-                printf("Clic en (%d, %d)\n", x, y);
-            }
-            break;
-        }
-    }
-}
 
 void init_game(game_t *game)
 {
@@ -82,16 +56,13 @@ int main(int argc, char const *argv[])
     game_t *game = malloc(sizeof(game_t));
     init_game(game);
 
-    int board_piece[BOARD_SIZE][BOARD_SIZE]; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
-    int board_case[BOARD_SIZE][BOARD_SIZE];  // Matrice des cases du plateau (= 1, 2 ou 3)
-
-    initialise_plateau(board_case);
+    initialise_plateau(board->board_case);
 
     for (int i = 0; i < BOARD_SIZE; i++)
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            board_piece[i][j] = 0;
+            board->board_piece[i][j] = 0;
         }
     }
 
@@ -99,7 +70,7 @@ int main(int argc, char const *argv[])
     while (game->program_on)
     {
         get_input(game);
-        draw(ui->renderer, ui->textures, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, game->inPause);
+        draw(ui, board);
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
     }

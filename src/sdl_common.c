@@ -158,3 +158,30 @@ void unload_textures(SDL_Texture *textures[10])
     SDL_DestroyTexture(textures[7]);
     SDL_DestroyTexture(textures[8]);
 }
+
+/**
+ * @brief Fonction pour récupérer les événements
+ *
+ * @param game Structure de l'état du jeu
+ */
+void get_input(game_t *game)
+{
+    /* Gestion des événements */
+    while (SDL_PollEvent(&game->event))
+    {
+        switch (game->event.type)
+        {
+        case SDL_QUIT:
+            game->program_on = SDL_FALSE;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (game->event.button.button == SDL_BUTTON_LEFT)
+            {
+                int x = game->event.button.x;
+                int y = game->event.button.y;
+                printf("Clic en (%d, %d)\n", x, y);
+            }
+            break;
+        }
+    }
+}

@@ -1,5 +1,7 @@
 #define STRUCT_H
 
+#include <stdbool.h>
+
 struct ui_s
 {
     SDL_Window *window;

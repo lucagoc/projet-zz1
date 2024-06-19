@@ -53,6 +53,13 @@ void get_input(game_t *game)
     }
 }
 
+void init_game(game_t *game)
+{
+    game->playing_player = PLAYER_1;
+    game->inPause = false;
+    game->program_on = true;
+}
+
 /**
  * @brief Fonction principale du jeu
  *
@@ -65,40 +72,15 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
 
-    /* Initialisation de la SDL */
-    SDL_Renderer *renderer = NULL;
-    SDL_Window *window = NULL;
-    /* Initialisation SDL */
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    /* Création de la fenêtre et du renderer */
-    window = SDL_CreateWindow("Mana (pre-alpha)",
-                              SDL_WINDOWPOS_CENTERED,
-                              SDL_WINDOWPOS_CENTERED,
-                              SCREEN_WIDTH,
-                              SCREEN_HEIGHT,
-                              SDL_WINDOW_SHOWN);
-    if (window == NULL)
-        end_sdl(0, "ERROR WINDOW CREATION", window, renderer);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (renderer == NULL)
-        end_sdl(0, "ERROR RENDERER CREATION", window, renderer);
-    if (TTF_Init() < 0)
-        end_sdl(0, "Couldn't initialize SDL TTF", window, renderer);
-
-    /* Loading de toutes les textures dans un tableau */
-    SDL_Texture *textures[10];
-    load_textures(textures, renderer, window);
+    board_t *board = malloc(sizeof(board_t));
+    ui_t *ui = malloc(sizeof(ui_t));
+    ui->SCREEN_WIDTH = SCREEN_WIDTH;
+    ui->SCREEN_HEIGHT = SCREEN_HEIGHT;
+    init_sdl(ui);
 
     /* Initialisation du jeu */
     game_t *game = malloc(sizeof(game_t));
-    game->program_on = true;
-    game->inPause = false;
-    game->playing_player = PLAYER_1;
+    init_game(game);
 
     int board_piece[BOARD_SIZE][BOARD_SIZE]; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
     int board_case[BOARD_SIZE][BOARD_SIZE];  // Matrice des cases du plateau (= 1, 2 ou 3)
@@ -117,14 +99,14 @@ int main(int argc, char const *argv[])
     while (game->program_on)
     {
         get_input(game);
-        draw(renderer, textures, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, game->inPause);
-        SDL_RenderPresent(renderer);
+        draw(ui->renderer, ui->textures, SCREEN_WIDTH, SCREEN_HEIGHT, board_case, board_piece, game->inPause);
+        SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
     }
 
     free(game);
-    unload_textures(textures);
-    end_sdl(0, "Le programme s'est terminé correctement", window, renderer);
+    unload_textures(ui->textures);
+    end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
 
     return 0;
 }

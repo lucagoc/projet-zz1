@@ -49,7 +49,7 @@ void draw_menu(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Text
     SDL_Rect continue_button_rect = {SCREEN_WIDTH / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
 
     SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect quit_text_rect = {SCREEN_WIDTH / 2 - text_width / 2, WINDOW_HEIGHT - 200, text_width, text_height};
+    SDL_Rect quit_text_rect = {SCREEN_WIDTH / 2 - text_width / 2, SCREEN_HEIGHT - 200, text_width, text_height};
     SDL_Rect quit_button_rect = {SCREEN_WIDTH / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
 
     SDL_RenderClear(renderer);
@@ -59,7 +59,7 @@ void draw_menu(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Text
 
     // Dessiner un rectangle semi-transparent qui permet de créer de transparent lors du pause
     SDL_SetRenderDrawColor(renderer,134, 182, 240, 100); 
-    SDL_Rect semi_transparent_rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_Rect semi_transparent_rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     SDL_RenderFillRect(renderer, &semi_transparent_rect);
 
     // Dessiner le fond

@@ -74,21 +74,18 @@ void initialise_pieces(int pieces_position[GRID_SIZE][GRID_SIZE], int king_black
 
     if (king_black_position == 0)
     {
-
         pieces_position[0][0] = 3;
         pieces_position[3][0] = 1;
         pieces_position[4][0] = 1;
     }
     else if (king_black_position == 1)
     {
-
         pieces_position[0][0] = 1;
         pieces_position[3][0] = 3;
         pieces_position[4][0] = 1;
     }
     else
     {
-
         pieces_position[0][0] = 1;
         pieces_position[3][0] = 1;
         pieces_position[4][0] = 3;
@@ -139,7 +136,7 @@ void initialise_pieces(int pieces_position[GRID_SIZE][GRID_SIZE], int king_black
  *
  * @param valid utile à la récursion, initialisé à 0
  *
-  * @param xinit position initiale de la pièce jouée
+ * @param xinit position initiale de la pièce jouée
   * @param yinit position initiale de la pièce jouée
   *
   * @param xprev utile à la récursion, initialisé à xinit
@@ -149,8 +146,6 @@ void initialise_pieces(int pieces_position[GRID_SIZE][GRID_SIZE], int king_black
   * @param ydesti position du coup joué
   *
   * @param number_moves nombre de coups à jouer (1 2 3): pieces_position[OMx][OMy]==pieces_position[xinit][yinit] au départ
-
-
  */
 bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][GRID_SIZE], int xinit, int yinit, int xprev, int yprev, int xdesti, int ydesti)
 {
@@ -220,39 +215,40 @@ bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][G
  *
  */
 
+// retourne 0 si le joueur n'a aucune pièce placée sur une case de valeur board[xprev][yprev], 1 sinon
+bool possible_piece(int player, int board[GRID_SIZE][GRID_SIZE], int xprev, int yprev, int position_piece[GRID_SIZE][GRID_SIZE])
+{
 
-//retourne 0 si le joueur a aucune pièce placée sur une case de valeur board[xprev][yprev], 1 sinon
-bool possible_piece(int player, int board[GRID_SIZE][GRID_SIZE], int xprev, int yprev, int position_piece[GRID_SIZE][GRID_SIZE]){
+    int possible = 0;
+    int number_moves_value = board[xprev][yprev];
 
-    int possible=0;
-    int number_moves_value=board[xprev][yprev];
-
-    for (int i = 0; i < GRID_SIZE && possible==0 ; i++)
+    for (int i = 0; i < GRID_SIZE && possible == 0; i++)
     {
-        for (int j = 0; j < GRID_SIZE && possible==0; j++)
+        for (int j = 0; j < GRID_SIZE && possible == 0; j++)
         {
-            if (player ==0) {
-                if ((position_piece[i][j]== 1 || position_piece[i][j]== 3) && board[i][j]==number_moves_value){
-                    possible=1;
+            if (player == 0)
+            {
+                if ((position_piece[i][j] == 1 || position_piece[i][j] == 3) && board[i][j] == number_moves_value)
+                {
+                    possible = 1;
 
-                    //si on a une pièce noire sur une case de même valeur que le coup joué précédemment
-
+                    // si on a une pièce noire sur une case de même valeur que le coup joué précédemment
                 }
-            } else {
-                if ((position_piece[i][j]== 2 || position_piece[i][j]== 4) && board[i][j]==number_moves_value){
-                    possible=1;
+            }
+            else
+            {
+                if ((position_piece[i][j] == 2 || position_piece[i][j] == 4) && board[i][j] == number_moves_value)
+                {
+                    possible = 1;
 
-                    //si on a une pièce blanche sur une case de même valeur que le coup joué précédemment
-
+                    // si on a une pièce blanche sur une case de même valeur que le coup joué précédemment
                 }
             }
         }
-        
     }
-    
+
     return possible;
 }
-
 
 // renvoie 0 s'il n'y a aucun coup jouable 1 s'il y a une pièce bloquée 2 si on a au moins un coup possible
 bool can_play(int player, int possible_move, int number_moves, int position_piece[GRID_SIZE][GRID_SIZE], int xinit, int yinit, int xprev, int yprev)
@@ -338,19 +334,19 @@ bool can_play(int player, int possible_move, int number_moves, int position_piec
 
             // possible_move = 1 si on arrive sur la bonne case
         }
-        if (xinit > 0 && possible_move !=1 && (xinit - 1 != xprev && yinit != yprev) && position_piece[xinit - 1][yinit] == 0)
+        if (xinit > 0 && possible_move != 1 && (xinit - 1 != xprev && yinit != yprev) && position_piece[xinit - 1][yinit] == 0)
         {
             possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit - 1, yinit, xinit, yinit);
 
             // possible_move = 1 si on arrive sur la bonne case
         }
-        if (yinit < 5 && possible_move !=1 && (xinit != xprev && yinit + 1 != yprev) && position_piece[xinit][yinit + 1] == 0)
+        if (yinit < 5 && possible_move != 1 && (xinit != xprev && yinit + 1 != yprev) && position_piece[xinit][yinit + 1] == 0)
         {
             possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit + 1, xinit, yinit);
 
             // possible_move = 1 si on arrive sur la bonne case
         }
-        if (yinit > 0 && possible_move !=1 && (xinit != xprev && yinit - 1 != yprev) && position_piece[xinit][yinit - 1] == 0)
+        if (yinit > 0 && possible_move != 1 && (xinit != xprev && yinit - 1 != yprev) && position_piece[xinit][yinit - 1] == 0)
         {
             possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit - 1, xinit, yinit);
 

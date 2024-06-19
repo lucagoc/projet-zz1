@@ -74,3 +74,28 @@ void draw_menu(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Text
 
     SDL_RenderPresent(renderer);
 }
+
+void handle_events(SDL_Event* event, bool* running, bool* show_menu, SDL_Rect continue_button_rect, SDL_Rect quit_button_rect) {        //Fonction qui permet de d'afficher le menu pause
+    while (SDL_PollEvent(event)) {
+        if (event->type == SDL_QUIT) {
+            *running = false;
+        } else if (event->type == SDL_KEYDOWN) {
+            if (event->key.keysym.sym == SDLK_ESCAPE) {
+                *show_menu = !*show_menu;
+            }
+        } else if (event->type == SDL_MOUSEBUTTONDOWN) {
+            int mouse_x, mouse_y;
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+
+            if (is_mouse_over_button(continue_button_rect, mouse_x, mouse_y)) {
+                SDL_Log("Continue button clicked!");
+                *show_menu = false;
+                // Ajoutez ici le code pour continuer le jeu
+
+            } else if (is_mouse_over_button(quit_button_rect, mouse_x, mouse_y)) {
+                SDL_Log("Quit button clicked!");
+                *running = false;
+            }
+        }
+    }
+}

@@ -90,17 +90,19 @@ int main(int argc, char const *argv[])
     SDL_bool program_on = SDL_TRUE;
     SDL_Event event;
 
-    int board_piece[BOARD_SIZE][BOARD_SIZE] = {0}; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
+    int board_piece[BOARD_SIZE][BOARD_SIZE]; // Matrices des rhonins et daimios (= 1, 2, 3, 4)
     int board_case[BOARD_SIZE][BOARD_SIZE];        // Matrice des cases du plateau (= 1, 2 ou 3)
+
+    initialise_plateau(board_case);
 
     for (int i = 0; i < BOARD_SIZE; i++)
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            board_case[i][j] = 1;
-            board_piece[i][j] = 1;
+            board_piece[i][j] = 0;
         }
     }
+    
 
     bool inPause = false;
 

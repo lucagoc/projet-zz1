@@ -29,8 +29,11 @@ void draw_case(SDL_Renderer *renderer, SDL_Texture *textures[10], int type, int 
     daimio player_2 -> 4 */
 void draw_piece(SDL_Renderer *renderer, SDL_Texture *textures[10], int player, int x, int y)
 {
-    SDL_Rect piece_rect = {x, y, 95, 95};
-    SDL_RenderCopy(renderer, textures[player], NULL, &piece_rect);
+    if (player != 0)
+    {
+        SDL_Rect piece_rect = {x, y, 95, 95};
+        SDL_RenderCopy(renderer, textures[player], NULL, &piece_rect);
+    }
 }
 
 /**

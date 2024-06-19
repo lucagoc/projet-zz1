@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-int **initialise_plateau(int board[6][6])
+void initialise_plateau(int board[6][6])
 {
 
     board[0][0] = 1;
@@ -39,8 +39,6 @@ int **initialise_plateau(int board[6][6])
     board[5][3] = 1;
     board[5][4] = 3;
     board[5][5] = 2;
-
-    return board;
 }
 
 /* Vérifie si le pion peut être placé sur cette case */
@@ -55,7 +53,7 @@ bool is_valid_move(int pieces_position[6][6], int x, int y)
 // board contient le tableau initial avec les valeurs des cases
 // pieces contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
 // player vaut 0 si on est sur le joueur noir ou 1 si le joueur blanc
-//OMx et OMy correspond à la position de l'oiseau marseillais posé précédemment
+// OMx et OMy correspond à la position de l'oiseau marseillais posé précédemment
 
 bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position[6][6])
 {

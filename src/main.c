@@ -48,6 +48,17 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
 
+    int joueur=0;
+
+    int captured_white=0;
+    int captured_black=0;
+    int vic=0;  // 0 si partie en cours, 1 si noir gagne, 2 si blanc gagne
+
+    int * captured_white_piece =captured_white;
+    int * captured_black_piece =captured_black;
+    int * victory = vic;
+    int choice=0; //0 si le joueur respawn, 1 s'il joue (dans le cas où il a le choix)
+
     board_t *board = malloc(sizeof(board_t));
     ui_t *ui = malloc(sizeof(ui_t));
     ui->SCREEN_WIDTH = SCREEN_WIDTH;
@@ -65,6 +76,49 @@ int main(int argc, char const *argv[])
     /* Boucle principal */
     while (game->program_on)
     {
+
+
+        
+        if (possible_piece()==0){ //aucune pièce jouable
+            
+            //il choisit
+
+            if (choice==0) { //respawn
+                respawn_piece();
+            } else { //coup libre
+                playing_move();
+                //placer pièce et gérer capture
+            }
+        } else if (can_play()==0) { //blocage
+
+            //adversaire choisit
+
+            if (choice==0) { //respawn
+                respawn_piece();
+            } else { //coup libre
+                playing_move();
+                //placer pièce et gérer capture
+
+            }
+        } else { //coup
+
+            while (is_valid_move() ==0){
+                //choix piece, position
+            }
+
+            playing_move();
+            //placer la pièce, gérer une capture ici
+
+            while(valid_bird_placement==0){
+
+            //choix placement piaf
+            }
+            //placer le piaf ici
+
+        }
+
+
+
         get_input(ui, game);
         draw(ui, board);
         SDL_RenderPresent(ui->renderer);

@@ -2,6 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "headers/struct.h"
+
 /**
  * @file sdl_common.c
  * @brief Fonctions communes à l'initialisation de la SDL
@@ -49,10 +51,6 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     {
         exit(EXIT_FAILURE);
     }
-}
-
-void init_sdl(SDL_Renderer *renderer, SDL_Window *window, int SCREEN_WIDTH, int SCREEN_HEIGHT){
-    
 }
 
 /**
@@ -105,12 +103,43 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
     TTF_Font *metal_lord = TTF_OpenFont("assets/otf/metal_lord.otf", 100);
     SDL_Color Black = {0, 0, 0, 255};
     SDL_Surface *surfaceMessage = TTF_RenderText_Blended(metal_lord, "Mana", Black);
-    if(surfaceMessage == NULL)
+    if (surfaceMessage == NULL)
         end_sdl(0, "Erreur lors de la création de la surface de texte", window, renderer);
     textures[8] = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
     SDL_FreeSurface(surfaceMessage);
 
     return;
+}
+
+void init_sdl(ui_t *ui)
+{
+    /* Initialisation de la SDL */
+    ui->renderer = NULL;
+    ui->window = NULL;
+    /* Initialisation SDL */
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+
+    /* Création de la fenêtre et du renderer */
+    ui->window = SDL_CreateWindow("Mana (pre-alpha)",
+                                  SDL_WINDOWPOS_CENTERED,
+                                  SDL_WINDOWPOS_CENTERED,
+                                  ui->SCREEN_WIDTH,
+                                  ui->SCREEN_HEIGHT,
+                                  SDL_WINDOW_SHOWN);
+    if (ui->window == NULL)
+        end_sdl(0, "ERROR WINDOW CREATION", ui->window, ui->renderer);
+    ui->renderer = SDL_CreateRenderer(ui->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (ui->renderer == NULL)
+        end_sdl(0, "ERROR RENDERER CREATION", ui->window, ui->renderer);
+    if (TTF_Init() < 0)
+        end_sdl(0, "Couldn't initialize SDL TTF", ui->window, ui->renderer);
+
+    /* Loading de toutes les textures dans un tableau */
+    load_textures(ui->textures, ui->renderer, ui->window);
 }
 
 /**
@@ -129,3 +158,73 @@ void unload_textures(SDL_Texture *textures[10])
     SDL_DestroyTexture(textures[7]);
     SDL_DestroyTexture(textures[8]);
 }
+
+/**
+ * @brief Charge la police d'écriture
+ *
+ * @param message Message afficher
+ * @param font_file Le path à charger
+ * @param color  La couleur de la police
+ * @param font_size La taille de la police
+ * @param renderer Renderer SDL
+ */
+SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color color, int font_size, SDL_Renderer* renderer) {
+    TTF_Font* font = TTF_OpenFont(font_file, font_size);
+    if (!font) {
+        SDL_Log("ERROR: Unable to open font %s: %s\n", font_file, TTF_GetError());
+        return NULL;
+    }
+    SDL_Surface* surface = TTF_RenderText_Blended(font, message, color);
+    if (!surface) {
+        SDL_Log("ERROR: Unable to create text surface: %s\n", TTF_GetError());
+        TTF_CloseFont(font);
+        return NULL;
+    }
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(font);
+    if (!texture) {
+        SDL_Log("ERROR: Unable to create texture from text: %s\n", SDL_GetError());
+        return NULL;
+    }
+    return texture;
+}
+
+pos_t cord2grid(ui_t *ui, int x, int y)
+{
+    pos_t pos;
+    pos.x = (x - (ui->SCREEN_WIDTH/2 - ui->BOARD_SIZE/2))/ 100;
+    pos.y = (y - (ui->SCREEN_HEIGHT/2 - ui->BOARD_SIZE/2))/ 100;
+    return pos;
+}
+
+ /*
+ * @brief Fonction pour récupérer les événements
+ *
+ * @param game Structure de l'état du jeu
+ */
+void get_input(ui_t *ui, game_t *game)
+{
+    /* Gestion des événements */
+    
+    while (SDL_PollEvent(&game->event))
+    {
+        switch (game->event.type)
+        {
+        case SDL_QUIT:
+            game->program_on = SDL_FALSE;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (game->event.button.button == SDL_BUTTON_LEFT)
+            {
+                int x = game->event.button.x;
+                int y = game->event.button.y;
+                printf("Clic en (%d, %d)\n", x, y);
+                pos_t case_grid = cord2grid(ui, x, y);
+                printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
+            }
+            break;
+        }
+    }
+}
+

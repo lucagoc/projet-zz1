@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+# define GRID_SIZE 6
+
 /**
  * @file rules.c
  * @brief Fonctions correspondant aux règles du jeu (algorithmique)
@@ -79,7 +81,10 @@ int **initialise_pieces(int king_black_position, int king_white_position)
         }
     }
 
-    // ronin noir 1 ronin blanc 2 daimyo noir 3 daimyo blanc 4
+// board contient le tableau initial avec les valeurs des cases
+// pieces contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
+// player vaut 0 si on est sur le joueur noir ou 1 si le joueur blanc
+// OMx et OMy correspond à la position de l'oiseau marseillais posé précédemment
 
     // ajout du daimyo noir
 

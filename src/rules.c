@@ -369,9 +369,8 @@ int number_moves_to_play(int board[6][6], int xinit, int yinit)
 bool playing_move(int player, int *victory, int *captured_black_piece, int *captured_white_piece, int pieces_position[GRID_SIZE][GRID_SIZE], int board[6][6], int xinit, int yinit, int xdesti, int ydesti)
 {
 
-    int **occuped_cases = occuped_cases_def(pieces_position);
     int valid_move_played = 0;
-    if (is_valid_move(0, board[xinit][yinit], occuped_cases, xinit, yinit, xinit, yinit, xdesti, ydesti))
+    if (is_valid_move(0, board[xinit][yinit], pieces_position, xinit, yinit, xinit, yinit, xdesti, ydesti))
     {
         valid_move_played = 1;
         if (player == 0)

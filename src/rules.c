@@ -220,125 +220,144 @@ bool is_valid_move(int valid, int number_moves, int pieces_position[GRID_SIZE][G
  *
  */
 
+
+//retourne 0 si le joueur a aucune pièce placée sur une case de valeur board[xprev][yprev], 1 sinon
+bool possible_piece(int player, int board[GRID_SIZE][GRID_SIZE], int xprev, int yprev, int position_piece[GRID_SIZE][GRID_SIZE]){
+
+    int possible=0;
+    int number_moves_value=board[xprev][yprev];
+
+    for (int i = 0; i < GRID_SIZE && possible==0 ; i++)
+    {
+        for (int j = 0; j < GRID_SIZE && possible==0; j++)
+        {
+            if (player ==0) {
+                if ((position_piece[i][j]== 1 || position_piece[i][j]== 3) && board[i][j]==number_moves_value){
+                    possible=1;
+
+                    //si on a une pièce noire sur une case de même valeur que le coup joué précédemment
+
+                }
+            } else {
+                if ((position_piece[i][j]== 2 || position_piece[i][j]== 4) && board[i][j]==number_moves_value){
+                    possible=1;
+
+                    //si on a une pièce blanche sur une case de même valeur que le coup joué précédemment
+
+                }
+            }
+        }
+        
+    }
+    
+    return possible;
+}
+
+
 // renvoie 0 s'il n'y a aucun coup jouable 1 s'il y a une pièce bloquée 2 si on a au moins un coup possible
 bool can_play(int player, int possible_move, int number_moves, int position_piece[GRID_SIZE][GRID_SIZE], int xinit, int yinit, int xprev, int yprev)
 {
 
-    if (xinit < 0 || yinit < 0 || xinit > 5 || yinit > 5)
+    // 1 ou plusieurs mouvements restants
+
+    if (number_moves == 1)
     {
-        return -1; // si on a un coup invalide (pas censé arriver)
+        if (player == 0) // c'est au joueur noir de jouer 1 mouvement
+        {
+
+            // si on est pas au bord du plateau, si on ne revient pas sur la case prec, si la case adjacente est libre ou capturable
+
+            if (xinit < 5 && possible_move != 2 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 2 || position_piece[xinit + 1][yinit] == 4))
+            {
+
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+            else if (xinit > 0 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 2 || position_piece[xinit - 1][yinit] == 4))
+            {
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+            else if (yinit < 5 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 2 || position_piece[xinit][yinit + 1] == 4))
+            {
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+            else if (yinit > 0 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 2 || position_piece[xinit][yinit - 1] == 4))
+            {
+                possible_move = 1;
+
+                // possible_move =1 si on arrive sur la bonne case
+            }
+        }
+        else // c'est au joueur blanc de jouer 1 mouvement
+        {
+
+            // si on est pas au bord du plateau, si on ne revient pas sur la case prec, si la case adjacente est libre ou capturable
+
+            if (xinit < 5 && possible_move != 2 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 1 || position_piece[xinit + 1][yinit] == 3))
+            {
+
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+            else if (xinit > 0 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 1 || position_piece[xinit - 1][yinit] == 3))
+            {
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+            else if (yinit < 5 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 1 || position_piece[xinit][yinit + 1] == 3))
+            {
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+            else if (yinit > 0 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 1 || position_piece[xinit][yinit - 1] == 3))
+            {
+                possible_move = 1;
+
+                // possible_move = 1 si on arrive sur la bonne case
+            }
+        }
+        return possible_move;
     }
-    else
+    else // si on a 2 ou 3 mouvements à jouer
     {
 
-        if (number_moves == 0)
+        // si on est pas au bord du plateau, si on ne revient pas sur la case prec, si la case adjacente est libre ou capturable
+
+        if (xinit < 5 && (xinit + 1 != xprev && yinit != yprev) && position_piece[xinit + 1][yinit] == 0)
         {
-            // plus aucun mouvement à effectuer
-            return -1;
-            // on ne doit pas arriver ici, normalement
+
+            possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit, xinit, yinit);
+
+            // possible_move = 1 si on arrive sur la bonne case
         }
-        else
+        if (xinit > 0 && possible_move !=1 && (xinit - 1 != xprev && yinit != yprev) && position_piece[xinit - 1][yinit] == 0)
         {
-            // 1 ou plusieurs mouvements restants
+            possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit - 1, yinit, xinit, yinit);
 
-            if (number_moves == 1)
-            {
-                if (player == 0)
-                {
-
-                    // si on ne revient pas sur la case prec, si la case à droite est libre
-                    if (xinit < 5 && possible_move != 2 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 2 || position_piece[xinit + 1][yinit] == 4))
-                    {
-
-                        possible_move = 2;
-
-                        // valid = 2 si on arrive sur la bonne case
-                    }
-                    if (xinit > 0 && possible_move != 2 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 2 || position_piece[xinit - 1][yinit] == 4))
-                    {
-                        possible_move = 2;
-
-                        // possible_move = 2 si on arrive sur la bonne case
-                    }
-                    if (yinit < 5 && possible_move != 2 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 2 || position_piece[xinit][yinit + 1] == 4))
-                    {
-                        possible_move = 2;
-
-                        // valid = 2 si on arrive sur la bonne case
-                    }
-
-                    if (yinit > 0 && possible_move != 2 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 2 || position_piece[xinit][yinit - 1] == 4))
-                    {
-                        possible_move = 2;
-
-                        // possible_move =2 si on arrive sur la bonne case
-                    }
-                }
-                else
-                {
-
-                    // si on ne revient pas sur la case prec, si la case à droite est libre
-                    if (xinit < 5 && possible_move != 2 && (xinit + 1 != xprev && yinit != yprev) && (position_piece[xinit + 1][yinit] == 0 || position_piece[xinit + 1][yinit] == 1 || position_piece[xinit + 1][yinit] == 3))
-                    {
-
-                        possible_move = 2;
-
-                        // valid = 2 si on arrive sur la bonne case
-                    }
-                    if (xinit > 0 && possible_move != 2 && (xinit - 1 != xprev && yinit != yprev) && (position_piece[xinit - 1][yinit] == 0 || position_piece[xinit - 1][yinit] == 1 || position_piece[xinit - 1][yinit] == 3))
-                    {
-                        possible_move = 2;
-
-                        // possible_move = 2 si on arrive sur la bonne case
-                    }
-                    if (yinit < 5 && possible_move != 2 && (xinit != xprev && yinit + 1 != yprev) && (position_piece[xinit][yinit + 1] == 0 || position_piece[xinit][yinit + 1] == 1 || position_piece[xinit][yinit + 1] == 3))
-                    {
-                        possible_move = 2;
-
-                        // valid = 2 si on arrive sur la bonne case
-                    }
-
-                    if (yinit > 0 && possible_move != 2 && (xinit != xprev && yinit - 1 != yprev) && (position_piece[xinit][yinit - 1] == 0 || position_piece[xinit][yinit - 1] == 1 || position_piece[xinit][yinit - 1] == 3))
-                    {
-                        possible_move = 2;
-
-                        // possible_move = 2 si on arrive sur la bonne case
-                    }
-                }
-            }
-            else
-            {
-
-                // si on ne revient pas sur la case prec, si la case à droite est libre
-                if (xinit < 5 && (xinit + 1 != xprev && yinit != yprev) && position_piece[xinit + 1][yinit] == 0)
-                {
-
-                    possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit, xinit, yinit);
-
-                    // valid = 1 si on arrive sur la bonne case
-                }
-                if (xinit > 0 && possible_move == 0 && (xinit - 1 != xprev && yinit != yprev) && position_piece[xinit - 1][yinit] == 0)
-                {
-                    possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit - 1, yinit, xinit, yinit);
-
-                    // possible_move = 1 si on arrive sur la bonne case
-                }
-                if (yinit < 5 && possible_move == 0 && (xinit != xprev && yinit + 1 != yprev) && position_piece[xinit][yinit + 1] == 0)
-                {
-                    possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit + 1, xinit, yinit);
-
-                    // valid = 1 si on arrive sur la bonne case
-                }
-
-                if (yinit > 0 && possible_move == 0 && (xinit != xprev && yinit - 1 != yprev) && position_piece[xinit][yinit - 1] == 0)
-                {
-                    possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit - 1, xinit, yinit);
-
-                    // possible_move = 1 si on arrive sur la bonne case
-                }
-            }
-            return possible_move;
+            // possible_move = 1 si on arrive sur la bonne case
         }
+        if (yinit < 5 && possible_move !=1 && (xinit != xprev && yinit + 1 != yprev) && position_piece[xinit][yinit + 1] == 0)
+        {
+            possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit + 1, xinit, yinit);
+
+            // possible_move = 1 si on arrive sur la bonne case
+        }
+        if (yinit > 0 && possible_move !=1 && (xinit != xprev && yinit - 1 != yprev) && position_piece[xinit][yinit - 1] == 0)
+        {
+            possible_move = can_play(player, 0, number_moves - 1, position_piece, xinit + 1, yinit - 1, xinit, yinit);
+
+            // possible_move = 1 si on arrive sur la bonne case
+        }
+
+        return possible_move;
     }
 }
 

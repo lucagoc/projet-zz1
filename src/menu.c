@@ -3,6 +3,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 
+#define SCREEN_WIDTH 620
+#define SCREEN_HEIGHT 400
+
 // fonctions qui affiche le menu de sélection de la partie (joueur vs joueur, joueur vs IA, IA vs IA)
 // Possibilité par la suite de rajouter un moyen d'enregistrer les scores, les parties, etc. (Si on a trop de temps).
 // Ajouter la descriptions des positions comme échec peut être pas mal aussi (A8, B4 etc.).
@@ -42,12 +45,12 @@ void draw_menu(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Text
     // La taille et le position du bouton "continue" et "quit"
 
     SDL_QueryTexture(continue_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect continue_text_rect = {WINDOW_WIDTH / 2 - text_width / 2 - 5, 200, text_width, text_height};
-    SDL_Rect continue_button_rect = {WINDOW_WIDTH / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
+    SDL_Rect continue_text_rect = {SCREEN_WIDTH / 2 - text_width / 2 - 5, 200, text_width, text_height};
+    SDL_Rect continue_button_rect = {SCREEN_WIDTH / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
 
     SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect quit_text_rect = {WINDOW_WIDTH / 2 - text_width / 2, WINDOW_HEIGHT - 200, text_width, text_height};
-    SDL_Rect quit_button_rect = {WINDOW_WIDTH / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
+    SDL_Rect quit_text_rect = {SCREEN_WIDTH / 2 - text_width / 2, WINDOW_HEIGHT - 200, text_width, text_height};
+    SDL_Rect quit_button_rect = {SCREEN_WIDTH / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
 
     SDL_RenderClear(renderer);
 

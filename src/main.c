@@ -103,10 +103,12 @@ int main(int argc, char const *argv[])
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
     }
-
+    
     free(game);
+    free(board);
     unload_textures(ui->textures);
     end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
+    free(ui);
 
     return 0;
 }

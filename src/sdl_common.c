@@ -168,22 +168,26 @@ void unload_textures(SDL_Texture *textures[10])
  * @param font_size La taille de la police
  * @param renderer Renderer SDL
  */
-SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color color, int font_size, SDL_Renderer* renderer) {
-    TTF_Font* font = TTF_OpenFont(font_file, font_size);
-    if (!font) {
+SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color color, int font_size, SDL_Renderer *renderer)
+{
+    TTF_Font *font = TTF_OpenFont(font_file, font_size);
+    if (!font)
+    {
         SDL_Log("ERROR: Unable to open font %s: %s\n", font_file, TTF_GetError());
         return NULL;
     }
-    SDL_Surface* surface = TTF_RenderText_Blended(font, message, color);
-    if (!surface) {
+    SDL_Surface *surface = TTF_RenderText_Blended(font, message, color);
+    if (!surface)
+    {
         SDL_Log("ERROR: Unable to create text surface: %s\n", TTF_GetError());
         TTF_CloseFont(font);
         return NULL;
     }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
     TTF_CloseFont(font);
-    if (!texture) {
+    if (!texture)
+    {
         SDL_Log("ERROR: Unable to create texture from text: %s\n", SDL_GetError());
         return NULL;
     }
@@ -193,12 +197,28 @@ SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color c
 pos_t cord2grid(ui_t *ui, int x, int y)
 {
     pos_t pos;
-    pos.x = (x - (ui->SCREEN_WIDTH/2 - ui->BOARD_SIZE/2))/ 100;
-    pos.y = (y - (ui->SCREEN_HEIGHT/2 - ui->BOARD_SIZE/2))/ 100;
+    pos.x = (x - (ui->SCREEN_WIDTH / 2 - ui->BOARD_SIZE / 2)) / 100;
+    pos.y = (y - (ui->SCREEN_HEIGHT / 2 - ui->BOARD_SIZE / 2)) / 100;
     return pos;
 }
 
- /*
+void play_the_game(game_t *game, pos_t case_grid)
+{
+    /*
+    if (is_case_valid(game, case_grid))
+    {
+        // Jouer le coup
+        
+        // Demander de placer l'oiseau
+
+        // Augmenter le round;
+        game->round++;
+        // Changer de joueur
+        game->playing_player = (game->playing_player == 1) ? 2 : 1;
+    }*/
+}
+
+/*
  * @brief Fonction pour récupérer les événements
  *
  * @param game Structure de l'état du jeu
@@ -206,7 +226,7 @@ pos_t cord2grid(ui_t *ui, int x, int y)
 void get_input(ui_t *ui, game_t *game)
 {
     /* Gestion des événements */
-    
+
     while (SDL_PollEvent(&game->event))
     {
         switch (game->event.type)
@@ -214,17 +234,20 @@ void get_input(ui_t *ui, game_t *game)
         case SDL_QUIT:
             game->program_on = SDL_FALSE;
             break;
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONDOWN: // Clic souris
             if (game->event.button.button == SDL_BUTTON_LEFT)
             {
                 int x = game->event.button.x;
                 int y = game->event.button.y;
-                printf("Clic en (%d, %d)\n", x, y);
+
                 pos_t case_grid = cord2grid(ui, x, y);
+
+                printf("Clic en (%d, %d)\n", x, y);
                 printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
+
+                play_the_game(game, case_grid);
             }
             break;
         }
     }
 }
-

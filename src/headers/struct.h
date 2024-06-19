@@ -33,6 +33,7 @@ struct game_s
 {
     SDL_Event event;
     int playing_player;
+    int round;
     bool inPause;
     bool program_on;
 };

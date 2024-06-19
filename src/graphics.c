@@ -32,6 +32,7 @@ void draw_piece(ui_t *ui, int player, int x, int y)
 {
     if (player != 0)
     {
+        fprintf(stderr, "player : %d\n", player);
         SDL_Rect piece_rect = {x, y, 95, 95};
         SDL_RenderCopy(ui->renderer, ui->textures[player], NULL, &piece_rect);
     }
@@ -58,14 +59,20 @@ void draw_board(ui_t *ui, board_t *board)
     int x_case = x - 300;
     int y_case = y - 300;
 
+    int compteur = 0;
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
             draw_case(ui, board->board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
             draw_piece(ui, board->board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
+            if (board->board_piece[i][j] != 0)
+            {
+                compteur++;
+            }
         }
     }
+    fprintf(stderr, "compteur : %d\n", compteur);
 
     return;
 }

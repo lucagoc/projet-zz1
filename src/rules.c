@@ -16,69 +16,57 @@
  *
  * @param board Fin normale : plateau initialisé ; anormale plateau mal initialisé
  */
-int **initialise_plateau()
+void initialise_plateau(int board[GRID_SIZE][GRID_SIZE])
 {
-
-    int **board = malloc(6 * sizeof(int *));
-    for (int i = 0; i < 6; i++)
-    {
-        board[i] = malloc(6 * sizeof(int));
-    }
-
     board[0][0] = 2;
-    board[0][1] = 3;
-    board[0][2] = 1;
-    board[0][3] = 2;
-    board[0][4] = 2;
-    board[0][5] = 3;
-    board[1][0] = 2;
-    board[1][1] = 1;
-    board[1][2] = 3;
-    board[1][3] = 1;
-    board[1][4] = 3;
-    board[1][5] = 1;
+    board[1][0] = 3;
     board[2][0] = 1;
-    board[2][1] = 3;
-    board[2][2] = 2;
-    board[2][3] = 3;
-    board[2][4] = 1;
-    board[2][5] = 2;
-    board[3][0] = 3;
-    board[3][1] = 1;
-    board[3][2] = 2;
-    board[3][3] = 1;
-    board[3][4] = 3;
-    board[3][5] = 2;
+    board[3][0] = 2;
     board[4][0] = 2;
+    board[5][0] = 3;
+    board[0][1] = 2;
+    board[1][1] = 1;
+    board[2][1] = 3;
+    board[3][1] = 1;
     board[4][1] = 3;
-    board[4][2] = 1;
-    board[4][3] = 3;
-    board[4][4] = 1;
-    board[4][5] = 3;
-    board[5][0] = 2;
     board[5][1] = 1;
-    board[5][2] = 3;
+    board[0][2] = 1;
+    board[1][2] = 3;
+    board[2][2] = 2;
+    board[3][2] = 3;
+    board[4][2] = 1;
+    board[5][2] = 2;
+    board[0][3] = 3;
+    board[1][3] = 1;
+    board[2][3] = 2;
+    board[3][3] = 1;
+    board[4][3] = 3;
     board[5][3] = 2;
-    board[5][4] = 2;
+    board[0][4] = 2;
+    board[1][4] = 3;
+    board[2][4] = 1;
+    board[3][4] = 3;
+    board[4][4] = 1;
+    board[5][4] = 3;
+    board[0][5] = 2;
+    board[1][5] = 1;
+    board[2][5] = 3;
+    board[3][5] = 2;
+    board[4][5] = 2;
     board[5][5] = 1;
-
-    return board;
 }
 
 // kpos= 0, 1, 2 selon la position de gauche à droite du roi, avec le POV blanc en bas
 
-int **initialise_pieces(int king_black_position, int king_white_position)
+void initialise_pieces(int pieces_position[GRID_SIZE][GRID_SIZE], int king_black_position, int king_white_position)
 {
-
-    int **pieces_position = malloc(6 * sizeof(int *));
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < GRID_SIZE; i++)
     {
-        pieces_position[i] = malloc(6 * sizeof(int));
-
-        for (int j = 0; j < 6; j++)
+        for (int j = 0; j < GRID_SIZE; j++)
         {
             pieces_position[i][j] = 0;
         }
+        
     }
 
     // ronin noir 1 ronin blanc 2 daimyo noir 3 daimyo blanc 4
@@ -89,61 +77,58 @@ int **initialise_pieces(int king_black_position, int king_white_position)
     {
 
         pieces_position[0][0] = 3;
-        pieces_position[0][3] = 1;
-        pieces_position[0][4] = 1;
+        pieces_position[3][0] = 1;
+        pieces_position[4][0] = 1;
     }
     else if (king_black_position == 1)
     {
 
         pieces_position[0][0] = 1;
-        pieces_position[0][3] = 3;
-        pieces_position[0][4] = 1;
+        pieces_position[3][0] = 3;
+        pieces_position[4][0] = 1;
     }
     else
     {
 
         pieces_position[0][0] = 1;
-        pieces_position[0][3] = 1;
-        pieces_position[0][4] = 3;
+        pieces_position[3][0] = 1;
+        pieces_position[4][0] = 3;
     }
 
     // ajout du daimyo blanc
 
     if (king_white_position == 0)
     {
-
-        pieces_position[0][0] = 4;
-        pieces_position[0][3] = 2;
-        pieces_position[0][4] = 2;
+        pieces_position[0][5] = 4;
+        pieces_position[3][5] = 2;
+        pieces_position[4][5] = 2;
     }
     else if (king_white_position == 1)
     {
 
-        pieces_position[0][0] = 2;
-        pieces_position[0][3] = 4;
-        pieces_position[0][4] = 2;
+        pieces_position[0][5] = 2;
+        pieces_position[3][5] = 4;
+        pieces_position[4][5] = 2;
     }
     else
     {
 
-        pieces_position[0][0] = 2;
-        pieces_position[0][3] = 2;
-        pieces_position[0][4] = 4;
+        pieces_position[0][5] = 2;
+        pieces_position[3][5] = 2;
+        pieces_position[4][5] = 4;
     }
 
     // ajout des ronins noirs
 
-    pieces_position[0][1] = 1;
-    pieces_position[0][2] = 1;
-    pieces_position[0][5] = 1;
+    pieces_position[1][0] = 1;
+    pieces_position[2][0] = 1;
+    pieces_position[5][0] = 1;
 
     // ajout du ronins blancs
 
-    pieces_position[5][1] = 2;
-    pieces_position[5][2] = 2;
+    pieces_position[1][5] = 2;
+    pieces_position[2][5] = 2;
     pieces_position[5][5] = 2;
-
-    return pieces_position;
 }
 
 int **occuped_cases_def(int pieces_position[6][6])

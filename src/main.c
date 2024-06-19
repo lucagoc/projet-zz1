@@ -33,6 +33,7 @@ void init_game(game_t *game)
     game->playing_player = PLAYER_1;
     game->inPause = false;
     game->program_on = true;
+    game->round = 0;
 }
 
 /**
@@ -59,14 +60,7 @@ int main(int argc, char const *argv[])
     init_game(game);
 
     initialise_plateau(board->board_case);
-
-    for (int i = 0; i < GRID_SIZE; i++)
-    {
-        for (int j = 0; j < GRID_SIZE; j++)
-        {
-            board->board_piece[i][j] = 0;
-        }
-    }
+    initialise_pieces(board->board_piece, 1, 1);
 
     /* Boucle principal */
     while (game->program_on)

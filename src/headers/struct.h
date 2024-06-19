@@ -39,3 +39,10 @@ struct game_s
 };
 typedef struct game_s game_t;
 
+// Liste de positions
+struct list_s
+{
+    pos_t pos;
+    struct list_s *next;
+};
+typedef struct list_s list_t;

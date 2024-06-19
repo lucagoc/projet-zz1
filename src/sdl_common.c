@@ -3,6 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "headers/struct.h"
+#define GRID_SIZE 6
 
 /**
  * @file sdl_common.c
@@ -205,9 +206,10 @@ pos_t cord2grid(ui_t *ui, int x, int y)
 void play_the_game(game_t *game, pos_t case_grid)
 {
     /*
-    if (is_case_valid(game, case_grid))
+    if (is_valid_move(0, 3, 3, , case_grid.x, case_grid.y))
     {
         // Jouer le coup
+        )
         
         // Demander de placer l'oiseau
 
@@ -218,15 +220,19 @@ void play_the_game(game_t *game, pos_t case_grid)
     }*/
 }
 
+bool can_be_selected(game_t *game, board_t *board, pos_t pos_grid)
+{
+    return board->board_piece[pos_grid.x][pos_grid.y]%2 == game->playing_player;
+}
+
 /*
  * @brief Fonction pour récupérer les événements
  *
  * @param game Structure de l'état du jeu
  */
-void get_input(ui_t *ui, game_t *game)
+void get_input(ui_t *ui, game_t *game, board_t *board)
 {
     /* Gestion des événements */
-
     while (SDL_PollEvent(&game->event))
     {
         switch (game->event.type)
@@ -241,6 +247,19 @@ void get_input(ui_t *ui, game_t *game)
                 int y = game->event.button.y;
 
                 pos_t case_grid = cord2grid(ui, x, y);
+
+                // Cliquer dans le plateau
+                if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
+                {
+                    if(can_be_selected(game, board, case_grid)){
+                        printf("Case sélectionnée\n");
+                    }
+                    else
+                    {
+                        printf("Case non sélectionnée\n");
+                    
+                    }
+                }
 
                 printf("Clic en (%d, %d)\n", x, y);
                 printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);

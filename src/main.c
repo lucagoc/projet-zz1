@@ -65,7 +65,7 @@ int main(int argc, char const *argv[])
     /* Boucle principal */
     while (game->program_on)
     {
-        get_input(ui, game);
+        get_input(ui, game, board);
         draw(ui, board);
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
@@ -79,4 +79,3 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
-

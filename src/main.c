@@ -6,7 +6,7 @@
 
 #include "headers/struct.h"
 #include "headers/graphics.h"
-#include "headers/rules.h"
+//#include "headers/rules.h"
 #include "headers/opponent.h"
 #include "headers/sdl_common.h"
 
@@ -62,6 +62,22 @@ int main(int argc, char const *argv[])
     initialise_plateau(board->board_case);
     initialise_pieces(board->board_piece, 1, 1);
 
+    /*Initilisation textures et events*/
+    SDL_Texture* background_texture;
+    SDL_Texture* continue_text;
+    SDL_Texture* quit_text;
+    SDL_Event *event;
+    bool show_menu = false;
+
+    int text_width, text_height;
+    SDL_QueryTexture(continue_text, NULL, NULL, &text_width, &text_height);
+    SDL_Rect continue_text_rect = {SCREEN_WIDTH / 2 - text_width / 2 - 5, 200, text_width, text_height};
+    SDL_Rect continue_button_rect = {SCREEN_WIDTH / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
+
+    SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
+    SDL_Rect quit_text_rect = {SCREEN_WIDTH / 2 - text_width / 2, SCREEN_HEIGHT - 200, text_width, text_height};
+    SDL_Rect quit_button_rect = {SCREEN_WIDTH / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
+
     /* Boucle principal */
     while (game->program_on)
     {
@@ -69,6 +85,39 @@ int main(int argc, char const *argv[])
         draw(ui, board);
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
+
+        if (show_menu){
+            draw_menu_pause(ui->renderer, background_texture, continue_text, quit_text);
+            }
+
+        if (event->type == SDL_Quit){
+            game->program_on = false;
+        }
+        else if (event->type == SDL_KEYDOWN){
+            if (event->key.keysym.sym == SDLK_ESCAPE){
+                show_menu = !show_menu;
+                
+            }
+            } else if (event->type == SDL_MOUSEBUTTONDOWN) {
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+
+                if (is_mouse_over_button(continue_button_rect, mouse_x, mouse_y)) {
+                    SDL_Log("Continue button clicked!");
+                    show_menu = false;
+                    // Ajoutez ici le code pour continuer le jeu
+                    get_input(ui, game);
+                    draw(ui, board);
+                    SDL_RenderPresent(ui->renderer);
+                    SDL_Delay(15); // ~ 60 FPS
+
+            }   else if (is_mouse_over_button(quit_button_rect, mouse_x, mouse_y)) {
+                    SDL_Log("Quit button clicked!");
+                    game->program_on = false;
+            }
+
+        }
+
     }
     
     free(game);

@@ -160,6 +160,36 @@ void unload_textures(SDL_Texture *textures[10])
 }
 
 /**
+ * @brief Charge la police d'écriture
+ *
+ * @param message Message afficher
+ * @param font_file Le path à charger
+ * @param color  La couleur de la police
+ * @param font_size La taille de la police
+ * @param renderer Renderer SDL
+ */
+SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color color, int font_size, SDL_Renderer* renderer) {
+    TTF_Font* font = TTF_OpenFont(font_file, font_size);
+    if (!font) {
+        SDL_Log("ERROR: Unable to open font %s: %s\n", font_file, TTF_GetError());
+        return NULL;
+    }
+    SDL_Surface* surface = TTF_RenderText_Blended(font, message, color);
+    if (!surface) {
+        SDL_Log("ERROR: Unable to create text surface: %s\n", TTF_GetError());
+        TTF_CloseFont(font);
+        return NULL;
+    }
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(font);
+    if (!texture) {
+        SDL_Log("ERROR: Unable to create texture from text: %s\n", SDL_GetError());
+        return NULL;
+    }
+    return texture;
+}
+
  * @brief Fonction pour récupérer les événements
  *
  * @param game Structure de l'état du jeu
@@ -185,3 +215,4 @@ void get_input(game_t *game)
         }
     }
 }
+

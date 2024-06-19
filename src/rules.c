@@ -448,6 +448,42 @@ bool respawn_piece(int player, int captured_white_piece, int captured_black_piec
     return respawn_possible;
 }
 
+bool is_movement_valid(game_t *game, board_t *board, pos_t destination)
+{   
+    int player = game->playing_player;
+    int x = destination.x;
+    int y = destination.y;
+    if(x < 0 || y < 0 || x > 5 || y > 5)
+    {
+        return false;
+    }
+    else if(board->board_piece[x][y] == 0)
+    {
+        
+        return true;
+    }
+    else
+    {
+        if(player == 2)
+        {
+            
+            if(board->board_piece[x][y] == 1 || board->board_piece[x][y] == 3)
+            {
+                return true;
+            }
+        }
+        else if(player == 1)
+        {
+            if(board->board_piece[x][y] == 2 || board->board_piece[x][y] == 4)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 /**
  * @brief Calcule les prédictions de déplacement possibles pour une pièce, step doit être égale à 0 pour que la case soit prise en compte
  * @param game Structure de l'état du jeu
@@ -458,42 +494,35 @@ bool respawn_piece(int player, int captured_white_piece, int captured_black_piec
  *
  * @return Liste des déplacements possibles
  */
-void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int step, int player)
+void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int step)
 {
-    fprintf(stderr, "ENTRER DANS PREDICTIONS\n");
     if (piece_pos.x < 0 || piece_pos.y < 0 || piece_pos.x > 5 || piece_pos.y > 5)
     {
         fprintf(stderr, "Position invalide : %d %d\n", piece_pos.x, piece_pos.y);
         return;
     }
-    else if(step == 0 && board->board_piece[piece_pos.x][piece_pos.y] == 0)
+    else if(step == 0 && is_movement_valid(game, board, piece_pos))
     {
-        fprintf(stderr, "Position valide : %d %d\n", piece_pos.x, piece_pos.y);
         game->predictions[piece_pos.x][piece_pos.y] = 1;
     }
     else
     {
-        fprintf(stderr, "Position chemin : %d %d\n", piece_pos.x, piece_pos.y);
-        if(piece_pos.x < 5 && board->board_piece[piece_pos.x + 1][piece_pos.y] == 0 && game->predictions[piece_pos.x + 1][piece_pos.y] == 0)
+        game->predictions[piece_pos.x][piece_pos.y] = -1;
+        if (piece_pos.x < 5 && game->predictions[piece_pos.x + 1][piece_pos.y] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}))
         {
-            game->predictions[piece_pos.x + 1][piece_pos.y] = -1;
-            predictions_calculations(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}, step - 1, player);
+            predictions_calculations(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}, step - 1);
         }
-        if(piece_pos.x > 0 && board->board_piece[piece_pos.x - 1][piece_pos.y] == 0 && game->predictions[piece_pos.x - 1][piece_pos.y] == 0)
+        if (piece_pos.x > 0 && game->predictions[piece_pos.x - 1][piece_pos.y] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}))
         {
-            game->predictions[piece_pos.x - 1][piece_pos.y] = -1;
-            predictions_calculations(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}, step - 1, player);
+            predictions_calculations(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}, step - 1);
         }
-        if(piece_pos.y < 5 && board->board_piece[piece_pos.x][piece_pos.y + 1] == 0 && game->predictions[piece_pos.x][piece_pos.y + 1] == 0)
+        if (piece_pos.y < 5 && game->predictions[piece_pos.x][piece_pos.y + 1] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}))
         {
-            game->predictions[piece_pos.x][piece_pos.y + 1] = -1;
-            predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}, step - 1, player);
+            predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}, step - 1);
         }
-        if(piece_pos.y > 0 && board->board_piece[piece_pos.x][piece_pos.y - 1] == 0 && game->predictions[piece_pos.x][piece_pos.y - 1] == 0)
+        if (piece_pos.y > 0 && game->predictions[piece_pos.x][piece_pos.y - 1] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}))
         {
-            game->predictions[piece_pos.x][piece_pos.y - 1] = -1;
-            predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}, step - 1, player);
+            predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}, step - 1);
         }
     }
-
 }

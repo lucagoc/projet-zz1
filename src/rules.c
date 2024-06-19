@@ -18,42 +18,43 @@
 void initialise_plateau(int board[6][6])
 {
 
-    board[0][0] = 1;
-    board[0][1] = 2;
-    board[0][2] = 2;
-    board[0][3] = 3;
-    board[0][4] = 1;
-    board[0][5] = 2;
-    board[1][0] = 3;
+    board[0][0] = 2;
+    board[0][1] = 3;
+    board[0][2] = 1;
+    board[0][3] = 2;
+    board[0][4] = 2;
+    board[0][5] = 3;
+    board[1][0] = 2;
     board[1][1] = 1;
     board[1][2] = 3;
     board[1][3] = 1;
     board[1][4] = 3;
-    board[1][5] = 2;
-    board[2][0] = 2;
+    board[1][5] = 1;
+    board[2][0] = 1;
     board[2][1] = 3;
-    board[2][2] = 1;
-    board[2][3] = 2;
+    board[2][2] = 2;
+    board[2][3] = 3;
     board[2][4] = 1;
-    board[2][5] = 3;
-    board[3][0] = 2;
+    board[2][5] = 2;
+    board[3][0] = 3;
     board[3][1] = 1;
-    board[3][2] = 3;
-    board[3][3] = 2;
+    board[3][2] = 2;
+    board[3][3] = 1;
     board[3][4] = 3;
-    board[3][5] = 1;
-    board[4][0] = 1;
+    board[3][5] = 2;
+    board[4][0] = 2;
     board[4][1] = 3;
     board[4][2] = 1;
     board[4][3] = 3;
     board[4][4] = 1;
-    board[4][5] = 2;
-    board[5][0] = 3;
-    board[5][1] = 2;
-    board[5][2] = 2;
-    board[5][3] = 1;
-    board[5][4] = 3;
-    board[5][5] = 2;
+    board[4][5] = 3;
+    board[5][0] = 2;
+    board[5][1] = 1;
+    board[5][2] = 3;
+    board[5][3] = 2;
+    board[5][4] = 2;
+    board[5][5] = 1;
+
 }
 
 
@@ -274,35 +275,37 @@ bool can_play(int player, int possible_move, int number_moves, int occuped_cases
 /* Vérifie si le joueur peut encore jouer */
 
 
+
+int number_moves_to_play(int board[6][6],int xinit, int yinit){
+    return board[xinit][yinit];
+}
+
 /**
- * @brief Joue le coup indiqué par le joueur si c'est possible
+ * @brief Joue le coup indiqué par le joueur et retourne 1 si c'est possible, retourne 0 sinon
  *
  * @param player 0 si on est sur le joueur noir ou 1 si le joueur blanc
- * @param board contient le tableau initial avec les valeurs des cases
+ * @param victory contient l'adresse vers une case contenant: 0 si pas de victoire, 1 si victoire noire, 2 si victoire blanche
+ *
+ * @param captured_black_piece contient l'adresse vers un compteur du nombre de ronin noirs capturés
+ * @param captured_white_piece contient l'adresse vers un compteur du nombre de ronin blancs capturés
+ *
  * @param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
-
- * @param OMx position de l'oiseau marseillais posé précédemment
-
- * @param OMy position de l'oiseau marseillais posé précédemment
-
- * @param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
-  * 
-  * @param xinit position de la pièce jouée
-  * @param yinit position de la pièce jouée
-  *  
-  * @param xdesti position du coup joué
-  * @param ydesti position du coup joué
-  * 
-  *@param advantage 0 si le coup dépend de l'oiseau, 1 sinon (cas où le coup précédent est impossible)
-  *
+ * @param board contient les numéros des cases de la grille
+ *
+ * @param xinit position de la pièce jouée
+ * @param yinit position de la pièce jouée
+ *  
+ * @param xdesti position du coup joué
+ * @param ydesti position du coup joué
+ * 
+ *@param advantage 0 si le coup dépend de l'oiseau, 1 sinon (cas où le coup précédent est impossible)
+ *
  */
-
-
-bool playing_move(int player, int * victory, int * captured_black_piece, int * captured_white_piece, int pieces_position[6][6],  int board[6][6],int xinit, int yinit, int xdesti, int ydesti){
+bool playing_move(int player, int * victory, int * captured_black_piece, int * captured_white_piece, int pieces_position[6][6], int board[6][6], int xinit, int yinit, int xdesti, int ydesti){
 
     int ** occuped_cases=occuped_cases_def(player, pieces_position);
     int valid_move_played=0;
-    if (is_valid_move(0,pieces_position[xinit][yinit],occuped_cases, xinit, yinit, xinit,yinit, xdesti, ydesti )){
+    if (is_valid_move(0,board[xinit][yinit],occuped_cases, xinit, yinit, xinit,yinit, xdesti, ydesti )){
         valid_move_played=1;
         if (player==0){
 

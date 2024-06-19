@@ -1,3 +1,5 @@
+#define STRUCT_H
+
 struct ui_s
 {
     SDL_Window *window;

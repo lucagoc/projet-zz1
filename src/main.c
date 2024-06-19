@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "headers/struct.h"
 #include "headers/graphics.h"
 #include "headers/rules.h"
 #include "headers/opponent.h"
@@ -17,32 +18,6 @@
  * @author Team 21
  */
 
-struct ui_s
-{
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_Texture *textures[10];
-    int SCREEN_WIDTH;
-    int SCREEN_HEIGHT;
-};
-typedef struct ui_s ui_t;
-
-struct board_s
-{
-    int board_case[6][6];
-    int board_piece[6][6];
-};
-typedef struct board_s board_t;
-
-struct game_s
-{
-    SDL_Event event;
-    int playing_player;
-    bool inPause;
-    bool program_on;
-};
-typedef struct game_s game_t;
-
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -52,13 +27,10 @@ const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
 
 /**
- * @brief Fonction principale du jeu
+ * @brief Fonction pour récupérer les événements
  *
- * @param argc Nombre d'arguments
- * @param argv Arguments
- * @return int Code de retour
+ * @param game Structure de l'état du jeu
  */
-
 void get_input(game_t *game)
 {
     /* Gestion des événements */
@@ -81,6 +53,13 @@ void get_input(game_t *game)
     }
 }
 
+/**
+ * @brief Fonction principale du jeu
+ *
+ * @param argc Nombre d'arguments
+ * @param argv Arguments
+ * @return int Code de retour
+ */
 int main(int argc, char const *argv[])
 {
     (void)argc;

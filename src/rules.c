@@ -58,7 +58,7 @@ void initialise_plateau(int board[6][6])
 
 
 
-int ** occuped_cases_def(int pieces_position[8][8]){
+int ** occuped_cases_def(int player, int pieces_position[6][6]){
     int occuped_cases[8][8]={0};
 
     for (int j = 0; j < 8; j++)
@@ -73,7 +73,8 @@ int ** occuped_cases_def(int pieces_position[8][8]){
             {
                 if (pieces_position[j-1][k-1] != 0)
                 {
-                    occuped_cases[j][k] = 1;
+
+                    occuped_cases[j][k] = pieces_position[j-1][k-1];
                 }
             }
         }
@@ -105,7 +106,7 @@ int ** occuped_cases_def(int pieces_position[8][8]){
 
 
  */
-bool is_valid_move(int valid, int number_moves, int occuped_cases[6][6], int xinit, int yinit,int xprev, int yprev, int xdesti, int ydesti)
+bool is_valid_move(int valid, int number_moves, int occuped_cases[8][8], int xinit, int yinit,int xprev, int yprev, int xdesti, int ydesti)
 {
 
     if (number_moves==0){
@@ -146,22 +147,156 @@ bool is_valid_move(int valid, int number_moves, int occuped_cases[6][6], int xin
     }
 }
 
+bool can_play(int player, int valid, int number_moves, int occuped_cases[8][8], int xinit, int yinit,int xprev, int yprev, int xdesti, int ydesti)
+{
+
+    if (number_moves==0){
+        //plus aucun mouvement à effectuer
+            int possible_move=0;
+
+            //teste si on est sur la bonne case (on ne peut y arriver que si elle est vide)
+            if (player==0){
+
+                if (occuped_cases[xinit][yinit]==0 || occuped_cases[xinit][yinit]==2 || occuped_cases[xinit][yinit]==4){
+                    possible_move=1;
+                }
+            } else {
+                if (occuped_cases[xinit][yinit]==0 || occuped_cases[xinit][yinit]==1 || occuped_cases[xinit][yinit]==3){
+                    possible_move=1;
+                }
+            }
+            return possible_move; 
+
+    } else {
+        //1 ou plusieurs mouvements restants
+
+        if((xinit+1 != xprev && yinit != yprev) && occuped_cases[xinit+1][yinit]==0){
+
+            valid= is_valid_move(0,number_moves-1,occuped_cases,xinit+1 ,yinit,xinit ,yinit , xdesti, ydesti );
+                    
+            //valid = 1 si on arrive sur la bonne case
+
+        }        
+        if(valid==0 && (xinit-1 != xprev && yinit != yprev) && occuped_cases[xinit-1][yinit]==0){
+            valid=  is_valid_move(0,number_moves-1,occuped_cases,xinit-1 ,yinit,xinit ,yinit , xdesti, ydesti );
+        
+            //valid = 1 si on arrive sur la bonne case
+
+        }
+        if(valid==0 && (xinit != xprev && yinit+1 != yprev) && occuped_cases[xinit][yinit+1]==0){
+            valid=  is_valid_move(0,number_moves-1,occuped_cases,xinit+1 ,yinit+1,xinit ,yinit , xdesti, ydesti );
+            
+            //valid = 1 si on arrive sur la bonne case
+
+        }
+        if(valid==0 && (xinit != xprev && yinit-1 != yprev) && occuped_cases[xinit][yinit-1]==0){
+            valid=  is_valid_move(0,number_moves-1,occuped_cases,xinit+1 ,yinit-1,xinit ,yinit , xdesti, ydesti );
+        
+            //valid = 1 si on arrive sur la bonne case
+
+        }
+        return valid;
+    }
+}
+
 /* Vérifie si le joueur peut encore jouer */
 
+
 /**
- * @brief Regarde si le joueur peut jouer ou non (0 ou 1)
+ * @brief Joue le coup indiqué par le joueur si c'est possible
  *
  * @param player 0 si on est sur le joueur noir ou 1 si le joueur blanc
  * @param board contient le tableau initial avec les valeurs des cases
+ * @param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
 
  * @param OMx position de l'oiseau marseillais posé précédemment
 
  * @param OMy position de l'oiseau marseillais posé précédemment
 
  * @param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
+  * 
+  * @param xinit position de la pièce jouée
+  * @param yinit position de la pièce jouée
+  *  
+  * @param xdesti position du coup joué
+  * @param ydesti position du coup joué
+  * 
+  *@param advantage 0 si le coup dépend de l'oiseau, 1 sinon (cas où le coup précédent est impossible)
+  *
+ */
+
+int ** playing_move(int player,int advantage, int OMx, int OMy, int pieces_position[6][6],  int board[6][6],int xinit, int yinit, int xdesti, int ydesti){
+
+    int ** occuped_cases=occuped_cases_def(player, pieces_position);
+    if (advantage==0){
+        if (can_play(player,board, OMx, OMy, pieces_position )){
+
+        }
+    } else {
+        
+
+    }
+
+}
+
+
+/**
+ * @brief Respawne une pièce à l'endroit indiqué et renvoie 1 si c'est possible, renvoie 0 sinon
+ *
+ * @param player 0 si on est sur le joueur noir ou 1 si le joueur blanc
+
+ * @param captured_white_piece nombre de pièces blanches capturées
+
+ * @param captured_black_piece nombre de pièces noires capturées
+
+ * @param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
+  * 
+  * @param xres position de la pièce replacée
+  * @param yres position de la pièce replacée
+  * 
+ */
+
+bool respawn_piece(int player, int captured_white_piece, int captured_black_piece, int pieces_position[6][6], int xres, int yres){
+    
+    int respawn_possible=0;
+    
+    if (player==0){
+        if (captured_black_piece>0 && pieces_position[xres][yres]==0){
+            respawn_possible=1;
+            pieces_position[xres][yres]=1;  //on place un ronin noir
+        }
+    } else {
+        if (captured_white_piece>0 && pieces_position[xres][yres]==0){
+            respawn_possible=1;
+            pieces_position[xres][yres]=2;//on place un ronin blanc
+
+        }
+    }
+
+    return respawn_possible;
+}
+
+
+
+
+
+
+/**
+ * brief Regarde si le joueur peut jouer ou non (0 ou 1)
+ *
+ * param player 0 si on est sur le joueur noir ou 1 si le joueur blanc
+ * param board contient le tableau initial avec les valeurs des cases
+
+ * param OMx position de l'oiseau marseillais posé précédemment
+
+ * param OMy position de l'oiseau marseillais posé précédemment
+
+ * param pieces_position tableau qui contient les pièces sur le plateau: 0 aucun 1 ronin noir 2 ronin blanc 3 daimyo noir 4 daimyo blanc 5 le piaf
 
  */
-bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position[6][6])
+
+
+/*bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position[6][6])
 {
 
     int possible_move = 1;
@@ -169,7 +304,7 @@ bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position
 
     // pour gérer les bords du plateau: matrice 0 si case inoccupee et 1 si occupee
 
-    int ** occuped_cases=occuped_cases_def(pieces_position);
+    int ** occuped_cases=occuped_cases_def(player, pieces_position);
 
     for (int x = 0; x < 6; x++)
     {
@@ -586,9 +721,4 @@ bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position
 
     return possible_move;
 }
-
-
-
-void playing_move(int number_moves, int occuped_cases[6][6], int xinit, int yinit, int xdesti, int ydesti){
-
-}
+*/

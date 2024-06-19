@@ -90,7 +90,6 @@ void handle_events(SDL_Event* event, bool* running, bool* show_menu, SDL_Rect co
     }
 }
 
-
 /*rendu du menu pause*/
 void draw_menu_pause(SDL_Renderer* renderer, SDL_Texture* background_texture, SDL_Texture* continue_text, SDL_Texture* quit_text) {               //Fonction dessine le menu de pause
     int text_width, text_height;

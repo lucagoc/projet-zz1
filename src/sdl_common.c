@@ -189,7 +189,7 @@ SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color c
     }
     return texture;
 }
-
+ /*
  * @brief Fonction pour récupérer les événements
  *
  * @param game Structure de l'état du jeu

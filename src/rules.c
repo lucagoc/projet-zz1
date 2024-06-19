@@ -297,12 +297,13 @@ bool can_play(int player, int possible_move, int number_moves, int occuped_cases
   *
  */
 
-void play_free_move(int player, int * victory, int * captured_black_piece, int * captured_white_piece,int advantage,int choice, int pieces_position[6][6],  int board[6][6],int xinit, int yinit, int xdesti, int ydesti){
+
+bool playing_move(int player, int * victory, int * captured_black_piece, int * captured_white_piece, int pieces_position[6][6],  int board[6][6],int xinit, int yinit, int xdesti, int ydesti){
 
     int ** occuped_cases=occuped_cases_def(player, pieces_position);
-
-    if (is_valid_move(0,pieces_position[OMx][OMy],occuped_cases, xinit, yinit, xinit,yinit, xdesti, ydesti )){
-        
+    int valid_move_played=0;
+    if (is_valid_move(0,pieces_position[xinit][yinit],occuped_cases, xinit, yinit, xinit,yinit, xdesti, ydesti )){
+        valid_move_played=1;
         if (player==0){
 
             if (pieces_position[xdesti][ydesti]==2){
@@ -322,34 +323,7 @@ void play_free_move(int player, int * victory, int * captured_black_piece, int *
         pieces_position[xinit][yinit]=0;
 
     }
-
-}
-
-void playing_move(int player, int * victory, int * captured_black_piece, int * captured_white_piece,int advantage,int choice, int OMx, int OMy, int pieces_position[6][6],  int board[6][6],int xinit, int yinit, int xdesti, int ydesti){
-
-    int ** occuped_cases=occuped_cases_def(player, pieces_position);
-
-    if (is_valid_move(0,pieces_position[OMx][OMy],occuped_cases, xinit, yinit, xinit,yinit, xdesti, ydesti )){
-        
-        if (player==0){
-
-            if (pieces_position[xdesti][ydesti]==2){
-                *captured_white_piece++;
-            } else if (pieces_position[xdesti][ydesti]==4){
-                *victory=1;
-            }
-        } else {
-            if (pieces_position[xdesti][ydesti]==1){
-                *captured_black_piece++;
-            } else if (pieces_position[xdesti][ydesti]==3){
-                *victory=2;
-            }
-        }
-
-        pieces_position[xdesti][ydesti]=pieces_position[xinit][yinit];
-        pieces_position[xinit][yinit]=0;
-
-    }
+    return valid_move_played;
 
 }
 

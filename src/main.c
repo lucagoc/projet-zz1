@@ -34,6 +34,15 @@ void init_game(game_t *game)
     game->inPause = false;
     game->program_on = true;
     game->round = 0;
+    game->selected_case = malloc(sizeof(pos_t));
+
+    if(game->selected_case == NULL){
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+
+    game->selected_case->x = -1;
+    game->selected_case->y = -1;
 }
 
 /**
@@ -66,7 +75,7 @@ int main(int argc, char const *argv[])
     while (game->program_on)
     {
         get_input(ui, game, board);
-        draw(ui, board);
+        draw(ui, board, game);
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
     }

@@ -37,6 +37,14 @@ void draw_piece(ui_t *ui, int player, int x, int y)
     }
 }
 
+void draw_selected_case(ui_t *ui, board_t *board, game_t *game){
+    if(game->selected_case->x != -1 && game->selected_case->y != -1){
+        SDL_Rect selected_rect = {ui->SCREEN_WIDTH / 2 - 300 + game->selected_case->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + game->selected_case->y * 99 + 5, 95, 95};
+        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(ui->renderer, &selected_rect);
+    }
+}
+
 /**
  * @brief Rendu du plateau
  *
@@ -47,7 +55,7 @@ void draw_piece(ui_t *ui, int player, int x, int y)
  * @param x Coordonnée x du centre du plateau
  * @param y Coordonnée y du centre du plateau
  */
-void draw_board(ui_t *ui, board_t *board)
+void draw_board(ui_t *ui, board_t *board, game_t *game)
 {
     int x = ui->SCREEN_WIDTH / 2;
     int y = ui->SCREEN_HEIGHT / 2;
@@ -66,6 +74,8 @@ void draw_board(ui_t *ui, board_t *board)
             draw_piece(ui, board->board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
         }
     }
+
+    draw_selected_case(ui, board, game);
 
     return;
 }
@@ -107,13 +117,12 @@ void draw_all_predictions(ui_t *ui, board_t *board, game_t *game, list_t *predic
         draw_prediction(ui, board, game, current->pos.x, current->pos.y);
         current = current->next;
     }
-    
 }
 
 /* Rendu globale */
 void draw(ui_t *ui, board_t *board, game_t *game)
 {
     draw_background(ui);
-    draw_board(ui, board);
+    draw_board(ui, board, game);
     draw_logo(ui);
 }

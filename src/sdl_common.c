@@ -253,11 +253,14 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                 {
                     if(can_be_selected(game, board, case_grid)){
                         printf("Case sélectionnée\n");
+                        game->selected_case->x = case_grid.x;
+                        game->selected_case->y = case_grid.y;
                     }
                     else
                     {
+                        game->selected_case->x = -1;
+                        game->selected_case->y = -1;
                         printf("Case non sélectionnée\n");
-                    
                     }
                 }
 

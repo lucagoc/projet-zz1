@@ -36,6 +36,7 @@ struct game_s
     int round;
     bool inPause;
     bool program_on;
+    pos_t* selected_case;
 };
 typedef struct game_s game_t;
 

@@ -5,6 +5,9 @@
 #include "headers/struct.h"
 #include "headers/rules.h"
 
+#define GRID_SIZE 6
+
+
 /**
  * @file sdl_common.c
  * @brief Fonctions communes à l'initialisation de la SDL
@@ -109,6 +112,8 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
     textures[8] = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
     SDL_FreeSurface(surfaceMessage);
 
+    textures[9] = load_texture_from_image("assets/pieces/bird.png", window, renderer);
+
     return;
 }
 
@@ -203,20 +208,91 @@ pos_t cord2grid(ui_t *ui, int x, int y)
     return pos;
 }
 
-void play_the_game(game_t *game, pos_t case_grid)
+void move_piece_to(board_t *board, pos_t origin, pos_t destination)
 {
-   /* 
-    if (is_case_valid(game, case_grid))
-    {
-        // Jouer le coup
-        
-        // Demander de placer l'oiseau
+    board->board_piece[destination.x][destination.y] = board->board_piece[origin.x][origin.y];
+    board->board_piece[origin.x][origin.y] = 0;
+}
 
-        // Augmenter le round;
-        game->round++;
-        // Changer de joueur
-        game->playing_player = (game->playing_player == 1) ? 2 : 1;
-    }*/
+void print_list(list_t *list)
+{
+    list_t *tmp = list;
+    while (tmp != NULL)
+    {
+        printf("(%d, %d)\n", tmp->pos.x, tmp->pos.y);
+        tmp = tmp->next;
+    }
+}
+
+void free_list(list_t *list)
+{
+    list_t *tmp = list;
+    while (tmp != NULL)
+    {
+        list_t *next = tmp->next;
+        free(tmp);
+        tmp = next;
+    }
+}
+
+bool can_be_selected(game_t *game, board_t *board, pos_t pos_grid)
+{
+    return board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player || board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player + 2;
+}
+
+void init_predictions(game_t *game)
+{
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            game->predictions[i][j] = 0;
+        }
+    }
+}
+
+// Vérifie si une pièce est bloquée
+bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
+{
+    init_predictions(game);
+    predictions_calculations(game, board, (pos_t){i, j}, board->board_case[i][j], 1);
+    for (int k = 0; k < GRID_SIZE; k++)
+    {
+        for (int k = 0; k < GRID_SIZE; k++)
+        {
+            if (game->predictions[i][j] == 1)
+            {
+                return false;
+            }
+        }
+    }
+}
+
+// Pour qu'un joueur soit bloqué, il faut que toutes ses pièces soient bloquées
+bool is_active_player_blocked(game_t *game, board_t *board)
+{
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            if ((board->board_piece[i][j] == 1 || board->board_piece[i][j] == 3) && game->playing_player == 1)
+            {
+                if (!is_piece_blocked(game, board, i, j))
+                {
+                    return false;
+                }
+            }
+            else if ((board->board_piece[i][j] == 2 || board->board_piece[i][j] == 4) && game->playing_player == 2)
+            {
+                if (!is_piece_blocked(game, board, i, j))
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 /*
@@ -224,10 +300,9 @@ void play_the_game(game_t *game, pos_t case_grid)
  *
  * @param game Structure de l'état du jeu
  */
-void get_input(ui_t *ui, game_t *game)
+void get_input(ui_t *ui, game_t *game, board_t *board)
 {
     /* Gestion des événements */
-
     while (SDL_PollEvent(&game->event))
     {
         switch (game->event.type)
@@ -243,10 +318,95 @@ void get_input(ui_t *ui, game_t *game)
 
                 pos_t case_grid = cord2grid(ui, x, y);
 
+                // Cliquer dans le plateau
+                if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
+                {
+                    if (game->case_is_selected)
+                    {
+                        if (game->predictions[case_grid.x][case_grid.y] == 1)
+                        {
+                            // Déplacer le pion sur la case
+                            move_piece_to(board, *game->selected_case, case_grid);
+                            game->last_case_value = board->board_case[case_grid.x][case_grid.y];
+                            fprintf(stderr, "LAST CASE VALUE %d\n", game->last_case_value);
+                            game->case_is_selected = false;
+                            game->selected_case->x = -1;
+                            game->selected_case->y = -1;
+
+                            // Passage en mode oiseau
+                            game->bird_is_selected = true;
+                            init_predictions(game);
+                            bird_predictions_calculations(game, board);
+                            game->predictions[board->bird->x][board->bird->y] = -1;
+                        }
+                        else
+                        {
+                            game->selected_case->x = -1;
+                            game->selected_case->y = -1;
+                            game->case_is_selected = false;
+                        }
+                    }
+                    else if (!game->bird_is_selected && can_be_selected(game, board, case_grid))
+                    {
+                        printf("Case sélectionnée\n");
+                        game->selected_case->x = case_grid.x;
+                        game->selected_case->y = case_grid.y;
+                        game->case_is_selected = true;
+
+                        init_predictions(game);
+                        predictions_calculations(game, board, *game->selected_case, board->board_case[game->selected_case->x][game->selected_case->y], game->playing_player);
+                    }
+                    else if (game->bird_is_selected && game->predictions[case_grid.x][case_grid.y] == 1) // Sélection de l'oiseau
+                    {
+                        if (board->bird->x == -1 && board->bird->y == -1)
+                        {
+                            board->bird->x = case_grid.x;
+                            board->bird->y = case_grid.y;
+
+                            board->board_piece[board->bird->x][board->bird->y] = 5;
+                            
+                        }
+                        else
+                        {
+                            move_piece_to(board, (pos_t){board->bird->x, board->bird->y}, case_grid);
+                            board->bird->x = case_grid.x;
+                            board->bird->y = case_grid.y;
+                        }
+
+                        game->bird_is_selected = false;
+
+                        // Changement de joueur
+                        if (game->playing_player == 1)
+                        {
+                            game->playing_player = 2;
+                        }
+                        else
+                        {
+                            game->playing_player = 1;
+                        }
+                        if (is_active_player_blocked(game, board))
+                            {
+                                printf("Joueur %d bloqué\n", game->playing_player);
+                                init_predictions(game);
+                            }
+                    }
+                    else
+                    {
+                        game->selected_case->x = -1;
+                        game->selected_case->y = -1;
+                        game->case_is_selected = false;
+                        printf("Case non sélectionnée\n");
+                    }
+                }
+                int winner = who_wins(board);
+                if (winner != 0)
+                {
+                    printf("Joueur %d a gagné\n", winner);
+                    game->program_on = SDL_FALSE;
+                }
+
                 printf("Clic en (%d, %d)\n", x, y);
                 printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
-
-                play_the_game(game, case_grid);
             }
             break;
         }

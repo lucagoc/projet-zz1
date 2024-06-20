@@ -32,9 +32,83 @@ void draw_piece(ui_t *ui, int player, int x, int y)
 {
     if (player != 0)
     {
-        fprintf(stderr, "player : %d\n", player);
         SDL_Rect piece_rect = {x, y, 95, 95};
         SDL_RenderCopy(ui->renderer, ui->textures[player], NULL, &piece_rect);
+    }
+}
+
+void draw_selected_case(ui_t *ui, board_t *board, game_t *game)
+{
+    if (game->selected_case->x != -1 && game->selected_case->y != -1)
+    {
+        SDL_Rect selected_rect = {ui->SCREEN_WIDTH / 2 - 300 + game->selected_case->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + game->selected_case->y * 99 + 5, 95, 95};
+        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(ui->renderer, &selected_rect);
+    }
+}
+
+/**
+ * @brief Affiche un rectangle rouge autour de la case prédite
+ *
+ * @param ui Interface utilisateur
+ * @param board Plateau de jeu
+ * @param x Coordonnée x de la prédiction
+ * @param y Coordonnée y de la prédiction
+ */
+void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
+{
+    SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
+    SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
+    SDL_RenderFillRect(ui->renderer, &prediction_rect);
+}
+
+/**
+ * @brief Affiche toutes les cases possibles depuis le pion sélectionné
+ *
+ */
+void draw_all_predictions(ui_t *ui, board_t *board, game_t *game)
+{
+    fprintf(stderr, "draw_all_predictions\n");
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            fprintf(stderr, "predictions[%d][%d] = %d\n", i, j, game->predictions[i][j]);
+            if (game->predictions[i][j] == 1)
+            {
+                draw_prediction(ui, board, game, i, j);
+            }
+        }
+    }
+}
+
+void draw_bird_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
+{
+    SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
+    SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 128);
+    SDL_RenderFillRect(ui->renderer, &prediction_rect);
+}
+
+void draw_all_bird_predictions(ui_t *ui, board_t *board, game_t *game)
+{
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            if (game->predictions[i][j] == 1)
+            {
+                draw_bird_prediction(ui, board, game, i, j);
+            }
+        }
+    }
+}
+
+void draw_bird(ui_t *ui, board_t *board)
+{
+    if (board->bird->x != -1 && board->bird->y != -1)
+    {
+        SDL_Rect bird_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
+        SDL_RenderCopy(ui->renderer, ui->textures[9], NULL, &bird_rect);
     }
 }
 
@@ -48,7 +122,7 @@ void draw_piece(ui_t *ui, int player, int x, int y)
  * @param x Coordonnée x du centre du plateau
  * @param y Coordonnée y du centre du plateau
  */
-void draw_board(ui_t *ui, board_t *board)
+void draw_board(ui_t *ui, board_t *board, game_t *game)
 {
     int x = ui->SCREEN_WIDTH / 2;
     int y = ui->SCREEN_HEIGHT / 2;
@@ -59,20 +133,26 @@ void draw_board(ui_t *ui, board_t *board)
     int x_case = x - 300;
     int y_case = y - 300;
 
-    int compteur = 0;
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
             draw_case(ui, board->board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
             draw_piece(ui, board->board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
-            if (board->board_piece[i][j] != 0)
-            {
-                compteur++;
-            }
         }
     }
-    fprintf(stderr, "compteur : %d\n", compteur);
+
+    if (game->case_is_selected)
+    {
+        draw_selected_case(ui, board, game);
+        draw_all_predictions(ui, board, game);
+    }
+    else if (game->bird_is_selected)
+    {
+        draw_all_bird_predictions(ui, board, game);
+    }
+
+    draw_bird(ui, board);
 
     return;
 }
@@ -94,6 +174,6 @@ void draw_logo(ui_t *ui)
 void draw(ui_t *ui, board_t *board, game_t *game)
 {
     draw_background(ui);
-    draw_board(ui, board);
+    draw_board(ui, board, game);
     draw_logo(ui);
 }

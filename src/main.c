@@ -35,6 +35,29 @@ void init_game(game_t *game)
     game->inPause = false;
     game->program_on = true;
     game->round = 0;
+    game->selected_case = malloc(sizeof(pos_t));
+    
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            game->predictions[i][j] = 0;
+        }
+        
+    }
+    
+    if(game->selected_case == NULL){
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+
+    game->selected_case->x = -1;
+    game->selected_case->y = -1;
+    
+    game->case_is_selected = false;
+    game->bird_is_selected = false;
+    
+    game->last_case_value = 0;
 }
 
 /**
@@ -61,6 +84,9 @@ int main(int argc, char const *argv[])
     init_sdl(ui);
     init_game(game);
     initialise_plateau(board->board_case);
+    board->bird = malloc(sizeof(pos_t));
+    board->bird->x = -1; // position de l'oiseau en dehors du plateau
+    board->bird->y = -1;
     initialise_pieces(board->board_piece, 1, 1);
 
     // Charger les ressources pour le menu pause
@@ -102,7 +128,6 @@ int main(int argc, char const *argv[])
             draw(ui, board);
             SDL_RenderPresent(ui->renderer);
         }
-
         SDL_Delay(15); // ~ 60 FPS
     }
 

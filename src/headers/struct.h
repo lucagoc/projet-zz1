@@ -34,6 +34,8 @@ struct board_s
 {
     int board_case[6][6];
     int board_piece[6][6];
+    int captured_pieces_black;
+    int captured_pieces_white;
     pos_t *bird; // Position de l'oiseau
 };
 typedef struct board_s board_t;
@@ -47,6 +49,7 @@ struct game_s
     bool program_on;
     pos_t* selected_case;
     bool case_is_selected;
+    bool player_is_blocked;
     int predictions[6][6];
     int last_case_value;
     bool bird_is_selected;

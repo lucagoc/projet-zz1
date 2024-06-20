@@ -502,7 +502,6 @@ void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int
 {
     if (piece_pos.x < 0 || piece_pos.y < 0 || piece_pos.x > 5 || piece_pos.y > 5)
     {
-        fprintf(stderr, "Position invalide : %d %d\n", piece_pos.x, piece_pos.y);
         return;
     }
     else if(step == 0 && is_movement_valid(game, board, piece_pos))
@@ -545,10 +544,7 @@ void bird_predictions_calculations(game_t *game, board_t *board)
             {
                 game->predictions[i][j] = -1;
             }
-            printf("%d ", game->predictions[i][j]);
         }
-        printf("\n");
-        
     }
 }
 

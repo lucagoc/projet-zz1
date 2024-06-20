@@ -34,6 +34,7 @@ void init_game(game_t *game)
     game->playing_player = PLAYER_1;
     game->inPause = false;
     game->program_on = true;
+    game->player_is_blocked = false;
     game->round = 0;
     game->selected_case = malloc(sizeof(pos_t));
     
@@ -85,6 +86,12 @@ int main(int argc, char const *argv[])
     init_game(game);
     initialise_plateau(board->board_case);
     board->bird = malloc(sizeof(pos_t));
+    if (board->bird == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+    
     board->bird->x = -1; // position de l'oiseau en dehors du plateau
     board->bird->y = -1;
     initialise_pieces(board->board_piece, 1, 1);

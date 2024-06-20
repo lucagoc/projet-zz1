@@ -68,12 +68,10 @@ void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
  */
 void draw_all_predictions(ui_t *ui, board_t *board, game_t *game)
 {
-    fprintf(stderr, "draw_all_predictions\n");
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
-            fprintf(stderr, "predictions[%d][%d] = %d\n", i, j, game->predictions[i][j]);
             if (game->predictions[i][j] == 1)
             {
                 draw_prediction(ui, board, game, i, j);
@@ -105,7 +103,7 @@ void draw_all_bird_predictions(ui_t *ui, board_t *board, game_t *game)
 
 void draw_bird(ui_t *ui, board_t *board)
 {
-    if (board->bird->x != -1 && board->bird->y != -1)
+    if (board->bird != NULL && board->bird->x != -1 && board->bird->y != -1)
     {
         SDL_Rect bird_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
         SDL_RenderCopy(ui->renderer, ui->textures[9], NULL, &bird_rect);
@@ -170,10 +168,20 @@ void draw_logo(ui_t *ui)
     SDL_RenderCopy(ui->renderer, ui->textures[8], NULL, &logo_rect);
 }
 
+void draw_indicator(ui_t *ui, game_t *game)
+{
+    if(game->player_is_blocked){
+        SDL_Rect indicator_rect = {0, 200, 100, 100};
+        SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
+        SDL_RenderFillRect(ui->renderer, &indicator_rect);
+    }
+}
+
 /* Rendu globale */
 void draw(ui_t *ui, board_t *board, game_t *game)
 {
     draw_background(ui);
     draw_board(ui, board, game);
+    draw_indicator(ui, game);
     draw_logo(ui);
 }

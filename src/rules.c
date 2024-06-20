@@ -344,8 +344,7 @@ bool can_play(int player, int possible_move, int number_moves, int position_piec
 
 bool valid_bird_placement(int xinit, int yinit, int birdX, int birdY, int pieces_position[GRID_SIZE][GRID_SIZE], int board[GRID_SIZE][GRID_SIZE]){
     
-    return ((pieces_position[birdX][birdY]==0 || pieces_position[birdX][birdY]==5) && (board[birdX][birdY]==board[xinit][yinit])){
-
+    return ((pieces_position[birdX][birdY]==0 || pieces_position[birdX][birdY]==5) && (board[birdX][birdY]==board[xinit][yinit]));
 }
 
 /* Vérifie si le joueur peut encore jouer */

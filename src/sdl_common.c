@@ -7,7 +7,6 @@
 
 #define GRID_SIZE 6
 
-
 /**
  * @file sdl_common.c
  * @brief Fonctions communes à l'initialisation de la SDL
@@ -310,105 +309,111 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
         case SDL_QUIT:
             game->program_on = SDL_FALSE;
             break;
-        case SDL_MOUSEBUTTONDOWN: // Clic souris
-            if (game->event.button.button == SDL_BUTTON_LEFT)
+            if (game->inPause)
             {
-                int x = game->event.button.x;
-                int y = game->event.button.y;
-
-                pos_t case_grid = cord2grid(ui, x, y);
-
-                // Cliquer dans le plateau
-                if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
+                /*handle_events(&game->event, &game->program_on, &game->inPause, ui->continue_button_rect, ui->quit_button_rect);*/
+            }
+            else
+            {
+            case SDL_MOUSEBUTTONDOWN: // Clic souris
+                if (game->event.button.button == SDL_BUTTON_LEFT)
                 {
-                    if (game->case_is_selected)
-                    {
-                        if (game->predictions[case_grid.x][case_grid.y] == 1)
-                        {
-                            // Déplacer le pion sur la case
-                            move_piece_to(board, *game->selected_case, case_grid);
-                            game->last_case_value = board->board_case[case_grid.x][case_grid.y];
-                            fprintf(stderr, "LAST CASE VALUE %d\n", game->last_case_value);
-                            game->case_is_selected = false;
-                            game->selected_case->x = -1;
-                            game->selected_case->y = -1;
+                    int x = game->event.button.x;
+                    int y = game->event.button.y;
 
-                            // Passage en mode oiseau
-                            game->bird_is_selected = true;
+                    pos_t case_grid = cord2grid(ui, x, y);
+
+                    // Cliquer dans le plateau
+                    if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
+                    {
+                        if (game->case_is_selected)
+                        {
+                            if (game->predictions[case_grid.x][case_grid.y] == 1)
+                            {
+                                // Déplacer le pion sur la case
+                                move_piece_to(board, *game->selected_case, case_grid);
+                                game->last_case_value = board->board_case[case_grid.x][case_grid.y];
+                                fprintf(stderr, "LAST CASE VALUE %d\n", game->last_case_value);
+                                game->case_is_selected = false;
+                                game->selected_case->x = -1;
+                                game->selected_case->y = -1;
+
+                                // Passage en mode oiseau
+                                game->bird_is_selected = true;
+                                init_predictions(game);
+                                bird_predictions_calculations(game, board);
+                                game->predictions[board->bird->x][board->bird->y] = -1;
+                            }
+                            else
+                            {
+                                game->selected_case->x = -1;
+                                game->selected_case->y = -1;
+                                game->case_is_selected = false;
+                            }
+                        }
+                        else if (!game->bird_is_selected && can_be_selected(game, board, case_grid))
+                        {
+                            printf("Case sélectionnée\n");
+                            game->selected_case->x = case_grid.x;
+                            game->selected_case->y = case_grid.y;
+                            game->case_is_selected = true;
+
                             init_predictions(game);
-                            bird_predictions_calculations(game, board);
-                            game->predictions[board->bird->x][board->bird->y] = -1;
+                            predictions_calculations(game, board, *game->selected_case, board->board_case[game->selected_case->x][game->selected_case->y], game->playing_player);
                         }
-                        else
+                        else if (game->bird_is_selected && game->predictions[case_grid.x][case_grid.y] == 1) // Sélection de l'oiseau
                         {
-                            game->selected_case->x = -1;
-                            game->selected_case->y = -1;
-                            game->case_is_selected = false;
-                        }
-                    }
-                    else if (!game->bird_is_selected && can_be_selected(game, board, case_grid))
-                    {
-                        printf("Case sélectionnée\n");
-                        game->selected_case->x = case_grid.x;
-                        game->selected_case->y = case_grid.y;
-                        game->case_is_selected = true;
+                            if (board->bird->x == -1 && board->bird->y == -1)
+                            {
+                                board->bird->x = case_grid.x;
+                                board->bird->y = case_grid.y;
 
-                        init_predictions(game);
-                        predictions_calculations(game, board, *game->selected_case, board->board_case[game->selected_case->x][game->selected_case->y], game->playing_player);
-                    }
-                    else if (game->bird_is_selected && game->predictions[case_grid.x][case_grid.y] == 1) // Sélection de l'oiseau
-                    {
-                        if (board->bird->x == -1 && board->bird->y == -1)
-                        {
-                            board->bird->x = case_grid.x;
-                            board->bird->y = case_grid.y;
+                                board->board_piece[board->bird->x][board->bird->y] = 5;
+                            }
+                            else
+                            {
+                                move_piece_to(board, (pos_t){board->bird->x, board->bird->y}, case_grid);
+                                board->bird->x = case_grid.x;
+                                board->bird->y = case_grid.y;
+                            }
 
-                            board->board_piece[board->bird->x][board->bird->y] = 5;
-                            
-                        }
-                        else
-                        {
-                            move_piece_to(board, (pos_t){board->bird->x, board->bird->y}, case_grid);
-                            board->bird->x = case_grid.x;
-                            board->bird->y = case_grid.y;
-                        }
+                            game->bird_is_selected = false;
 
-                        game->bird_is_selected = false;
-
-                        // Changement de joueur
-                        if (game->playing_player == 1)
-                        {
-                            game->playing_player = 2;
-                        }
-                        else
-                        {
-                            game->playing_player = 1;
-                        }
-                        if (is_active_player_blocked(game, board))
+                            // Changement de joueur
+                            if (game->playing_player == 1)
+                            {
+                                game->playing_player = 2;
+                            }
+                            else
+                            {
+                                game->playing_player = 1;
+                            }
+                            if (is_active_player_blocked(game, board))
                             {
                                 printf("Joueur %d bloqué\n", game->playing_player);
                                 init_predictions(game);
                             }
+                        }
+                        else
+                        {
+                            game->selected_case->x = -1;
+                            game->selected_case->y = -1;
+                            game->case_is_selected = false;
+                            printf("Case non sélectionnée\n");
+                        }
                     }
-                    else
+                    int winner = who_wins(board);
+                    if (winner != 0)
                     {
-                        game->selected_case->x = -1;
-                        game->selected_case->y = -1;
-                        game->case_is_selected = false;
-                        printf("Case non sélectionnée\n");
+                        printf("Joueur %d a gagné\n", winner);
+                        game->program_on = SDL_FALSE;
                     }
-                }
-                int winner = who_wins(board);
-                if (winner != 0)
-                {
-                    printf("Joueur %d a gagné\n", winner);
-                    game->program_on = SDL_FALSE;
-                }
 
-                printf("Clic en (%d, %d)\n", x, y);
-                printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
+                    printf("Clic en (%d, %d)\n", x, y);
+                    printf("Case en (%d, %d)\n", case_grid.x, case_grid.y);
+                }
+                break;
             }
-            break;
         }
     }
 }

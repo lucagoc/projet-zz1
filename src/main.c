@@ -6,7 +6,7 @@
 
 #include "headers/struct.h"
 #include "headers/graphics.h"
-//#include "headers/rules.h"
+#include "headers/rules.h"
 #include "headers/opponent.h"
 #include "headers/sdl_common.h"
 #include "headers/menu.h"
@@ -89,6 +89,7 @@ int main(int argc, char const *argv[])
     board->bird->y = -1;
     initialise_pieces(board->board_piece, 1, 1);
 
+    /*
     // Charger les ressources pour le menu pause
     SDL_Texture *background_texture = NULL;
     SDL_Texture *continue_text = NULL;
@@ -113,28 +114,26 @@ int main(int argc, char const *argv[])
 
     SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
     SDL_Rect quit_button_rect = {ui->SCREEN_WIDTH / 2 - 100, ui->SCREEN_HEIGHT - 200 - 10, 200, text_height + 20};
-
+     */
     // Boucle principale
     while (game->program_on) {
-        // Gestion des événements
-        handle_events(&game->event, &game->program_on, &game->inPause, continue_button_rect, quit_button_rect);
-
         if (game->inPause) {
             // Afficher le menu pause
-            draw_menu_pause(ui->renderer, background_texture, continue_text, quit_text);
+            /*draw_menu_pause(ui->renderer, background_texture, continue_text, quit_text);*/
         } else {
             // Afficher le plateau de jeu
-            get_input(ui, game);
-            draw(ui, board);
+            get_input(ui, game, board);
+            draw(ui, board, game);
             SDL_RenderPresent(ui->renderer);
         }
         SDL_Delay(15); // ~ 60 FPS
     }
 
     // Libération des ressources et nettoyage
+    /*
     SDL_DestroyTexture(background_texture);
     SDL_DestroyTexture(continue_text);
-    SDL_DestroyTexture(quit_text);
+    SDL_DestroyTexture(quit_text);*/
 
     free(game);
     free(board);

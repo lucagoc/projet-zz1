@@ -434,7 +434,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     // Cliquer dans le plateau
 
                     if (game->blocage>1 && x >= 500 && x < 550 && case_grid.y >= 0 && case_grid.y < 75){
-                        printf("playfreemove\n");
+                        game->blocage=3;
                     }else if (game->blocage>1 && x >= 600 && x < 650 && case_grid.y >= 0 && case_grid.y < 75) {
                         if (game->playing_player==1){  //joueur noir
                             if (board->captured_black_pieces>0){
@@ -453,31 +453,30 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                         {
                             //printf("Joueur %d bloqué\n", game->playing_player);
                             //init_predictions(game);
-                            printf("joueur bloquée \n");
+                            printf("joueur bloqué \n");
 
-                            if (game->playing_player==1){ //joueur noir
+                            if (game->playing_player==1 && game->blocage==0){ //joueur noir
                                 game->blocage=1;
                             } else {
                                 game->blocage=2;
-
                             }
 
                             if (game->enable_respawn==1 && respawning_possible(game, board, case_grid)){
                                 respawning(game, board, case_grid);
                                 game->blocage=0;
                                 game->enable_respawn=0;
-
+                                player_change(game);
                             }
 
-                            player_change(game);
 
                         } else if (!game->bird_is_selected && pieces_are_blocked(game, board)) { //blocage partiel
                             
                             printf("piece bloquée \n");
-                            player_change(game);
-                            if (game->playing_player==1){ //joueur noir
+                            if (game->playing_player==1 && game->blocage==0){ //joueur noir
+                                player_change(game);
                                 game->blocage=1;
                             } else {
+                                player_change(game);
                                 game->blocage=2;
 
                             }
@@ -485,9 +484,13 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                                 respawning(game, board, case_grid);
                                 game->blocage=0;
                                 game->enable_respawn=0;
-                            }                            
-                            player_change(game);
+                                player_change(game);
 
+                            }
+
+                        } else if (!game->bird_is_selected && game->blocage==3) {
+                            
+                            
                         }
                         if (game->blocage<1 && game->case_is_selected)
                         {

@@ -115,7 +115,7 @@ void draw_bird(ui_t *ui, board_t *board)
 void draw_blocage(game_t * game){
     if (game->blocage==1){
         printf("joueur noir bloqué \n");
-    } else {
+    } else if (game->blocage==2){
         printf("joueur blanc bloqué \n");
 
     }
@@ -167,7 +167,7 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
 
     }
 
-    if (game->blocage !=0){
+    if (game->blocage==1 || game->blocage==2){
         draw_blocage(game);
     }
 

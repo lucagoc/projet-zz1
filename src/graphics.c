@@ -125,18 +125,32 @@ void draw_blocage(ui_t *ui,game_t * game,int x,int y){
 
     SDL_Color color = {20, 0, 40, 255};                                  // la couleur du texte
     SDL_Surface* text_surface = NULL;                                    // la surface  (uniquement transitoire)
-    text_surface = TTF_RenderText_Blended(font, "    jouer           revivre", color); // création du texte dans la surface 
+    text_surface = TTF_RenderText_Blended(font, "jouer", color); // création du texte dans la surface 
     if (text_surface == NULL) end_sdl(0, "Can't create text surface", ui->window, ui->renderer);
+
+    SDL_Surface* text_surface2 = NULL;                                    // la surface  (uniquement transitoire)
+    text_surface2 = TTF_RenderText_Blended(font, "revivre", color); // création du texte dans la surface 
+    if (text_surface2 == NULL) end_sdl(0, "Can't create text surface", ui->window, ui->renderer);
 
     SDL_Texture* text_texture = NULL;                                    // la texture qui contient le texte
     text_texture = SDL_CreateTextureFromSurface(ui->renderer, text_surface); // transfert de la surface à la texture
-    if (text_texture == NULL) end_sdl(0, "Can't create texture from surface", ui->window, ui->renderer);
+    if (text_texture == NULL) end_sdl(0, "Can't create texture from surface", ui->window, ui->renderer);                                     // la texture ne sert plus à rien
     SDL_FreeSurface(text_surface);                                       // la texture ne sert plus à rien
 
-    SDL_Rect pos = {x-100, 0, x+50, 75};                                         // rectangle où le texte va être prositionné
+    SDL_Texture* text_texture2 = NULL;                                    // la texture qui contient le texte
+    text_texture2 = SDL_CreateTextureFromSurface(ui->renderer, text_surface2); // transfert de la surface à la texture
+    if (text_texture2 == NULL) end_sdl(0, "Can't create texture from surface", ui->window, ui->renderer);
+    SDL_FreeSurface(text_surface2);                                       // la texture ne sert plus à rien
+
+    SDL_Rect pos = {500, 0, 550, 75};                                         // rectangle où le texte va être prositionné
     SDL_QueryTexture(text_texture, NULL, NULL, &pos.w, &pos.h);          // récupération de la taille (w, h) du texte 
     SDL_RenderCopy(ui->renderer, text_texture, NULL, &pos);                  // Ecriture du texte dans le renderer   
     SDL_DestroyTexture(text_texture);  
+
+    SDL_Rect pos2 = {600, 0, 650, 75};                                         // rectangle où le texte va être prositionné
+    SDL_QueryTexture(text_texture2, NULL, NULL, &pos2.w, &pos2.h);          // récupération de la taille (w, h) du texte 
+    SDL_RenderCopy(ui->renderer, text_texture2, NULL, &pos2);                  // Ecriture du texte dans le renderer   
+    SDL_DestroyTexture(text_texture2);  
 }
 
 /**

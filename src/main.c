@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
     board->captured_white_pieces=0;
 
     game->blocage=-1; //-1 si premier coup 0 si pas de blocage, 1 si joueur noir doit respawner, 2 si blanc doit respawner
-
+    game->enable_respawn=0;
     /*
     // Charger les ressources pour le menu pause
     SDL_Texture *background_texture = NULL;

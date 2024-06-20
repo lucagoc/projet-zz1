@@ -53,5 +53,6 @@ struct game_s
     int last_case_value;
     bool bird_is_selected;
     int blocage;
+    int enable_respawn;
 };
 typedef struct game_s game_t;

@@ -432,9 +432,22 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     pos_t case_grid = cord2grid(ui, x, y);
 
                     // Cliquer dans le plateau
-                    if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
+
+                    if (game->blocage>1 && x >= 500 && x < 550 && case_grid.y >= 0 && case_grid.y < 75){
+                        printf("playfreemove\n");
+                    }else if (game->blocage>1 && x >= 600 && x < 650 && case_grid.y >= 0 && case_grid.y < 75) {
+                        if (game->playing_player==1){  //joueur noir
+                            if (board->captured_black_pieces>0){
+                                game->enable_respawn=1; //on peut respawner une pièce
+                            }
+                        } else {  //joueur blanc
+                            if (board->captured_white_pieces>0){
+                                game->enable_respawn=1; //on peut respawner une pièce
+                            }
+                        }
+
+                    } else if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
                     {
-                        
                         
                         if (!game->bird_is_selected && is_active_player_blocked(game, board)) //blocage total
                         {
@@ -449,9 +462,11 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
 
                             }
 
-                            if (respawning_possible(game, board, case_grid)){
+                            if (game->enable_respawn==1 && respawning_possible(game, board, case_grid)){
                                 respawning(game, board, case_grid);
                                 game->blocage=0;
+                                game->enable_respawn=0;
+
                             }
 
                             player_change(game);
@@ -466,9 +481,10 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                                 game->blocage=2;
 
                             }
-                            if (respawning_possible(game, board, case_grid)){
+                            if (game->enable_respawn==1 && respawning_possible(game, board, case_grid)){
                                 respawning(game, board, case_grid);
                                 game->blocage=0;
+                                game->enable_respawn=0;
                             }                            
                             player_change(game);
 

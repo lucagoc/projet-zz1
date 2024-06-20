@@ -360,16 +360,17 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                         {
                             board->bird->x = case_grid.x;
                             board->bird->y = case_grid.y;
-                            
+
                             board->board_piece[board->bird->x][board->bird->y] = 5;
+                            
                         }
                         else
                         {
-                            move_piece_to(board, (pos_t){ board->bird->x, board->bird->y}, case_grid);
+                            move_piece_to(board, (pos_t){board->bird->x, board->bird->y}, case_grid);
                             board->bird->x = case_grid.x;
                             board->bird->y = case_grid.y;
                         }
-                        
+
                         game->bird_is_selected = false;
 
                         // Changement de joueur
@@ -381,7 +382,11 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                         {
                             game->playing_player = 1;
                         }
-                        
+                        if (is_active_player_blocked(game, board))
+                            {
+                                printf("Joueur %d bloqué\n", game->playing_player);
+                                init_predictions(game);
+                            }
                     }
                     else
                     {
@@ -390,11 +395,12 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                         game->case_is_selected = false;
                         printf("Case non sélectionnée\n");
                     }
-
-                    /* Ne fonctionne pas.
-                    if(is_active_player_blocked(game, board)){
-                        printf("Joueur %d bloqué\n", game->playing_player);
-                    }*/
+                }
+                int winner = who_wins(board);
+                if (winner != 0)
+                {
+                    printf("Joueur %d a gagné\n", winner);
+                    game->program_on = SDL_FALSE;
                 }
 
                 printf("Clic en (%d, %d)\n", x, y);

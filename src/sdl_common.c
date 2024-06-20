@@ -284,6 +284,10 @@ bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
 // blocage total: aucune pièce positionnée sur une case de bonne valeur ?
 bool is_active_player_blocked(game_t *game, board_t *board)
 {
+
+    if (game->last_case_value==-1){
+        return false;
+    }
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
@@ -427,12 +431,12 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     {
                         if (game->case_is_selected)
                         {
+                            
                             if (is_active_player_blocked(game, board)) //blocage total
                             {
                                 //printf("Joueur %d bloqué\n", game->playing_player);
                                 //init_predictions(game);
-                                printf("active player blocked\n");
-
+                                
                                 if (game->playing_player==1){
                                     game->blocage=1;
                                 } else {
@@ -448,7 +452,6 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
 
                             } else if (pieces_are_blocked(game, board)) { //blocage partiel
 
-                                printf("pieces are blocked\n");
                                 player_change(game);
                                 if (game->playing_player==1){
                                     game->blocage=1;
@@ -464,7 +467,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
 
                             } 
                             
-                            if (game->blocage==0 && game->predictions[case_grid.x][case_grid.y] == 1)
+                            if (game->predictions[case_grid.x][case_grid.y] == 1)
                             {
                                 // Déplacer le pion sur la case
                                 capturing_piece(game, board, case_grid);

@@ -57,7 +57,7 @@ void init_game(game_t *game)
     game->case_is_selected = false;
     game->bird_is_selected = false;
     
-    game->last_case_value = 0;
+    game->last_case_value = -1;
 }
 
 /**

@@ -122,6 +122,20 @@ void draw_bird(ui_t *ui, board_t *board)
     }
 }
 
+void draw_playing_player(ui_t *ui, game_t *game)
+{
+    SDL_Rect player_rect = {0, 400, 100, 100};
+    if (game->playing_player == 1) // Joueur noir
+    {
+        SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
+    }
+    SDL_RenderFillRect(ui->renderer, &player_rect);
+}
+
 /**
  * @brief Rendu du plateau
  *
@@ -164,6 +178,7 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
 
     draw_bird(ui, board);
     draw_last_case(ui, board, game);
+    draw_playing_player(ui, game);
 
     return;
 }

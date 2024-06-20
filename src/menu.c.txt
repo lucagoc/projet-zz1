@@ -2,7 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
-#include "headers/sdl_common.h"
+
+#include "headers/struct.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720

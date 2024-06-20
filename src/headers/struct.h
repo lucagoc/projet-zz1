@@ -11,47 +11,58 @@ struct pos_s
 };
 typedef struct pos_s pos_t;
 
-// Liste de positions
 struct list_s
 {
-    pos_t pos;
-    struct list_s *next;
+    pos_t value;        // Valeur de la case
+    struct list_s *next;// Case suivante
 };
 typedef struct list_s list_t;
 
 struct ui_s
 {
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_Texture *textures[10];
-    int SCREEN_WIDTH;
-    int SCREEN_HEIGHT;
-    int BOARD_SIZE;
+    SDL_Renderer *renderer;     // Rendu SDL
+    SDL_Window *window;         // Fenêtre SDL
+    SDL_Event event;            // Évènement SDL
+    SDL_Texture *textures[10];  // Textures
+
+    int screen_w;           // Largeur de l'écran
+    int screen_h;          // Hauteur de l'écran
+    int board_size;             // Taille du plateau
+
+    pos_t* selected_case;       // Case sélectionnée
+    bool in_pause;               // Booléen pour la pause
+    bool program_on;            // Booléen pour le programme
 };
 typedef struct ui_s ui_t;
 
 struct board_s
 {
-    int board_case[6][6];
-    int board_piece[6][6];
-    int captured_pieces_black;
-    int captured_pieces_white;
-    pos_t *bird; // Position de l'oiseau
+    int cases[6][6];    // 1, 2 ou 3
+    int pieces[6][6];   // 0 si case vide, 1 si joueur 1, 2 si joueur 2, 3 si oiseau
+    pos_t *bird;        // Position de l'oiseau
+    pos_t *daimyo_1;    // Position du daimyo du joueur 1
+    pos_t *daimyo_2;    // Position du daimyo du joueur 2
 };
 typedef struct board_s board_t;
 
-struct game_s
+struct game_state_s
 {
-    SDL_Event event;
-    int playing_player;
-    int round;
-    bool inPause;
-    bool program_on;
-    pos_t* selected_case;
-    bool case_is_selected;
-    bool player_is_blocked;
-    int predictions[6][6];
-    int last_case_value;
-    bool bird_is_selected;
+    int player;             // Indique quel joueur doit jouer
+    int phase;              // Indique la phase de jeu (0 pion, 1 oiseau)
+    bool player_blocked;    // Indique si le joueur est bloqué
+    int round;              // Indique le tour actuel
+    int last_case;          // Indique la valeur de la dernière case jouée
+    board_t *board;          // Plateau de jeu
 };
-typedef struct game_s game_t;
+typedef struct game_state_s game_state_t;
+
+struct input_s
+{
+    pos_t *selected_case_1;  // Case sélectionnée
+    pos_t *selected_case_2;  // Case prédite
+    list_t *possible_moves;  // Liste des cases possibles
+    bool is_bird;            // Indique si l'oiseau est sélectionné
+};
+typedef struct input_s input_t;
+
+list_t* free_list(list_t *list);

@@ -1,8 +1,14 @@
 #define RULES_H
 
-void initialise_plateau(int board[6][6]);
-bool can_play(int player, int board[6][6], int OMx, int OMy, int pieces_position[6][6]);
-void initialise_pieces(int pieces_position[6][6], int king_black_position, int king_white_position);
-void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int step, int player);
-void bird_predictions_calculations(game_t *game, board_t *board);
+board_t* init_board(board_t *board);
+bool is_daimyo(pos_t position, board_t *board);
+bool is_pos_valid(pos_t position);
+bool is_pos_empty(pos_t position, board_t *board);
+int is_pos_occupied(pos_t position, board_t *board);
+bool is_move_valid_play(pos_t destination, board_t *board, input_t *input, int player);
+bool is_move_valid(pos_t origin, pos_t destination, board_t *board, int player);
+list_t* list_rhonin_possible_moves(pos_t position, board_t *board, int step, int player);
+list_t *list_bird_possible_moves(board_t *board);
+void move_piece(pos_t origin, pos_t destination, board_t *board);
 int who_wins(board_t *board);
+void game_logic(game_state_t *game_state, input_t *input);

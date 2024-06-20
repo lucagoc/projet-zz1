@@ -9,7 +9,7 @@
 #include "headers/rules.h"
 #include "headers/opponent.h"
 #include "headers/sdl_common.h"
-#include "headers/menu.h"
+//#include "headers/menu.h"
 
 /**
  * @file main.c
@@ -19,46 +19,61 @@
  * @author Team 21
  */
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-const int BOARD_SIZE = 600;
-
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+#define BOARD_SIZE 600
 #define GRID_SIZE 6
 
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
 
-
-void init_game(game_t *game)
+void init_game_state(game_state_t *game_state)
 {
-    game->playing_player = PLAYER_1;
-    game->inPause = false;
-    game->program_on = true;
-    game->player_is_blocked = false;
-    game->round = 0;
-    game->selected_case = malloc(sizeof(pos_t));
-    
-    for (int i = 0; i < GRID_SIZE; i++)
+    game_state->player = PLAYER_1;
+    game_state->round = 0;
+    game_state->last_case = 0;
+    game_state->player_blocked = false;
+    game_state->phase = 0;
+}
+
+void init_ui(ui_t *ui)
+{
+    ui->screen_w = SCREEN_WIDTH;
+    ui->screen_h = SCREEN_HEIGHT;
+    ui->board_size = BOARD_SIZE;
+    ui->selected_case = malloc(sizeof(pos_t));
+    if (ui->selected_case == NULL)
     {
-        for (int j = 0; j < GRID_SIZE; j++)
-        {
-            game->predictions[i][j] = 0;
-        }
-        
-    }
-    
-    if(game->selected_case == NULL){
         fprintf(stderr, "Erreur d'allocation de mémoire\n");
         exit(EXIT_FAILURE);
     }
+    
+    init_sdl(ui);
+    ui->in_pause = false;
+    ui->program_on = true;
+}
 
-    game->selected_case->x = -1;
-    game->selected_case->y = -1;
-    
-    game->case_is_selected = false;
-    game->bird_is_selected = false;
-    
-    game->last_case_value = 0;
+void init_input(input_t *input)
+{
+    input->selected_case_1 = malloc(sizeof(pos_t));
+    if(input->selected_case_1 == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+    input->selected_case_1->x = -1;
+    input->selected_case_1->y = -1;
+    input->selected_case_2 = malloc(sizeof(pos_t));
+    if(input->selected_case_2 == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+    input->selected_case_2->x = -1;
+    input->selected_case_2->y = -1;
+
+    input->possible_moves = NULL;
+    input->is_bird = false;
 }
 
 /**
@@ -74,76 +89,45 @@ int main(int argc, char const *argv[])
     (void)argv;
 
     // Allocation et initialisation des structures
-    board_t *board = malloc(sizeof(board_t));
     ui_t *ui = malloc(sizeof(ui_t));
-    game_t *game = malloc(sizeof(game_t));
+    init_ui(ui);
+    game_state_t *game_state = malloc(sizeof(game_state_t));
+    init_game_state(game_state);
     
-    ui->SCREEN_WIDTH = SCREEN_WIDTH;
-    ui->SCREEN_HEIGHT = SCREEN_HEIGHT;
-    ui->BOARD_SIZE = BOARD_SIZE;
-
-    init_sdl(ui);
-    init_game(game);
-    initialise_plateau(board->board_case);
-    board->bird = malloc(sizeof(pos_t));
-    if (board->bird == NULL)
+    game_state->board = malloc(sizeof(board_t));
+    if (game_state->board == NULL)
     {
         fprintf(stderr, "Erreur d'allocation de mémoire\n");
         exit(EXIT_FAILURE);
     }
     
-    board->bird->x = -1; // position de l'oiseau en dehors du plateau
-    board->bird->y = -1;
-    initialise_pieces(board->board_piece, 1, 1);
+    game_state->board = init_board(game_state->board);
 
-    /*
-    // Charger les ressources pour le menu pause
-    SDL_Texture *background_texture = NULL;
-    SDL_Texture *continue_text = NULL;
-    SDL_Texture *quit_text = NULL;
+    input_t *input = malloc(sizeof(input_t));
+    init_input(input);
 
-    if (!load_resources(ui->renderer, &background_texture, ui->window, &continue_text, &quit_text)) {
-        // Gestion de l'échec du chargement des ressources
-        SDL_Log("Échec du chargement des ressources");
-        free(game);
-        free(board);
-        unload_textures(ui->textures);
-        end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
-        free(ui);
-        return -1;
-    }
+    
 
-    // Définitions des rectangles des boutons pour le menu pause
-    int text_width, text_height;
-
-    SDL_QueryTexture(continue_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect continue_button_rect = {ui->SCREEN_WIDTH / 2 - 100 - 5, 250, 200, text_height + 20};
-
-    SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect quit_button_rect = {ui->SCREEN_WIDTH / 2 - 100, ui->SCREEN_HEIGHT - 200 - 10, 200, text_height + 20};
-     */
+    bool in_pause = false;
+    
     // Boucle principale
-    while (game->program_on) {
-        if (game->inPause) {
-            // Afficher le menu pause
-            /*draw_menu_pause(ui->renderer, background_texture, continue_text, quit_text);*/
-        } else {
-            // Afficher le plateau de jeu
-            get_input(ui, game, board);
-            draw(ui, board, game);
-            SDL_RenderPresent(ui->renderer);
+    while (ui->program_on)
+    {
+        get_input(ui, input);
+        if (!in_pause)
+        {
+            game_logic(game_state, input);
         }
+        else
+        {
+            //menu_logic(ui, input); // menu.c
+        }
+        draw(ui, game_state, input);
+        SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
     }
 
-    // Libération des ressources et nettoyage
-    /*
-    SDL_DestroyTexture(background_texture);
-    SDL_DestroyTexture(continue_text);
-    SDL_DestroyTexture(quit_text);*/
-
-    free(game);
-    free(board);
+    free(game_state); // Attention à bien free imbriqué dedans !
     unload_textures(ui->textures);
     end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
     free(ui);

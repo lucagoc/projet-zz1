@@ -2,9 +2,9 @@
 #include <stdbool.h>
 #include "headers/struct.h"
 
+#define BOARD_SIZE 6
 #define GRID_SIZE 6
 
-/* Rendu du fond */
 void draw_background(ui_t *ui)
 {
     SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255); // R G B A
@@ -23,11 +23,6 @@ void draw_case(ui_t *ui, int type, int x, int y)
     SDL_RenderCopy(ui->renderer, ui->textures[type + 4], NULL, &case_rect);
 }
 
-/* Rendu d'un rhonin ou daimio :
-    rhonin player_1 -> 1
-    rhonin player_2 -> 2
-    daimio player_1 -> 3
-    daimio player_2 -> 4 */
 void draw_piece(ui_t *ui, int player, int x, int y)
 {
     if (player != 0)
@@ -37,11 +32,18 @@ void draw_piece(ui_t *ui, int player, int x, int y)
     }
 }
 
-void draw_selected_case(ui_t *ui, board_t *board, game_t *game)
+void draw_selected_case(ui_t *ui, input_t *input)
 {
-    if (game->selected_case->x != -1 && game->selected_case->y != -1)
+    if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1)
     {
-        SDL_Rect selected_rect = {ui->SCREEN_WIDTH / 2 - 300 + game->selected_case->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + game->selected_case->y * 99 + 5, 95, 95};
+        SDL_Rect selected_rect = {ui->screen_w / 2 - 300 + input->selected_case_1->x * 99 + 5, ui->screen_h / 2 - 300 + input->selected_case_1->y * 99 + 5, 95, 95};
+        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(ui->renderer, &selected_rect);
+    }
+
+    if (input->selected_case_2->x != -1 && input->selected_case_2->y != -1)
+    {
+        SDL_Rect selected_rect = {ui->screen_w / 2 - 300 + input->selected_case_2->x * 99 + 5, ui->screen_h / 2 - 300 + input->selected_case_2->y * 99 + 5, 95, 95};
         SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
         SDL_RenderFillRect(ui->renderer, &selected_rect);
     }
@@ -55,10 +57,17 @@ void draw_selected_case(ui_t *ui, board_t *board, game_t *game)
  * @param x Coordonnée x de la prédiction
  * @param y Coordonnée y de la prédiction
  */
-void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
+void draw_possible_move(ui_t *ui, int x, int y, bool is_bird)
 {
-    SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
-    SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
+    SDL_Rect prediction_rect = {ui->screen_w / 2 - 300 + x * 99 + 5, ui->screen_h / 2 - 300 + y * 99 + 5, 95, 95};
+    if (is_bird)
+    {
+        SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
+    }
     SDL_RenderFillRect(ui->renderer, &prediction_rect);
 }
 
@@ -66,47 +75,24 @@ void draw_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
  * @brief Affiche toutes les cases possibles depuis le pion sélectionné
  *
  */
-void draw_all_predictions(ui_t *ui, board_t *board, game_t *game)
+void draw_all_possible_moves(ui_t *ui, list_t *list_moves, bool is_bird)
 {
-    for (int i = 0; i < GRID_SIZE; i++)
+    list_t *current = list_moves;
+    while (current != NULL)
     {
-        for (int j = 0; j < GRID_SIZE; j++)
-        {
-            if (game->predictions[i][j] == 1)
-            {
-                draw_prediction(ui, board, game, i, j);
-            }
-        }
+        draw_possible_move(ui, current->value.x, current->value.y, is_bird);
+        current = current->next;
     }
+
+    return;
 }
 
-void draw_bird_prediction(ui_t *ui, board_t *board, game_t *game, int x, int y)
+void draw_last_case(ui_t *ui, game_state_t *game_state)
 {
-    SDL_Rect prediction_rect = {ui->SCREEN_WIDTH / 2 - 300 + x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + y * 99 + 5, 95, 95};
-    SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 128);
-    SDL_RenderFillRect(ui->renderer, &prediction_rect);
-}
-
-void draw_all_bird_predictions(ui_t *ui, board_t *board, game_t *game)
-{
-    for (int i = 0; i < GRID_SIZE; i++)
-    {
-        for (int j = 0; j < GRID_SIZE; j++)
-        {
-            if (game->predictions[i][j] == 1)
-            {
-                draw_bird_prediction(ui, board, game, i, j);
-            }
-        }
-    }
-}
-
-void draw_last_case(ui_t *ui, board_t *board, game_t *game)
-{
-    if (game->last_case_value != 0)
+    if (game_state->last_case != 0)
     {
         SDL_Rect last_case_rect = {0, 500, 100, 100};
-        SDL_RenderCopy(ui->renderer, ui->textures[game->last_case_value + 4], NULL, &last_case_rect);
+        SDL_RenderCopy(ui->renderer, ui->textures[game_state->last_case + 4], NULL, &last_case_rect);
     }
 }
 
@@ -114,18 +100,18 @@ void draw_bird(ui_t *ui, board_t *board)
 {
     if (board->bird != NULL && board->bird->x != -1 && board->bird->y != -1)
     {
-        SDL_Rect white_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
-        SDL_Rect bird_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
+        SDL_Rect bird_rect = {ui->screen_w / 2 - 300 + board->bird->x * 99 + 5, ui->screen_h / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
+        SDL_Rect white_rect = {ui->screen_w / 2 - 300 + board->bird->x * 99 + 5, ui->screen_h / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
         SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
         SDL_RenderFillRect(ui->renderer, &white_rect);
         SDL_RenderCopy(ui->renderer, ui->textures[9], NULL, &bird_rect);
     }
 }
 
-void draw_playing_player(ui_t *ui, game_t *game)
+void draw_playing_player(ui_t *ui, game_state_t *game_state)
 {
     SDL_Rect player_rect = {0, 400, 100, 100};
-    if (game->playing_player == 1) // Joueur noir
+    if (game_state->player == 1) // Joueur noir
     {
         SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 255);
     }
@@ -146,39 +132,47 @@ void draw_playing_player(ui_t *ui, game_t *game)
  * @param x Coordonnée x du centre du plateau
  * @param y Coordonnée y du centre du plateau
  */
-void draw_board(ui_t *ui, board_t *board, game_t *game)
+void draw_board(ui_t *ui, board_t *board)
 {
-    int x = ui->SCREEN_WIDTH / 2;
-    int y = ui->SCREEN_HEIGHT / 2;
+    int x = ui->screen_w / 2;
+    int y = ui->screen_h / 2;
     SDL_Rect board_rect = {x - 300, y - 300, 600, 600};
     SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(ui->renderer, &board_rect);
 
     int x_case = x - 300;
     int y_case = y - 300;
-
+    
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
-            draw_case(ui, board->board_case[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
-            draw_piece(ui, board->board_piece[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
+            draw_case(ui, board->cases[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
+            if(board->pieces[i][j] == 1){
+                if(board->daimyo_1->x == i && board->daimyo_1->y == j)
+                {
+                    draw_piece(ui, 3, x_case + i * 99 + 5, y_case + j * 99 + 5);
+                }
+                else
+                {
+                    draw_piece(ui, 1, x_case + i * 99 + 5, y_case + j * 99 + 5);
+                }
+            }
+            else if(board->pieces[i][j] == 2){
+                if(board->daimyo_2->x == i && board->daimyo_2->y == j)
+                {
+                    draw_piece(ui, 4, x_case + i * 99 + 5, y_case + j * 99 + 5);
+                }
+                else
+                {
+                    draw_piece(ui, 2, x_case + i * 99 + 5, y_case + j * 99 + 5);
+                }
+            }
+            
         }
     }
 
-    if (game->case_is_selected)
-    {
-        draw_selected_case(ui, board, game);
-        draw_all_predictions(ui, board, game);
-    }
-    else if (game->bird_is_selected)
-    {
-        draw_all_bird_predictions(ui, board, game);
-    }
-
     draw_bird(ui, board);
-    draw_last_case(ui, board, game);
-    draw_playing_player(ui, game);
 
     return;
 }
@@ -196,21 +190,43 @@ void draw_logo(ui_t *ui)
     SDL_RenderCopy(ui->renderer, ui->textures[8], NULL, &logo_rect);
 }
 
-void draw_indicator(ui_t *ui, game_t *game)
+void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
 {
-    if (game->player_is_blocked)
+    if (game_state->player_blocked) // Indicateur de blocage
     {
         SDL_Rect indicator_rect = {0, 200, 100, 100};
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
         SDL_RenderFillRect(ui->renderer, &indicator_rect);
     }
+
+    if (game_state->player == 1) // Indicateur de joueur
+    {
+        SDL_Rect player_rect = {0, 300, 100, 100};
+        SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 255);
+        SDL_RenderFillRect(ui->renderer, &player_rect);
+    }
+    else
+    {
+        SDL_Rect player_rect = {0, 300, 100, 100};
+        SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(ui->renderer, &player_rect);
+    }
+    draw_last_case(ui, game_state);
+    
+    draw_selected_case(ui, input);
+    if (input->possible_moves != NULL)
+    {
+        draw_all_possible_moves(ui, input->possible_moves, input->is_bird);
+    }
+    
+    return;
 }
 
 /* Rendu globale */
-void draw(ui_t *ui, board_t *board, game_t *game)
+void draw(ui_t *ui, game_state_t *game_state, input_t *input)
 {
     draw_background(ui);
-    draw_board(ui, board, game);
-    draw_indicator(ui, game);
+    draw_board(ui, game_state->board);
+    draw_indicator(ui, game_state, input);
     draw_logo(ui);
 }

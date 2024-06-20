@@ -1,5 +1,6 @@
 #define RULES_H
 
+void init_game_state(game_state_t *game_state);
 board_t* init_board(board_t *board);
 bool is_daimyo(pos_t position, board_t *board);
 bool is_pos_valid(pos_t position);

@@ -13,6 +13,26 @@
  * @author Team 21
  */
 
+
+/**
+ * @brief Initialise l'état de la partie
+ * 
+ * @param game_state Etat de la partie
+ * @return void
+ */
+void init_game_state(game_state_t *game_state)
+{
+    game_state->player = 1;
+    game_state->round = 0;
+    game_state->last_case = 0;
+    game_state->player_blocked = false;
+    game_state->phase = 0;
+
+    game_state->captured_pieces[0] = 0; // Inutilisé
+    game_state->captured_pieces[1] = 0;
+    game_state->captured_pieces[2] = 0;
+}
+
 /**
  * @brief Initialise le plateau avec les cases 1 2 3 (noir en bas, blanc en haut)
  *

@@ -13,10 +13,9 @@
  * @author Team 21
  */
 
-
 /**
  * @brief Initialise l'état de la partie
- * 
+ *
  * @param game_state Etat de la partie
  * @return void
  */
@@ -111,31 +110,68 @@ board_t *init_board(board_t *board)
     return board;
 }
 
-// Retourne si la pièce à l'emplacement est un daymio
+/*
+ * @brief Vérifie si la position donnée en entrée est un daimyo
+ *
+ * @param position Position à vérifier
+ * @param board Plateau de jeu
+ * @return true Si la position est un daimyo
+ * @return false Si la position n'est pas un daimyo
+ */
 bool is_daimyo(pos_t position, board_t *board)
 {
     return (board->daimyo_1->x == position.x && board->daimyo_1->y == position.y) || (board->daimyo_2->x == position.x && board->daimyo_2->y == position.y);
 }
 
-// Retourne si la position donné en entrée est valide
+/*
+ * @brief Vérifie si la position donnée en entrée est valide
+ *
+ * @param position Position à vérifier
+ * @return true Si la position est valide
+ * @return false Si la position n'est pas valide
+ */
 bool is_pos_valid(pos_t position)
 {
     return position.x >= 0 && position.y >= 0 && position.x < GRID_SIZE && position.y < GRID_SIZE;
 }
 
+/*
+ * @brief Vérifie si la position donnée en entrée est vide
+ *
+ * @param position Position à vérifier
+ * @param board Plateau de jeu
+ * @return true Si la position est vide
+ * @return false Si la position n'est pas vide
+ */
 bool is_pos_empty(pos_t position, board_t *board)
 {
     return board->pieces[position.x][position.y] == 0;
 }
 
-// Retourne si la position donné en entrée est occupée par le joueur
+/*
+ * @brief Vérifie si la position donnée en entrée est occupée
+ *
+ * @param position Position à vérifier
+ * @param board Plateau de jeu
+ * @return int 0 Si la position est vide
+ * @return int 1 Si la position est occupée par le joueur 1
+ * @return int 2 Si la position est occupée par le joueur 2
+ */
 int is_pos_occupied(pos_t position, board_t *board)
 {
     return board->pieces[position.x][position.y];
 }
 
-// Retourne si la pièce à la position origin peut se déplacer à la position destination
-// Un joueur peut manger l'autre joueur, quelque soit la distance
+/*
+ * @brief Vérifie si un mouvement est valide pour un joueur donné
+ *
+ * @param origin Position de départ
+ * @param destination Position d'arrivée
+ * @param board Plateau de jeu
+ * @param player Joueur
+ * @return true Si le mouvement est valide
+ * @return false Si le mouvement n'est pas valide
+ */
 bool is_move_valid(pos_t origin, pos_t destination, board_t *board, int player)
 {
     if (board->bird->x == destination.x && board->bird->y == destination.y)
@@ -163,7 +199,16 @@ bool is_move_valid(pos_t origin, pos_t destination, board_t *board, int player)
     }
 }
 
-// Fonction pour savoir si un mouvement est valide pour un rhonin dans un tour de jeu
+/*
+ * @brief Vérifie si un mouvement est valide pour un joueur donné
+ *
+ * @param destination Position d'arrivée
+ * @param board Plateau de jeu
+ * @param input Entrée utilisateur
+ * @param player Joueur
+ * @return true Si le mouvement est valide
+ * @return false Si le mouvement n'est pas valide
+ */
 bool is_move_valid_play(pos_t destination, board_t *board, input_t *input, int player)
 {
     if (!is_pos_valid(destination) || is_pos_occupied(destination, board) == player)
@@ -186,6 +231,13 @@ bool is_move_valid_play(pos_t destination, board_t *board, input_t *input, int p
     }
 }
 
+/*
+ * @brief Concatène deux listes
+ *
+ * @param list1 Première liste
+ * @param list2 Deuxième liste
+ * @return list_t* Liste concaténée
+ */
 list_t *concat_list(list_t *list1, list_t *list2)
 {
     if (list2 == NULL)
@@ -205,8 +257,17 @@ list_t *concat_list(list_t *list1, list_t *list2)
     return list2;
 }
 
-// Fonction qui construit un tableau avec des 0 là ou n'est pas encore passé le rhonin, et 1 là ou il est déjà passé
-// Renvoie la liste des mouvements possibles
+/*
+ * @brief Liste des mouvements possibles pour un rhonin (fonction auxiliaire)
+ *
+ * @param position Position actuelle
+ * @param board Plateau de jeu
+ * @param step Nombre de cases à parcourir
+ * @param player Joueur
+ * @param previous_tab Tableau des cases déjà visitées
+ * @return list_t* Liste des mouvements possibles
+ * @return NULL Si aucun mouvement possible ou si la case est déjà visitée
+ */
 list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step, int player, int **previous_tab)
 {
     if (is_pos_valid(position) && previous_tab[position.x][position.y] == 0 && (position.x != board->bird->x || position.y != board->bird->y) && is_pos_occupied(position, board) != player)
@@ -256,9 +317,15 @@ list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step,
     }
 }
 
-// Retourne la liste des mouvements possibles pour une pièce à une position donnée
-// Un joueur doit obligatoirement se déplacer du nombre de case correspondant à step (1 à 3), quelque soit la direction
-// Si il y a des joueurs sur le passage, il ne peut pas se déplacer plus loin
+/*
+ * @brief Liste des mouvements possibles pour un rhonin
+ *
+ * @param position Position actuelle
+ * @param board Plateau de jeu
+ * @param step Nombre de cases à parcourir
+ * @param player Joueur
+ * @return list_t* Liste des mouvements possibles
+ */
 list_t *list_rhonin_possible_moves(pos_t position, board_t *board, int step, int player)
 {
     int **previous_moves = malloc(GRID_SIZE * sizeof(int *));
@@ -285,6 +352,12 @@ list_t *list_rhonin_possible_moves(pos_t position, board_t *board, int step, int
     return res;
 }
 
+/*
+ * @brief Liste des mouvements possibles pour un oiseau
+ *
+ * @param board Plateau de jeu
+ * @return list_t* Liste des mouvements possibles
+ */
 list_t *list_bird_possible_moves(board_t *board)
 {
     list_t *possible_moves_list = NULL;
@@ -306,7 +379,14 @@ list_t *list_bird_possible_moves(board_t *board)
     return possible_moves_list;
 }
 
-// Déplace une pièce à l'emplacement choisie en actualisant les donnée de game
+/*
+ * @brief Déplace une pièce d'une position à une autre
+ *
+ * @param origin Position de départ
+ * @param destination Position d'arrivée
+ * @param game_state Etat de la partie
+ * @return void
+ */
 void move_piece(pos_t origin, pos_t destination, game_state_t *game_state)
 {
     // Si c'est un daimyo, il faut déplacer ses coordonnée aussi
@@ -327,7 +407,14 @@ void move_piece(pos_t origin, pos_t destination, game_state_t *game_state)
     game_state->board->pieces[origin.x][origin.y] = 0;
 }
 
-// Si la position du daimyo ne correspond plus à une position valide, le joueur a perdu
+/*
+ * @brief Détermine le gagnant de la partie
+ *
+ * @param board Plateau de jeu
+ * @return int 0 Si personne n'a gagné
+ * @return int 1 Si le joueur 1 a gagné
+ * @return int 2 Si le joueur 2 a gagné
+ */
 int who_wins(board_t *board)
 {
     if (board->pieces[board->daimyo_1->x][board->daimyo_1->y] != 1)
@@ -341,7 +428,13 @@ int who_wins(board_t *board)
     return 0;
 }
 
-// Fonction qui filtre les cases qui ont la valeur case_value donnée (supprime les autres)
+/*
+ * @brief Filtrer une liste de cases en fonction de leur valeur
+ *
+ * @param list Liste à filtrer
+ * @param case_value Valeur de la case à garder
+ * @param board Plateau de jeu
+ */
 list_t *filter_case_list(list_t *list, int case_value, board_t *board)
 {
     list_t *current = list;
@@ -373,6 +466,14 @@ list_t *filter_case_list(list_t *list, int case_value, board_t *board)
     return list;
 }
 
+/*
+ * @brief Vérifie si un joueur est bloqué
+ *
+ * @param game_state Etat de la partie
+ * @param player Joueur
+ * @return true Si le joueur est bloqué
+ * @return false Si le joueur n'est pas bloqué
+ */
 bool is_player_blocked(game_state_t *game_state, int player)
 {
     for (int i = 0; i < BOARD_SIZE; i++)
@@ -392,6 +493,13 @@ bool is_player_blocked(game_state_t *game_state, int player)
     return true;
 }
 
+/*
+ * @brief Logique du jeu
+ *
+ * @param game_state Etat de la partie
+ * @param input Entrée utilisateur
+ * @return void
+ */
 void game_logic(game_state_t *game_state, input_t *input)
 {
     int winner = who_wins(game_state->board);

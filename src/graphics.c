@@ -101,11 +101,23 @@ void draw_all_bird_predictions(ui_t *ui, board_t *board, game_t *game)
     }
 }
 
+void draw_last_case(ui_t *ui, board_t *board, game_t *game)
+{
+    if (game->last_case_value != 0)
+    {
+        SDL_Rect last_case_rect = {0, 500, 100, 100};
+        SDL_RenderCopy(ui->renderer, ui->textures[game->last_case_value + 4], NULL, &last_case_rect);
+    }
+}
+
 void draw_bird(ui_t *ui, board_t *board)
 {
     if (board->bird != NULL && board->bird->x != -1 && board->bird->y != -1)
     {
+        SDL_Rect white_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
         SDL_Rect bird_rect = {ui->SCREEN_WIDTH / 2 - 300 + board->bird->x * 99 + 5, ui->SCREEN_HEIGHT / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
+        SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(ui->renderer, &white_rect);
         SDL_RenderCopy(ui->renderer, ui->textures[9], NULL, &bird_rect);
     }
 }
@@ -151,6 +163,7 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
     }
 
     draw_bird(ui, board);
+    draw_last_case(ui, board, game);
 
     return;
 }
@@ -170,7 +183,8 @@ void draw_logo(ui_t *ui)
 
 void draw_indicator(ui_t *ui, game_t *game)
 {
-    if(game->player_is_blocked){
+    if (game->player_is_blocked)
+    {
         SDL_Rect indicator_rect = {0, 200, 100, 100};
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
         SDL_RenderFillRect(ui->renderer, &indicator_rect);

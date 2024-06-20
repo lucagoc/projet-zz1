@@ -34,6 +34,8 @@ struct board_s
 {
     int board_case[6][6];
     int board_piece[6][6];
+    int captured_white_pieces;
+    int captured_black_pieces;
     pos_t *bird; // Position de l'oiseau
 };
 typedef struct board_s board_t;

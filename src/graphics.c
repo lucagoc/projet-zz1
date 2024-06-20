@@ -142,6 +142,22 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
         }
     }
 
+    int captured_black = board->captured_black_pieces;
+    int captured_white = board->captured_white_pieces;
+
+    while (captured_black > 0)
+    {
+        draw_piece(ui, 1, 150 , captured_black*100+100);
+        captured_black--;
+    }
+
+    while (captured_white > 0)
+    {
+        draw_piece(ui, 2, ui->SCREEN_WIDTH-150 , captured_white*100+100);
+        captured_white--;
+
+    }
+
     if (game->case_is_selected)
     {
         draw_selected_case(ui, board, game);

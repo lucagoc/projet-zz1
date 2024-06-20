@@ -261,7 +261,7 @@ void init_predictions(game_t *game)
 // Vérifie si une pièce est bloquée
 bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
 {
-    // Si la pièce n'est pas sur la dernière case sélectionnée. 
+    // Si la pièce n'est pas sur la dernière case sélectionnée.
     if (board->board_case[i][j] != game->last_case_value)
     {
         return true;
@@ -307,6 +307,24 @@ bool is_active_player_blocked(game_t *game, board_t *board)
     return true;
 }
 
+void capturing_piece(game_t *game, board_t *board, pos_t destination)
+{
+    if (game->playing_player == 1)
+    { // joueur noir
+        if (board->board_piece[destination.x][destination.y] == 2)
+        { // on va sur un ronin blanc
+            board->captured_white_pieces += 1;
+        }
+    }
+    else
+    { // joueur blanc
+        if (board->board_piece[destination.x][destination.y] == 1)
+        { // on va sur un ronin noir
+            board->captured_black_pieces += 1;
+        }
+    }
+}
+
 /*
  * @brief Fonction pour récupérer les événements
  *
@@ -317,10 +335,11 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
     /* Gestion des événements */
     while (SDL_PollEvent(&game->event))
     {
-        if(game->playing_player == -1){
+        if (game->playing_player == -1)
+        {
             fprintf(stderr, "WARNING : playing_player = -1\n");
         }
-        
+
         switch (game->event.type)
         {
         case SDL_QUIT:
@@ -348,6 +367,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                             if (game->predictions[case_grid.x][case_grid.y] == 1)
                             {
                                 // Déplacer le pion sur la case
+                                capturing_piece(game, board, case_grid);
                                 move_piece_to(board, *game->selected_case, case_grid);
                                 game->last_case_value = board->board_case[case_grid.x][case_grid.y];
                                 fprintf(stderr, "LAST CASE VALUE %d\n", game->last_case_value);
@@ -359,7 +379,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                                 game->bird_is_selected = true;
                                 init_predictions(game);
                                 bird_predictions_calculations(game, board);
-                                //game->predictions[board->bird->x][board->bird->y] = -1; WTF
+                                // game->predictions[board->bird->x][board->bird->y] = -1; WTF
                             }
                             else
                             {

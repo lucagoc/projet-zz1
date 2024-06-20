@@ -88,6 +88,8 @@ int main(int argc, char const *argv[])
     board->bird->x = -1; // position de l'oiseau en dehors du plateau
     board->bird->y = -1;
     initialise_pieces(board->board_piece, 1, 1);
+    board->captured_black_pieces=0;
+    board->captured_white_pieces=0;
 
     /*
     // Charger les ressources pour le menu pause

@@ -467,7 +467,34 @@ list_t *filter_case_list(list_t *list, int case_value, board_t *board)
 }
 
 /*
- * @brief Vérifie si un joueur est bloqué
+ * @brief Vérifie si un joueur est bloqué totalement
+ *
+ * @param game_state Etat de la partie
+ * @param player Joueur
+ * @return true Si le joueur est bloqué
+ * @return false Si le joueur n'est pas bloqué
+ */
+bool is_player_partially_blocked(game_state_t *game_state, int player)
+{
+    for (int i = 0; i < BOARD_SIZE; i++)
+    {
+        for (int j = 0; j < BOARD_SIZE; j++)
+        {
+            if (game_state->board->pieces[i][j] == player && game_state->board->cases[i][j] == game_state->last_case)
+            {
+                list_t *possible_moves = list_rhonin_possible_moves((pos_t){i, j}, game_state->board, game_state->board->cases[i][j], player);
+                if (possible_moves != NULL)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/*
+ * @brief Vérifie si un joueur est bloqué totalement
  *
  * @param game_state Etat de la partie
  * @param player Joueur
@@ -482,11 +509,7 @@ bool is_player_blocked(game_state_t *game_state, int player)
         {
             if (game_state->board->pieces[i][j] == player && game_state->board->cases[i][j] == game_state->last_case)
             {
-                list_t *possible_moves = list_rhonin_possible_moves((pos_t){i, j}, game_state->board, game_state->board->cases[i][j], player);
-                if (possible_moves != NULL)
-                {
-                    return false;
-                }
+                return false;
             }
         }
     }
@@ -616,14 +639,22 @@ void game_logic(game_state_t *game_state, input_t *input)
                     input->possible_moves = free_list(input->possible_moves);
                     game_state->round++;
 
-                    if (is_player_blocked(game_state, game_state->player))
+                    bool player_1_blocked = is_player_blocked(game_state, 1);
+
+                    if (is_player_partially_blocked(game_state, game_state->player) && !player_1_blocked)
                     {
+                        // Changement de joueur
+                        fprintf(stderr, "Joueur %d bloqué partiellement, changement de joueur\n", game_state->player);
+                        game_state->player = game_state->player == 1 ? 2 : 1;
                         game_state->player_blocked = true;
-                        fprintf(stderr, "Joueur %d bloqué\n", game_state->player);
                     }
                     else
-                    {
-                        game_state->player_blocked = false;
+                    {   
+                        if(player_1_blocked)
+                        {
+                            game_state->player_blocked = true;
+                            fprintf(stderr, "Joueur %d bloqué totalement\n", game_state->player);
+                        }
                     }
                 }
                 else

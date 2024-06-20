@@ -1,4 +1,0 @@
-- Fonction qui renvoie la liste des coups possibles depuis une case donnée.
-- Fonction qui renvoie la liste où l'oiseau peut se déplacer.
-- Fonction qui affiche à l'aide d'un rectangle rouge les cases où le pion peut se déplacer.
-- Fonction qui déplace le pion à la case donnée. move_piece(from, to)

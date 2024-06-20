@@ -4,7 +4,9 @@
 
 #include "headers/struct.h"
 #include "headers/rules.h"
+
 #define GRID_SIZE 6
+
 
 /**
  * @file sdl_common.c

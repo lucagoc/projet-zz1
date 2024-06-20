@@ -342,6 +342,12 @@ bool can_play(int player, int possible_move, int number_moves, int position_piec
     }
 }
 
+bool valid_bird_placement(int xinit, int yinit, int birdX, int birdY, int pieces_position[GRID_SIZE][GRID_SIZE], int board[GRID_SIZE][GRID_SIZE]){
+    
+    return ((pieces_position[birdX][birdY]==0 || pieces_position[birdX][birdY]==5) && (board[birdX][birdY]==board[xinit][yinit])){
+
+}
+
 /* Vérifie si le joueur peut encore jouer */
 
 int number_moves_to_play(int board[6][6], int xinit, int yinit)
@@ -447,7 +453,7 @@ bool respawn_piece(int player, int captured_white_piece, int captured_black_piec
 
     return respawn_possible;
 }
-
+  
 bool is_movement_valid(game_t *game, board_t *board, pos_t destination)
 {   
     int player = game->playing_player;

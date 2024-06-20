@@ -112,6 +112,15 @@ void draw_bird(ui_t *ui, board_t *board)
     }
 }
 
+void draw_blocage(game_t * game){
+    if (game->blocage==1){
+        printf("joueur noir bloqué \n");
+    } else {
+        printf("joueur blanc bloqué \n");
+
+    }
+}
+
 /**
  * @brief Rendu du plateau
  *
@@ -156,6 +165,10 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
         draw_piece(ui, 2, ui->SCREEN_WIDTH-150 , captured_white*100+100);
         captured_white--;
 
+    }
+
+    if (game->blocage !=0){
+        draw_blocage(game);
     }
 
     if (game->case_is_selected)

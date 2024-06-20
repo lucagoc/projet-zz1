@@ -5,6 +5,11 @@
 #define BOARD_SIZE 6
 #define GRID_SIZE 6
 
+/**
+ * @brief Dessine le fond de l'écran
+ *
+ * @param ui Interface utilisateur
+ */
 void draw_background(ui_t *ui)
 {
     SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255); // R G B A
@@ -12,17 +17,28 @@ void draw_background(ui_t *ui)
     return;
 }
 
-/* Rendu d'une case :
-    type = 1
-    type = 2
-    type = 3 */
-// x et y sont les coordonnées du haut à gauche de la case
+/**
+ * @brief Affiche une case
+ *
+ * @param ui Interface utilisateur
+ * @param type Type de la case
+ * @param x Coordonnée x de la case
+ * @param y Coordonnée y de la case
+ */
 void draw_case(ui_t *ui, int type, int x, int y)
 {
     SDL_Rect case_rect = {x, y, 95, 95};
     SDL_RenderCopy(ui->renderer, ui->textures[type + 4], NULL, &case_rect);
 }
 
+/**
+ * @brief Affiche une pièce
+ *
+ * @param ui Interface utilisateur
+ * @param player Joueur
+ * @param x Coordonnée x de la pièce
+ * @param y Coordonnée y de la pièce
+ */
 void draw_piece(ui_t *ui, int player, int x, int y)
 {
     if (player != 0)
@@ -32,6 +48,12 @@ void draw_piece(ui_t *ui, int player, int x, int y)
     }
 }
 
+/**
+ * @brief Affiche la case sélectionnée
+ *
+ * @param ui Interface utilisateur
+ * @param input Entrée utilisateur
+ */
 void draw_selected_case(ui_t *ui, input_t *input)
 {
     if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1)
@@ -72,8 +94,11 @@ void draw_possible_move(ui_t *ui, int x, int y, bool is_bird)
 }
 
 /**
- * @brief Affiche toutes les cases possibles depuis le pion sélectionné
+ * @brief Affiche toutes les cases possibles
  *
+ * @param ui Interface utilisateur
+ * @param list_moves Liste des cases possibles
+ * @param is_bird Indique si l'oiseau est en jeu
  */
 void draw_all_possible_moves(ui_t *ui, list_t *list_moves, bool is_bird)
 {
@@ -87,6 +112,12 @@ void draw_all_possible_moves(ui_t *ui, list_t *list_moves, bool is_bird)
     return;
 }
 
+/**
+ * @brief Affiche la dernière case jouée
+ *
+ * @param ui Interface utilisateur
+ * @param game_state Etat du jeu
+ */
 void draw_last_case(ui_t *ui, game_state_t *game_state)
 {
     if (game_state->last_case != 0)
@@ -96,6 +127,12 @@ void draw_last_case(ui_t *ui, game_state_t *game_state)
     }
 }
 
+/**
+ * @brief Affiche l'oiseau
+ *
+ * @param ui Interface utilisateur
+ * @param board Plateau de jeu
+ */
 void draw_bird(ui_t *ui, board_t *board)
 {
     if (board->bird != NULL && board->bird->x != -1 && board->bird->y != -1)
@@ -108,6 +145,12 @@ void draw_bird(ui_t *ui, board_t *board)
     }
 }
 
+/**
+ * @brief Affiche le joueur qui doit jouer
+ *
+ * @param ui Interface utilisateur
+ * @param game_state Etat du jeu
+ */
 void draw_playing_player(ui_t *ui, game_state_t *game_state)
 {
     SDL_Rect player_rect = {0, 400, 100, 100};
@@ -178,19 +221,24 @@ void draw_board(ui_t *ui, board_t *board)
     return;
 }
 
-/* Rendu du menu */
-void draw_menu()
-{
-
-    return;
-}
-
+/**
+ * @brief Rendu du logo
+ *
+ * @param ui Interface utilisateur
+ */
 void draw_logo(ui_t *ui)
 {
     SDL_Rect logo_rect = {10, 10, 250, 100};
     SDL_RenderCopy(ui->renderer, ui->textures[8], NULL, &logo_rect);
 }
 
+/**
+ * @brief Rendu de l'indicateur de joueur
+ *
+ * @param ui Interface utilisateur
+ * @param game_state Etat du jeu
+ * @param input Entrée utilisateur
+ */
 void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
 {
     if (game_state->player_blocked) // Indicateur de blocage
@@ -223,7 +271,11 @@ void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
     return;
 }
 
-/*rendu du menu pause*/
+/**
+ * @brief Dessine le menu de pause
+ *
+ * @param ui Interface utilisateur
+ */
 void draw_menu_pause(ui_t *ui) {
     int text_width, text_height;
 
@@ -257,7 +309,13 @@ void draw_menu_pause(ui_t *ui) {
 
 }
 
-/* Rendu globale */
+/**
+ * @brief Rendu de l'interface utilisateur
+ *
+ * @param ui Interface utilisateur
+ * @param game_state Etat du jeu
+ * @param input Entrée utilisateur
+ */
 void draw(ui_t *ui, game_state_t *game_state, input_t *input)
 {
     if(ui->in_pause)

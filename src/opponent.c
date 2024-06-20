@@ -5,73 +5,150 @@
 #include "headers/struct.h"
 #include "headers/rules.h"
 
-// Principalement là où sera utilisé min-max pour calculer le prochain coup.
 
 #define GRID_SIZE 6
 
-/**
- * @brief Copie un plateau
- *
- * @param board Plateau à copier
- * @return int* Plateau copié
- */
-int **copy_board(int board[GRID_SIZE][GRID_SIZE])
+// Fonction d'évaluation ultra naïve basé sur le nombre de pièces de chaque joueur
+int evaluate(game_state_t *game_state)
 {
-    int **new_board = malloc(6 * sizeof(int *));
-    for (int i = 0; i < 6; i++)
+    int score = 0;
+    int i, j;
+    for (i = 0; i < GRID_SIZE; i++)
     {
-        new_board[i] = malloc(6 * sizeof(int));
-    }
-
-    for (int i = 0; i < 6; i++)
-    {
-        for (int j = 0; j < 6; j++)
+        for (j = 0; j < GRID_SIZE; j++)
         {
-            new_board[i][j] = board[i][j];
+            if (game_state->board->pieces[i][j] == 1)
+            {
+                score += 1;
+            }
+            else if (game_state->board->pieces[i][j] == 2)
+            {
+                score -= 1;
+            }
         }
     }
-    return new_board;
+    return score;
 }
 
-/**
- * @brief Évalue un plateau
- *
- * @param board Plateau à évaluer
- * @param player Joueur pour lequel évaluer le plateau
- * @return int Valeur du plateau
- */
-int evaluate(board_t *board, int player)
+// Fonction qui liste toute les cases jouables pour le joueur donné
+// Retourne une liste de cases jouables
+l_path_t *playable_cases(game_state_t *game_state, int player)
 {
-    return 0;
-}
-
-/**
- * @brief Min-Max
- *
- * @param board Plateau
- * @param depth Profondeur
- * @param player Joueur
- * @param maximizingPlayer Joueur maximisant
- * @return int Valeur du plateau
- */
-int min_max(board_t *board, int depth, int player, bool maximizingPlayer)
-{
-    /**
-     * Itération de l'algo
-     * - Si la profondeur est égale à 0 ou on ne peut plus jouer, on évalue le plateau (Cas de base)
-     * - Si on est le joueur maximisant, on cherche le maximum des valeurs des enfants
-     * - Sinon, on cherche le minimum des valeurs des enfants
-     * - On retourne la valeur du plateau
-     */
-    if (depth == 0 /*|| !can_play(player, board)*/)
+    l_path_t *res = NULL;
+    int i, j;
+    for (i = 0; i < GRID_SIZE; i++)
     {
-        return evaluate(board, player);
+        for (j = 0; j < GRID_SIZE; j++)
+        {
+            if (game_state->board->pieces[i][j] == player && game_state->board->cases[i][j] == game_state->last_case)
+            {
+                // Ajouter un élément à la liste
+                l_path_t *nouveau = malloc(sizeof(l_path_t));
+                if (nouveau == NULL)
+                {
+                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Ajouter la position
+                pos_t *pos = malloc(sizeof(pos_t));
+                if (pos == NULL)
+                {
+                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
+                    exit(EXIT_FAILURE);
+                }
+                pos->x = i;
+                pos->y = j;
+                nouveau->pos = pos;
+
+                // Ajouter les possibilités
+                list_t *possibilities = NULL;
+                possibilities = list_rhonin_possible_moves((pos_t){i, j}, game_state->board, game_state->board->cases[i][j], player);
+                nouveau->possibilities = possibilities;
+
+                // Ajouter à la liste
+                nouveau->next = res;
+            }
+        }
+    }
+
+    return res;
+}
+
+board_t *copy_board(board_t *board)
+{
+    board_t *copy = malloc(sizeof(board_t));
+    if (copy == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+    int i, j;
+    for (i = 0; i < GRID_SIZE; i++)
+    {
+        for (j = 0; j < GRID_SIZE; j++)
+        {
+            copy->cases[i][j] = board->cases[i][j];
+            copy->pieces[i][j] = board->pieces[i][j];
+        }
+    }
+    return copy;
+}
+
+game_state_t *copy_game_state(game_state_t *game_state)
+{
+    game_state_t *copy = malloc(sizeof(game_state_t));
+    if (copy == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+    copy->player = game_state->player;
+    copy->round = game_state->round;
+    copy->last_case = game_state->last_case;
+    copy->player_blocked = game_state->player_blocked;
+    copy->phase = game_state->phase;
+    copy->captured_pieces[0] = game_state->captured_pieces[0];
+    copy->captured_pieces[1] = game_state->captured_pieces[1];
+    copy->captured_pieces[2] = game_state->captured_pieces[2];
+    copy->board = copy_board(game_state->board);
+    return copy;
+}
+
+/*
+int min_max(game_state_t *game_state, int depth, bool is_max)
+{
+    int score = evaluate(game_state);
+    if (depth == 0)
+    {
+        return score;
+    }
+    if (is_max)
+    {
+        int best = -1000;
+        
+        
+        l_path_t *cases = playable_cases(game_state, 1);
+        l_path_t *current = cases;
+        while (current != NULL)
+        {
+            list_t *possibilities = current->possibilities;
+            list_t *current_possibility = possibilities;
+            while (current_possibility != NULL)
+            {
+                // Faire une copie de la possibilité
+                // game_state_t *new_game_state = copy_game_state(game_state);
+                
+
+            }
+            current = current->next;
+        }
+
     }
     else
     {
-        if (maximizingPlayer)
-        {
-            // TODO
-        }
+        int best = 1000;
+        // TODO
+        return best;
     }
-}
+} */

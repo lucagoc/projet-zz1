@@ -217,7 +217,7 @@ void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
     draw_selected_case(ui, input);
     if (input->possible_moves != NULL)
     {
-        draw_all_possible_moves(ui, input->possible_moves, input->is_bird);
+        draw_all_possible_moves(ui, input->possible_moves, game_state->phase);
     }
     
     return;

@@ -232,7 +232,6 @@ void init_input(input_t *input)
     input->selected_case_2->y = -1;
 
     input->possible_moves = NULL;
-    input->is_bird = false;
 }
 
 pos_t cord2grid(ui_t *ui, int x, int y)
@@ -317,33 +316,6 @@ void get_input(ui_t *ui, input_t *input)
         }
     }
 }
-
-/*
-    // Charger les ressources pour le menu pause
-    SDL_Texture *background_texture = NULL;
-    SDL_Texture *continue_text = NULL;
-    SDL_Texture *quit_text = NULL;
-
-    if (!load_resources(ui->renderer, &background_texture, ui->window, &continue_text, &quit_text)) {
-        // Gestion de l'échec du chargement des ressources
-        SDL_Log("Échec du chargement des ressources");
-        free(game);
-        free(board);
-        unload_textures(ui->textures);
-        end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
-        free(ui);
-        return -1;
-    }
-
-    // Définitions des rectangles des boutons pour le menu pause
-    int text_width, text_height;
-
-    SDL_QueryTexture(continue_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect continue_button_rect = {ui->SCREEN_WIDTH / 2 - 100 - 5, 250, 200, text_height + 20};
-
-    SDL_QueryTexture(quit_text, NULL, NULL, &text_width, &text_height);
-    SDL_Rect quit_button_rect = {ui->SCREEN_WIDTH / 2 - 100, ui->SCREEN_HEIGHT - 200 - 10, 200, text_height + 20};
-     */
 
 // Libération des ressources et nettoyage
 /*

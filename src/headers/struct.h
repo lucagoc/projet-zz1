@@ -64,7 +64,6 @@ struct input_s
     pos_t *selected_case_1;  // Case sélectionnée
     pos_t *selected_case_2;  // Case prédite
     list_t *possible_moves;  // Liste des cases possibles
-    bool is_bird;            // Indique si l'oiseau est sélectionné
 };
 typedef struct input_s input_t;
 

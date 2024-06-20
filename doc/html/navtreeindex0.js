@@ -1,0 +1,26 @@
+var NAVTREEINDEX0 =
+{
+"annotated.html":[0,0],
+"classes.html":[0,1],
+"d0/d29/main_8c.html":[1,0,0,1],
+"d0/d29/main_8c.html#abf9e6b7e6f15df4b525a2e7705ba3089":[1,0,0,1,2],
+"d3/d2c/sdl__common_8h_source.html":[1,0,0,0,4],
+"d4/d8a/animations_8h_source.html":[1,0,0,0,0],
+"d5/d99/structgame__s.html":[0,0,0],
+"d7/d04/graphics_8h_source.html":[1,0,0,0,1],
+"d9/d3e/rules_8h_source.html":[1,0,0,0,3],
+"d9/d42/opponent_8h_source.html":[1,0,0,0,2],
+"da/dc5/structui__s.html":[0,0,1],
+"dc/d3a/sdl__common_8c.html":[1,0,0,2],
+"dc/d3a/sdl__common_8c.html#a11050ac10bc55a12e3577922f2455027":[1,0,0,2,0],
+"dc/d3a/sdl__common_8c.html#a2ba12373407e852660a8ff1d311c21e8":[1,0,0,2,3],
+"dc/d3a/sdl__common_8c.html#aa3ee31d1cef7b16afc21b83f37cd4e23":[1,0,0,2,2],
+"dc/d3a/sdl__common_8c.html#ac0561f3c85b9263d3a172717303fd79a":[1,0,0,2,1],
+"dir_68267d1309a1af8e8297ef4c3efbcdba.html":[1,0,0],
+"dir_d0381950fc41278198232cb047ffc1f9.html":[1,0,0,0],
+"files.html":[1,0],
+"globals.html":[1,1,0],
+"globals_func.html":[1,1,1],
+"index.html":[],
+"pages.html":[]
+};

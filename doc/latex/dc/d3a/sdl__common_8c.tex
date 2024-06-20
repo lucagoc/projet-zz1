@@ -1,0 +1,118 @@
+\hypertarget{sdl__common_8c}{}\doxysection{Référence du fichier src/sdl\+\_\+common.c}
+\label{sdl__common_8c}\index{src/sdl\_common.c@{src/sdl\_common.c}}
+
+
+Fonctions communes à l\textquotesingle{}initialisation de la SDL.  
+
+
+{\ttfamily \#include $<$SDL2/\+SDL.\+h$>$}\newline
+{\ttfamily \#include $<$SDL2/\+SDL\+\_\+image.\+h$>$}\newline
+{\ttfamily \#include $<$SDL2/\+SDL\+\_\+ttf.\+h$>$}\newline
+\doxysubsection*{Fonctions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{sdl__common_8c_a11050ac10bc55a12e3577922f2455027}{end\+\_\+sdl}} (char ok, char const $\ast$msg, SDL\+\_\+\+Window $\ast$window, SDL\+\_\+\+Renderer $\ast$renderer)
+\begin{DoxyCompactList}\small\item\em Fermeture de la SDL. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{sdl__common_8c_a4b0ffd89240182cd6d038cc6db469954}\label{sdl__common_8c_a4b0ffd89240182cd6d038cc6db469954}} 
+void {\bfseries init\+\_\+sdl} (SDL\+\_\+\+Renderer $\ast$renderer, SDL\+\_\+\+Window $\ast$window, int SCREEN\+\_\+\+WIDTH, int SCREEN\+\_\+\+HEIGHT)
+\item 
+SDL\+\_\+\+Texture $\ast$ \mbox{\hyperlink{sdl__common_8c_ac0561f3c85b9263d3a172717303fd79a}{load\+\_\+texture\+\_\+from\+\_\+image}} (char $\ast$file\+\_\+image\+\_\+name, SDL\+\_\+\+Window $\ast$window, SDL\+\_\+\+Renderer $\ast$renderer)
+\begin{DoxyCompactList}\small\item\em Charge une texture à partir d\textquotesingle{}une image. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sdl__common_8c_aa3ee31d1cef7b16afc21b83f37cd4e23}{load\+\_\+textures}} (SDL\+\_\+\+Texture $\ast$textures\mbox{[}10\mbox{]}, SDL\+\_\+\+Renderer $\ast$renderer, SDL\+\_\+\+Window $\ast$window)
+\begin{DoxyCompactList}\small\item\em Charge toutes les textures du jeu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sdl__common_8c_a2ba12373407e852660a8ff1d311c21e8}{unload\+\_\+textures}} (SDL\+\_\+\+Texture $\ast$textures\mbox{[}10\mbox{]})
+\begin{DoxyCompactList}\small\item\em Décharge toutes les textures du jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+Fonctions communes à l\textquotesingle{}initialisation de la SDL. 
+
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2023-\/06-\/18 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Auteur}
+Team 21 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Documentation des fonctions}
+\mbox{\Hypertarget{sdl__common_8c_a11050ac10bc55a12e3577922f2455027}\label{sdl__common_8c_a11050ac10bc55a12e3577922f2455027}} 
+\index{sdl\_common.c@{sdl\_common.c}!end\_sdl@{end\_sdl}}
+\index{end\_sdl@{end\_sdl}!sdl\_common.c@{sdl\_common.c}}
+\doxysubsubsection{\texorpdfstring{end\_sdl()}{end\_sdl()}}
+{\footnotesize\ttfamily void end\+\_\+sdl (\begin{DoxyParamCaption}\item[{char}]{ok,  }\item[{char const $\ast$}]{msg,  }\item[{SDL\+\_\+\+Window $\ast$}]{window,  }\item[{SDL\+\_\+\+Renderer $\ast$}]{renderer }\end{DoxyParamCaption})}
+
+
+
+Fermeture de la SDL. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em ok} & Fin normale \+: ok = 0 ; anormale ok = 1 \\
+\hline
+{\em msg} & Message à afficher \\
+\hline
+{\em window} & Fenêtre à fermer \\
+\hline
+{\em renderer} & Renderer à fermer \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sdl__common_8c_ac0561f3c85b9263d3a172717303fd79a}\label{sdl__common_8c_ac0561f3c85b9263d3a172717303fd79a}} 
+\index{sdl\_common.c@{sdl\_common.c}!load\_texture\_from\_image@{load\_texture\_from\_image}}
+\index{load\_texture\_from\_image@{load\_texture\_from\_image}!sdl\_common.c@{sdl\_common.c}}
+\doxysubsubsection{\texorpdfstring{load\_texture\_from\_image()}{load\_texture\_from\_image()}}
+{\footnotesize\ttfamily SDL\+\_\+\+Texture $\ast$ load\+\_\+texture\+\_\+from\+\_\+image (\begin{DoxyParamCaption}\item[{char $\ast$}]{file\+\_\+image\+\_\+name,  }\item[{SDL\+\_\+\+Window $\ast$}]{window,  }\item[{SDL\+\_\+\+Renderer $\ast$}]{renderer }\end{DoxyParamCaption})}
+
+
+
+Charge une texture à partir d\textquotesingle{}une image. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em file\+\_\+image\+\_\+name} & Nom du fichier image \\
+\hline
+{\em window} & Fenêtre SDL \\
+\hline
+{\em renderer} & Renderer SDL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Renvoie}
+SDL\+\_\+\+Texture$\ast$ Texture chargée 
+\end{DoxyReturn}
+\mbox{\Hypertarget{sdl__common_8c_aa3ee31d1cef7b16afc21b83f37cd4e23}\label{sdl__common_8c_aa3ee31d1cef7b16afc21b83f37cd4e23}} 
+\index{sdl\_common.c@{sdl\_common.c}!load\_textures@{load\_textures}}
+\index{load\_textures@{load\_textures}!sdl\_common.c@{sdl\_common.c}}
+\doxysubsubsection{\texorpdfstring{load\_textures()}{load\_textures()}}
+{\footnotesize\ttfamily void load\+\_\+textures (\begin{DoxyParamCaption}\item[{SDL\+\_\+\+Texture $\ast$}]{textures\mbox{[}10\mbox{]},  }\item[{SDL\+\_\+\+Renderer $\ast$}]{renderer,  }\item[{SDL\+\_\+\+Window $\ast$}]{window }\end{DoxyParamCaption})}
+
+
+
+Charge toutes les textures du jeu. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em textures} & Tableau de textures \\
+\hline
+{\em renderer} & Renderer SDL \\
+\hline
+{\em window} & Fenêtre SDL \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sdl__common_8c_a2ba12373407e852660a8ff1d311c21e8}\label{sdl__common_8c_a2ba12373407e852660a8ff1d311c21e8}} 
+\index{sdl\_common.c@{sdl\_common.c}!unload\_textures@{unload\_textures}}
+\index{unload\_textures@{unload\_textures}!sdl\_common.c@{sdl\_common.c}}
+\doxysubsubsection{\texorpdfstring{unload\_textures()}{unload\_textures()}}
+{\footnotesize\ttfamily void unload\+\_\+textures (\begin{DoxyParamCaption}\item[{SDL\+\_\+\+Texture $\ast$}]{textures\mbox{[}10\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Décharge toutes les textures du jeu. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em textures} & Tableau de textures \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.9.4"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mana: Référence du fichier src/main.c</title>
+<link href="../../tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="../../dynsections.js"></script>
+<link href="../../navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../../resize.js"></script>
+<script type="text/javascript" src="../../navtreedata.js"></script>
+<script type="text/javascript" src="../../navtree.js"></script>
+<link href="../../search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../../search/searchdata.js"></script>
+<script type="text/javascript" src="../../search/search.js"></script>
+<link href="../../doxygen-awesome.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">Mana<span id="projectnumber">&#160;0.1.0</span>
+   </div>
+   <div id="projectbrief">Un jeu de société stratégique abstrait et complexe.</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Généré par Doxygen 1.9.4 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "../../search",'Recherche','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="../../menudata.js"></script>
+<script type="text/javascript" src="../../menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('../../',true,false,'search.php','Recherche');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(document).ready(function(){initNavTree('d0/d29/main_8c.html','../../'); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Définitions de type</a> &#124;
+<a href="#func-members">Fonctions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
+  <div class="headertitle"><div class="title">Référence du fichier main.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Programme principal du jeu Mana.  
+<a href="#details">Plus de détails...</a></p>
+<div class="textblock"><code>#include &lt;SDL2/SDL.h&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+<code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &lt;SDL2/SDL_ttf.h&gt;</code><br />
+<code>#include &quot;headers/graphics.h&quot;</code><br />
+<code>#include &quot;headers/rules.h&quot;</code><br />
+<code>#include &quot;headers/opponent.h&quot;</code><br />
+<code>#include &quot;headers/sdl_common.h&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dc5/structui__s.html">ui_s</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d99/structgame__s.html">game_s</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a1db39eb31d1315ce982608fe25587b6d"><td class="memItemLeft" align="right" valign="top"><a id="a1db39eb31d1315ce982608fe25587b6d" name="a1db39eb31d1315ce982608fe25587b6d"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>BOARD_SIZE</b>&#160;&#160;&#160;6</td></tr>
+<tr class="separator:a1db39eb31d1315ce982608fe25587b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Définitions de type</h2></td></tr>
+<tr class="memitem:aa2f38fd1746796b39f000aecc9dfff03"><td class="memItemLeft" align="right" valign="top"><a id="aa2f38fd1746796b39f000aecc9dfff03" name="aa2f38fd1746796b39f000aecc9dfff03"></a>
+typedef struct <a class="el" href="../../da/dc5/structui__s.html">ui_s</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ui_t</b></td></tr>
+<tr class="separator:aa2f38fd1746796b39f000aecc9dfff03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6039f87d8d4a80e0c5c9c48b5c6af926"><td class="memItemLeft" align="right" valign="top"><a id="a6039f87d8d4a80e0c5c9c48b5c6af926" name="a6039f87d8d4a80e0c5c9c48b5c6af926"></a>
+typedef struct <a class="el" href="../../d5/d99/structgame__s.html">game_s</a>&#160;</td><td class="memItemRight" valign="bottom"><b>game_t</b></td></tr>
+<tr class="separator:a6039f87d8d4a80e0c5c9c48b5c6af926"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Fonctions</h2></td></tr>
+<tr class="memitem:abf9e6b7e6f15df4b525a2e7705ba3089"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d29/main_8c.html#abf9e6b7e6f15df4b525a2e7705ba3089">main</a> (int argc, char const *argv[])</td></tr>
+<tr class="memdesc:abf9e6b7e6f15df4b525a2e7705ba3089"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fonction principale du jeu.  <a href="../../d0/d29/main_8c.html#abf9e6b7e6f15df4b525a2e7705ba3089">Plus de détails...</a><br /></td></tr>
+<tr class="separator:abf9e6b7e6f15df4b525a2e7705ba3089"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a3482785bd2a4c8b307f9e0b6f54e2c36"><td class="memItemLeft" align="right" valign="top"><a id="a3482785bd2a4c8b307f9e0b6f54e2c36" name="a3482785bd2a4c8b307f9e0b6f54e2c36"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>SCREEN_WIDTH</b> = 1280</td></tr>
+<tr class="separator:a3482785bd2a4c8b307f9e0b6f54e2c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab454541ae58bcf6555e8d723b1eb95e7"><td class="memItemLeft" align="right" valign="top"><a id="ab454541ae58bcf6555e8d723b1eb95e7" name="ab454541ae58bcf6555e8d723b1eb95e7"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>SCREEN_HEIGHT</b> = 720</td></tr>
+<tr class="separator:ab454541ae58bcf6555e8d723b1eb95e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3759142758b3b71c107b59c4ce0b87f"><td class="memItemLeft" align="right" valign="top"><a id="ac3759142758b3b71c107b59c4ce0b87f" name="ac3759142758b3b71c107b59c4ce0b87f"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>PLAYER_1</b> = 1</td></tr>
+<tr class="separator:ac3759142758b3b71c107b59c4ce0b87f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23488977d06207aca7d40c5070a9cd7c"><td class="memItemLeft" align="right" valign="top"><a id="a23488977d06207aca7d40c5070a9cd7c" name="a23488977d06207aca7d40c5070a9cd7c"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>PLAYER_2</b> = 2</td></tr>
+<tr class="separator:a23488977d06207aca7d40c5070a9cd7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Description détaillée</h2>
+<div class="textblock"><p >Programme principal du jeu Mana. </p>
+<dl class="section version"><dt>Version</dt><dd>1.0 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-06-18 </dd></dl>
+<dl class="section author"><dt>Auteur</dt><dd>Team 21 </dd></dl>
+</div><h2 class="groupheader">Documentation des fonctions</h2>
+<a id="abf9e6b7e6f15df4b525a2e7705ba3089" name="abf9e6b7e6f15df4b525a2e7705ba3089"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf9e6b7e6f15df4b525a2e7705ba3089">&#9670;&nbsp;</a></span>main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int main </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>argc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>argv</em>[]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fonction principale du jeu. </p>
+<dl class="params"><dt>Paramètres</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argc</td><td>Nombre d'arguments </td></tr>
+    <tr><td class="paramname">argv</td><td>Arguments </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Renvoie</dt><dd>int Code de retour </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../d0/d29/main_8c.html">main.c</a></li>
+    <li class="footer">Généré par <a href="https://www.doxygen.org/index.html"><img class="footer" src="../../doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4 </li>
+  </ul>
+</div>
+</body>
+</html>

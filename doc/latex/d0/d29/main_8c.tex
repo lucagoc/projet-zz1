@@ -1,0 +1,95 @@
+\hypertarget{main_8c}{}\doxysection{Référence du fichier src/main.c}
+\label{main_8c}\index{src/main.c@{src/main.c}}
+
+
+Programme principal du jeu Mana.  
+
+
+{\ttfamily \#include $<$SDL2/\+SDL.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$SDL2/\+SDL\+\_\+ttf.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}headers/graphics.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}headers/rules.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}headers/opponent.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}headers/sdl\+\_\+common.\+h\char`\"{}}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structui__s}{ui\+\_\+s}}
+\item 
+struct \mbox{\hyperlink{structgame__s}{game\+\_\+s}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{main_8c_a1db39eb31d1315ce982608fe25587b6d}\label{main_8c_a1db39eb31d1315ce982608fe25587b6d}} 
+\#define {\bfseries BOARD\+\_\+\+SIZE}~6
+\end{DoxyCompactItemize}
+\doxysubsection*{Définitions de type}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{main_8c_aa2f38fd1746796b39f000aecc9dfff03}\label{main_8c_aa2f38fd1746796b39f000aecc9dfff03}} 
+typedef struct \mbox{\hyperlink{structui__s}{ui\+\_\+s}} {\bfseries ui\+\_\+t}
+\item 
+\mbox{\Hypertarget{main_8c_a6039f87d8d4a80e0c5c9c48b5c6af926}\label{main_8c_a6039f87d8d4a80e0c5c9c48b5c6af926}} 
+typedef struct \mbox{\hyperlink{structgame__s}{game\+\_\+s}} {\bfseries game\+\_\+t}
+\end{DoxyCompactItemize}
+\doxysubsection*{Fonctions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8c_abf9e6b7e6f15df4b525a2e7705ba3089}{main}} (int argc, char const $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Fonction principale du jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{main_8c_a3482785bd2a4c8b307f9e0b6f54e2c36}\label{main_8c_a3482785bd2a4c8b307f9e0b6f54e2c36}} 
+const int {\bfseries SCREEN\+\_\+\+WIDTH} = 1280
+\item 
+\mbox{\Hypertarget{main_8c_ab454541ae58bcf6555e8d723b1eb95e7}\label{main_8c_ab454541ae58bcf6555e8d723b1eb95e7}} 
+const int {\bfseries SCREEN\+\_\+\+HEIGHT} = 720
+\item 
+\mbox{\Hypertarget{main_8c_ac3759142758b3b71c107b59c4ce0b87f}\label{main_8c_ac3759142758b3b71c107b59c4ce0b87f}} 
+const int {\bfseries PLAYER\+\_\+1} = 1
+\item 
+\mbox{\Hypertarget{main_8c_a23488977d06207aca7d40c5070a9cd7c}\label{main_8c_a23488977d06207aca7d40c5070a9cd7c}} 
+const int {\bfseries PLAYER\+\_\+2} = 2
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+Programme principal du jeu Mana. 
+
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2023-\/06-\/18 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Auteur}
+Team 21 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Documentation des fonctions}
+\mbox{\Hypertarget{main_8c_abf9e6b7e6f15df4b525a2e7705ba3089}\label{main_8c_abf9e6b7e6f15df4b525a2e7705ba3089}} 
+\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char const $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Fonction principale du jeu. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em argc} & Nombre d\textquotesingle{}arguments \\
+\hline
+{\em argv} & Arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Renvoie}
+int Code de retour 
+\end{DoxyReturn}

@@ -152,11 +152,15 @@ void drawviseur(SDL_Renderer *renderer, int xv, int yv)
                        xv, yv + 5,   // x,y du point de la première extrémité
                        xv, yv + 15); // x,y seconde extrémité
 
-    //          SDL_RenderPresent(renderer); // affichage
 }
 
 void affiche(SDL_Renderer *renderer, SDL_Window *window)
 {
+
+    int sourisx;
+    int sourisy;
+
+    SDL_GetMouseState(&sourisx, &sourisy);
 
     if (TTF_Init() < 0)
         end_sdl(0, "Couldn't initialize SDL TTF", window, renderer);
@@ -180,13 +184,13 @@ void affiche(SDL_Renderer *renderer, SDL_Window *window)
         end_sdl(0, "Can't create texture from surface", window, renderer);
     SDL_FreeSurface(text_surface); // la texture ne sert plus à rien
 
-    SDL_Rect pos = {580, 250, 0, 0};                         // rectangle où le texte va être prositionné
+    SDL_Rect pos = {sourisx-100, sourisy-100, 200, 50};                         // rectangle où le texte va être prositionné
     SDL_QueryTexture(text_texture, NULL, NULL, &pos.w, &pos.h); // récupération de la taille (w, h) du texte
     SDL_RenderCopy(renderer, text_texture, NULL, &pos);         // Ecriture du texte dans le renderer
     SDL_DestroyTexture(text_texture);                           // On n'a plus besoin de la texture avec le texte
 
     SDL_RenderPresent(renderer); // Affichage
-    SDL_Delay(500);              // Pause en ms
+    SDL_Delay(150);              // Pause en ms
 }
 int main()
 {
@@ -289,19 +293,12 @@ int main()
                     affiche(renderer, window);
                 }
                 break;
-
-            case SDL_MOUSEMOTION: //  souris bouge
-
-                SDL_GetMouseState(&mouseX, &mouseY);
-
-                drawviseur(renderer, mouseX, mouseY);
-
-                break;
             default: // L'évènement défilé ne nous intéresse pas
                 break;
             }
 
         } else {
+
             resetbackground(mare, renderer, window);
             if (angle < M_PI)
             {
@@ -325,13 +322,19 @@ int main()
             
         }
 
+        
+
+        SDL_GetMouseState(&mouseX, &mouseY);
+
+        drawviseur(renderer, mouseX, mouseY);
+
         angle += M_PI / 100;
         if (angle >= 2 * M_PI)
         {
             angle = 0;
         }
         
-        SDL_RenderPresent(renderer); // Affichage            SDL_Delay(80); // Pause en ms
+        SDL_RenderPresent(renderer); // Affichage  
         SDL_Delay(15); // Pause en ms
     }
     SDL_Delay(2000); // Pause en ms

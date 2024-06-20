@@ -79,10 +79,10 @@ void draw_selected_case(ui_t *ui, input_t *input)
  * @param x Coordonnée x de la prédiction
  * @param y Coordonnée y de la prédiction
  */
-void draw_possible_move(ui_t *ui, int x, int y, bool is_bird)
+void draw_possible_move(ui_t *ui, int x, int y, int phase)
 {
     SDL_Rect prediction_rect = {ui->screen_w / 2 - 300 + x * 99 + 5, ui->screen_h / 2 - 300 + y * 99 + 5, 95, 95};
-    if (is_bird)
+    if (phase  == 0)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
     }
@@ -100,12 +100,12 @@ void draw_possible_move(ui_t *ui, int x, int y, bool is_bird)
  * @param list_moves Liste des cases possibles
  * @param is_bird Indique si l'oiseau est en jeu
  */
-void draw_all_possible_moves(ui_t *ui, list_t *list_moves, bool is_bird)
+void draw_all_possible_moves(ui_t *ui, list_t *list_moves, int phase)
 {
     list_t *current = list_moves;
     while (current != NULL)
     {
-        draw_possible_move(ui, current->value.x, current->value.y, is_bird);
+        draw_possible_move(ui, current->value.x, current->value.y, phase);
         current = current->next;
     }
 

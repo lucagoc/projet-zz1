@@ -358,7 +358,7 @@ list_t *list_rhonin_possible_moves(pos_t position, board_t *board, int step, int
  * @param board Plateau de jeu
  * @return list_t* Liste des mouvements possibles
  */
-list_t *list_bird_possible_moves(board_t *board)
+list_t *list_bird_possible_moves(game_state_t *game_state)
 {
     list_t *possible_moves_list = NULL;
 
@@ -366,7 +366,7 @@ list_t *list_bird_possible_moves(board_t *board)
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            if (is_pos_valid((pos_t){i, j}) && is_pos_occupied((pos_t){i, j}, board) == 0)
+            if (is_pos_valid((pos_t){i, j}) && is_pos_occupied((pos_t){i, j}, game_state->board) == 0 && (game_state->board->cases[i][j] == game_state->last_case))
             {
                 list_t *new_move = (list_t *)malloc(sizeof(list_t));
                 new_move->value = (pos_t){i, j};
@@ -564,16 +564,18 @@ void game_logic(game_state_t *game_state, input_t *input)
                             game_state->last_case = game_state->board->cases[input->selected_case_2->x][input->selected_case_2->y];
 
                             game_state->phase = 1;
+                            input->possible_moves = free_list(input->possible_moves);
+                            input->possible_moves = list_bird_possible_moves(game_state);
                         }
                         else
                         {
                             fprintf(stderr, "Mouvement invalide\n");
+                            input->possible_moves = free_list(input->possible_moves);
                         }
                         input->selected_case_1->x = -1;
                         input->selected_case_1->y = -1;
                         input->selected_case_2->x = -1;
                         input->selected_case_2->y = -1;
-                        input->possible_moves = free_list(input->possible_moves);
                     }
                     else // Case 1 sélectionné, pas de case 2
                     {
@@ -590,7 +592,7 @@ void game_logic(game_state_t *game_state, input_t *input)
                         }
                         else if (game_state->phase == 1)
                         {
-                            input->possible_moves = list_bird_possible_moves(game_state->board);
+                            input->possible_moves = list_bird_possible_moves(game_state);
                             print_list(input->possible_moves);
                         }
                     }
@@ -611,6 +613,7 @@ void game_logic(game_state_t *game_state, input_t *input)
                     game_state->board->bird->y = input->selected_case_1->y;
                     game_state->player = game_state->player == 1 ? 2 : 1;
                     game_state->phase = 0;
+                    input->possible_moves = free_list(input->possible_moves);
                     game_state->round++;
 
                     if (is_player_blocked(game_state, game_state->player))

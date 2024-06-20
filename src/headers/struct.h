@@ -67,5 +67,14 @@ struct input_s
 };
 typedef struct input_s input_t;
 
+// Utilisé pour min-max.
+struct l_path_s
+{
+    list_t *possibilities;
+    pos_t *pos;
+    struct l_path_s *next;
+};
+typedef struct l_path_s l_path_t;
+
 list_t* free_list(list_t *list);
 void print_list(list_t *list);

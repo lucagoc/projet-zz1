@@ -317,6 +317,10 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
     /* Gestion des événements */
     while (SDL_PollEvent(&game->event))
     {
+        if(game->playing_player == -1){
+            fprintf(stderr, "WARNING : playing_player = -1\n");
+        }
+        
         switch (game->event.type)
         {
         case SDL_QUIT:
@@ -355,7 +359,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                                 game->bird_is_selected = true;
                                 init_predictions(game);
                                 bird_predictions_calculations(game, board);
-                                game->predictions[board->bird->x][board->bird->y] = -1;
+                                //game->predictions[board->bird->x][board->bird->y] = -1; WTF
                             }
                             else
                             {

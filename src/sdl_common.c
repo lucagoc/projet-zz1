@@ -433,9 +433,9 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
 
                     // Cliquer dans le plateau
 
-                    if (game->blocage>1 && x >= 500 && x < 550 && case_grid.y >= 0 && case_grid.y < 75){
+                    if (game->blocage>0 && x >= 500 && x < 550 && case_grid.y >= 0 && case_grid.y < 75){
                         game->blocage=3;
-                    }else if (game->blocage>1 && x >= 600 && x < 650 && case_grid.y >= 0 && case_grid.y < 75) {
+                    }else if (game->blocage>0 && x >= 600 && x < 650 && case_grid.y >= 0 && case_grid.y < 75) {
                         if (game->playing_player==1){  //joueur noir
                             if (board->captured_black_pieces>0){
                                 game->enable_respawn=1; //on peut respawner une pièce
@@ -458,14 +458,13 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                             if (game->playing_player==1 && game->blocage==0){ //joueur noir
                                 game->blocage=1;
                             } else {
-                                game->blocage=2;
+                                game->blocage=2; //on définit la situation de blocage
                             }
 
                             if (game->enable_respawn==1 && respawning_possible(game, board, case_grid)){
                                 respawning(game, board, case_grid);
                                 game->blocage=0;
                                 game->enable_respawn=0;
-                                player_change(game);
                             }
 
 
@@ -474,26 +473,58 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                             printf("piece bloquée \n");
                             if (game->playing_player==1 && game->blocage==0){ //joueur noir
                                 player_change(game);
-                                game->blocage=1;
-                            } else {
-                                player_change(game);
                                 game->blocage=2;
+                            } else {
+                                player_change(game);  //on inverse le joueur
+                                game->blocage=1;
 
                             }
                             if (game->enable_respawn==1 && respawning_possible(game, board, case_grid)){
                                 respawning(game, board, case_grid);
                                 game->blocage=0;
                                 game->enable_respawn=0;
-                                player_change(game);
 
                             }
 
-                        } else if (!game->bird_is_selected && game->blocage==3) {
-                            
-                            
+                        } else if (game->blocage==3 || game->blocage==4){ //si on a un coup libre à jouer
+                            if(game->playing_player==1){ //joueur noir
+
+                                //si on choisit une pièce noire (librement, sans contrainte du coup précédent)
+                                if (game->blocage==3 && (board->board_piece[case_grid.x][case_grid.y]==1 || board->board_piece[case_grid.x][case_grid.y]==3)) {
+                                    game->blocage=4;
+
+                                    game->selected_case->x=case_grid.x;
+                                    game->selected_case->y=case_grid.y;
+                                    predictions_calculations(game, board, *game->selected_case, board->board_case[game->selected_case->x][game->selected_case->y], game->playing_player);
+                                
+                                //si on choisit une case où la pièce sélectionnée précédemment peut bouger
+                                } else if ( game->predictions[case_grid.x][case_grid.y] == 1 && game->blocage==4){
+                                    
+                                    //alors on réalise un coup classique
+
+                                    capturing_piece(game, board, case_grid);
+                                    move_piece_to(board, *game->selected_case, case_grid);
+                                    game->last_case_value = board->board_case[case_grid.x][case_grid.y];
+                                    fprintf(stderr, "LAST CASE VALUE %d\n", game->last_case_value);
+                                    game->blocage=0;
+                                    
+                                    game->case_is_selected = false;
+                                    game->selected_case->x = -1;
+                                    game->selected_case->y = -1;
+
+                                    // Passage en mode oiseau
+                                    game->bird_is_selected = true;
+                                    init_predictions(game);
+                                    bird_predictions_calculations(game, board);
+                                
+                                }
+                            } else { //joueur blanc
+
+                            }
                         }
                         if (game->blocage<1 && game->case_is_selected)
                         {
+
                             if (game->predictions[case_grid.x][case_grid.y] == 1)
                             {
                                 // Déplacer le pion sur la case

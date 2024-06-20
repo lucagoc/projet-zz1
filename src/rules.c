@@ -510,20 +510,21 @@ void predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int
     }
     else
     {
-        game->predictions[piece_pos.x][piece_pos.y] = -1;
-        if (piece_pos.x < 5 && game->predictions[piece_pos.x + 1][piece_pos.y] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}))
+        if(game->predictions[piece_pos.x][piece_pos.y] == 0)
+            game->predictions[piece_pos.x][piece_pos.y] = -1;
+        if (piece_pos.x < 5 && game->predictions[piece_pos.x + 1][piece_pos.y] > -1 && is_movement_valid(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}))
         {
             predictions_calculations(game, board, (pos_t){piece_pos.x + 1, piece_pos.y}, step - 1);
         }
-        if (piece_pos.x > 0 && game->predictions[piece_pos.x - 1][piece_pos.y] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}))
+        if (piece_pos.x > 0 && game->predictions[piece_pos.x - 1][piece_pos.y] > -1 && is_movement_valid(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}))
         {
             predictions_calculations(game, board, (pos_t){piece_pos.x - 1, piece_pos.y}, step - 1);
         }
-        if (piece_pos.y < 5 && game->predictions[piece_pos.x][piece_pos.y + 1] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}))
+        if (piece_pos.y < 5 && game->predictions[piece_pos.x][piece_pos.y + 1] > -1 && is_movement_valid(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}))
         {
             predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y + 1}, step - 1);
         }
-        if (piece_pos.y > 0 && game->predictions[piece_pos.x][piece_pos.y - 1] == 0 && is_movement_valid(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}))
+        if (piece_pos.y > 0 && game->predictions[piece_pos.x][piece_pos.y - 1] > -1 && is_movement_valid(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}))
         {
             predictions_calculations(game, board, (pos_t){piece_pos.x, piece_pos.y - 1}, step - 1);
         }

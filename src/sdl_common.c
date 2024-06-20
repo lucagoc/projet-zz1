@@ -262,7 +262,7 @@ void init_predictions(game_t *game)
 bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
 {
     init_predictions(game);
-    predictions_calculations(game, board, (pos_t){i, j}, board->board_case[i][j], 1);
+    predictions_calculations(game, board, (pos_t){i, j}, board->board_case[i][j], game->playing_player);
     for (int k = 0; k < GRID_SIZE; k++)
     {
         for (int k = 0; k < GRID_SIZE; k++)
@@ -286,6 +286,7 @@ bool is_active_player_blocked(game_t *game, board_t *board)
         {
             if ((board->board_piece[i][j] == 1 || board->board_piece[i][j] == 3) && game->playing_player == 1)
             {
+                fprintf(stderr, "X ");
                 if (!is_piece_blocked(game, board, i, j))
                 {
                     return false;
@@ -293,12 +294,15 @@ bool is_active_player_blocked(game_t *game, board_t *board)
             }
             else if ((board->board_piece[i][j] == 2 || board->board_piece[i][j] == 4) && game->playing_player == 2)
             {
+                fprintf(stderr, "O ");
                 if (!is_piece_blocked(game, board, i, j))
                 {
+                    fprintf(stderr, "Pièce non bloquée !");
                     return false;
                 }
             }
         }
+        fprintf(stderr, "\n");
     }
 
     return true;

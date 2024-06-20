@@ -436,7 +436,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     {
                         
                         
-                        /*if (is_active_player_blocked(game, board)) //blocage total
+                        if (!game->bird_is_selected && is_active_player_blocked(game, board)) //blocage total
                         {
                             //printf("Joueur %d bloqué\n", game->playing_player);
                             //init_predictions(game);
@@ -456,7 +456,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
 
                             player_change(game);
 
-                        } else if (pieces_are_blocked(game, board)) { //blocage partiel
+                        } else if (!game->bird_is_selected && pieces_are_blocked(game, board)) { //blocage partiel
                             
                             printf("piece bloquée \n");
                             player_change(game);
@@ -472,10 +472,10 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                             }                            
                             player_change(game);
 
-                        }*/
-                        if (game->case_is_selected)
+                        }
+                        if (game->blocage<1 && game->case_is_selected)
                         {
-                            if (game->blocage<1 && game->predictions[case_grid.x][case_grid.y] == 1)
+                            if (game->predictions[case_grid.x][case_grid.y] == 1)
                             {
                                 // Déplacer le pion sur la case
                                 capturing_piece(game, board, case_grid);

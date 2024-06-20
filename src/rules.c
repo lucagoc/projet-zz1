@@ -101,7 +101,7 @@ board_t *init_board(board_t *board)
 
     // Initialisation des daimyos
     board->daimyo_1 = (pos_t *)malloc(sizeof(pos_t));
-    board->daimyo_1->x = 2;
+    board->daimyo_1->x = 3;
     board->daimyo_1->y = 0;
     board->daimyo_2 = (pos_t *)malloc(sizeof(pos_t));
     board->daimyo_2->x = 3;
@@ -279,7 +279,7 @@ list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step,
             new_move->next = NULL;
             return new_move;
         }
-        else if (step == 0)
+        else if (step == 0 || is_pos_occupied(position, board) != 0)
         {
             return NULL;
         }

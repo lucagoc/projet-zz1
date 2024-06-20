@@ -82,7 +82,7 @@ void draw_selected_case(ui_t *ui, input_t *input)
 void draw_possible_move(ui_t *ui, int x, int y, int phase)
 {
     SDL_Rect prediction_rect = {ui->screen_w / 2 - 300 + x * 99 + 5, ui->screen_h / 2 - 300 + y * 99 + 5, 95, 95};
-    if (phase  == 0)
+    if (phase == 0)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
     }
@@ -185,15 +185,16 @@ void draw_board(ui_t *ui, board_t *board)
 
     int x_case = x - 300;
     int y_case = y - 300;
-    
+
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
             draw_case(ui, board->cases[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
-            
-            if(board->pieces[i][j] == 1){
-                if(board->daimyo_1->x == i && board->daimyo_1->y == j)
+
+            if (board->pieces[i][j] == 1)
+            {
+                if (board->daimyo_1->x == i && board->daimyo_1->y == j)
                 {
                     draw_piece(ui, 3, x_case + i * 99 + 5, y_case + j * 99 + 5);
                 }
@@ -202,8 +203,9 @@ void draw_board(ui_t *ui, board_t *board)
                     draw_piece(ui, 1, x_case + i * 99 + 5, y_case + j * 99 + 5);
                 }
             }
-            else if(board->pieces[i][j] == 2){
-                if(board->daimyo_2->x == i && board->daimyo_2->y == j)
+            else if (board->pieces[i][j] == 2)
+            {
+                if (board->daimyo_2->x == i && board->daimyo_2->y == j)
                 {
                     draw_piece(ui, 4, x_case + i * 99 + 5, y_case + j * 99 + 5);
                 }
@@ -212,7 +214,6 @@ void draw_board(ui_t *ui, board_t *board)
                     draw_piece(ui, 2, x_case + i * 99 + 5, y_case + j * 99 + 5);
                 }
             }
-            
         }
     }
 
@@ -261,13 +262,13 @@ void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
         SDL_RenderFillRect(ui->renderer, &player_rect);
     }
     draw_last_case(ui, game_state);
-    
+
     draw_selected_case(ui, input);
     if (input->possible_moves != NULL)
     {
         draw_all_possible_moves(ui, input->possible_moves, game_state->phase);
     }
-    
+
     return;
 }
 
@@ -276,7 +277,8 @@ void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
  *
  * @param ui Interface utilisateur
  */
-void draw_menu_pause(ui_t *ui) {
+void draw_menu_pause(ui_t *ui)
+{
     int text_width, text_height;
 
     // La taille et la position du bouton "continue" et "quit"
@@ -290,7 +292,7 @@ void draw_menu_pause(ui_t *ui) {
     SDL_Rect quit_button_rect = {ui->screen_w / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
 
     // Dessiner un rectangle semi-transparent pour l'effet de pause
-    SDL_SetRenderDrawColor(ui->renderer, 134, 182, 240, 100); 
+    SDL_SetRenderDrawColor(ui->renderer, 134, 182, 240, 100);
     SDL_Rect semi_transparent_rect = {0, 0, ui->screen_w, ui->screen_h};
     SDL_RenderFillRect(ui->renderer, &semi_transparent_rect);
 
@@ -306,7 +308,6 @@ void draw_menu_pause(ui_t *ui) {
     SDL_SetRenderDrawColor(ui->renderer, 47, 10, 64, 255); // Bouton violet foncé
     SDL_RenderFillRect(ui->renderer, &quit_button_rect);
     SDL_RenderCopy(ui->renderer, ui->textures_pause[2], NULL, &quit_text_rect);
-
 }
 
 /**
@@ -318,7 +319,7 @@ void draw_menu_pause(ui_t *ui) {
  */
 void draw(ui_t *ui, game_state_t *game_state, input_t *input)
 {
-    if(ui->in_pause)
+    if (ui->in_pause)
     {
         draw_menu_pause(ui);
         return;

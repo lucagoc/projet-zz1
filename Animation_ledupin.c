@@ -75,7 +75,7 @@ void resetbackground(SDL_Texture *mare, SDL_Renderer *renderer, SDL_Window *wind
     rectangle.w = 1920; // sa largeur (w = width)
     rectangle.h = 1080; // sa hauteur (h = height)
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 200, 255, 200, 255);
     SDL_RenderFillRect(renderer, &rectangle);
 
     SDL_RenderCopy(renderer, mare,
@@ -137,7 +137,7 @@ void afficherherbes(SDL_Texture *herbe, SDL_Renderer *renderer, SDL_Window *wind
 
 void drawviseur(SDL_Renderer *renderer, int xv, int yv)
 {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     SDL_RenderDrawLine(renderer,
                        xv - 15, yv, // x,y du point de la première extrémité
@@ -151,6 +151,19 @@ void drawviseur(SDL_Renderer *renderer, int xv, int yv)
     SDL_RenderDrawLine(renderer,
                        xv, yv + 5,   // x,y du point de la première extrémité
                        xv, yv + 15); // x,y seconde extrémité
+
+    SDL_RenderDrawLine(renderer,
+                       xv - 15, yv-1, // x,y du point de la première extrémité
+                       xv - 5, yv-1); // x,y seconde extrémité
+    SDL_RenderDrawLine(renderer,
+                       xv + 5, yv-1,   // x,y du point de la première extrémité
+                       xv + 15, yv-1); // x,y seconde extrémité
+    SDL_RenderDrawLine(renderer,
+                       xv-1, yv - 15, // x,y du point de la première extrémité
+                       xv-1, yv - 5); // x,y seconde extrémité
+    SDL_RenderDrawLine(renderer,
+                       xv-1, yv + 5,   // x,y du point de la première extrémité
+                       xv-1, yv + 15); // x,y seconde extrémité
 
 }
 
@@ -184,7 +197,7 @@ void affiche(SDL_Renderer *renderer, SDL_Window *window)
         end_sdl(0, "Can't create texture from surface", window, renderer);
     SDL_FreeSurface(text_surface); // la texture ne sert plus à rien
 
-    SDL_Rect pos = {sourisx-100, sourisy-100, 200, 50};                         // rectangle où le texte va être prositionné
+    SDL_Rect pos = {sourisx-50, sourisy-50, 200, 50};                         // rectangle où le texte va être prositionné
     SDL_QueryTexture(text_texture, NULL, NULL, &pos.w, &pos.h); // récupération de la taille (w, h) du texte
     SDL_RenderCopy(renderer, text_texture, NULL, &pos);         // Ecriture du texte dans le renderer
     SDL_DestroyTexture(text_texture);                           // On n'a plus besoin de la texture avec le texte
@@ -256,8 +269,8 @@ int main()
             if (angle < M_PI)
             {
 
-                afficherherbes(herbe, renderer, window, angle * 15 - 200, -40, 1.2, 0.4);
-                afficherherbes(herbe, renderer, window, angle * 40 - 200, 500, 1.2, 1);
+                afficherherbes(herbe, renderer, window, -angle * 10 - 200, -20, 1.2, 0.3);
+                afficherherbes(herbe, renderer, window, angle * 30 - 200, 450, 1.2, 1);
 
                 affichercanard(canarddte, renderer, window, 500 + 275 * cos(angle + M_PI), 100 + 90 * sin(angle + M_PI));
                 affichercanard(canard, renderer, window, 500 + 275 * cos(angle), 100 + 90 * sin(angle));
@@ -265,8 +278,8 @@ int main()
             else
             {
 
-                afficherherbes(herbe, renderer, window, (angle - M_PI) * 15 - 200, -40, 1.2, 0.4);
-                afficherherbes(herbe, renderer, window, (angle - M_PI) * 40 - 200, 500, 1.2, 1);
+                afficherherbes(herbe, renderer, window, -(angle - M_PI) * 10 - 200, -20, 1.2, 0.3);
+                afficherherbes(herbe, renderer, window, (angle - M_PI) * 30 - 200, 450, 1.2, 1);
 
                 affichercanard(canarddte, renderer, window, 500 + 250 * cos(angle), 100 + 75 * sin(angle));
                 affichercanard(canard, renderer, window, 500 + 275 * cos(angle + M_PI), 100 + 90 * sin(angle + M_PI));
@@ -303,8 +316,8 @@ int main()
             if (angle < M_PI)
             {
 
-                afficherherbes(herbe, renderer, window, angle * 15 - 200, -40, 1.2, 0.4);
-                afficherherbes(herbe, renderer, window, angle * 40 - 200, 500, 1.2, 1);
+                afficherherbes(herbe, renderer, window, -angle * 10 - 200, -20, 1.2, 0.3);
+                afficherherbes(herbe, renderer, window, angle * 30 - 200, 450, 1.2, 1);
 
                 affichercanard(canarddte, renderer, window, 500 + 275 * cos(angle + M_PI), 100 + 90 * sin(angle + M_PI));
                 affichercanard(canard, renderer, window, 500 + 275 * cos(angle), 100 + 90 * sin(angle));
@@ -312,8 +325,8 @@ int main()
             else
             {
 
-                afficherherbes(herbe, renderer, window, (angle - M_PI) * 15 - 200, -40, 1.2, 0.4);
-                afficherherbes(herbe, renderer, window, (angle - M_PI) * 40 - 200, 500, 1.2, 1);
+                afficherherbes(herbe, renderer, window, -(angle - M_PI) * 10 - 200, -20, 1.2, 0.3);
+                afficherherbes(herbe, renderer, window, (angle - M_PI) * 30 - 200, 450, 1.2, 1);
 
                 affichercanard(canarddte, renderer, window, 500 + 250 * cos(angle), 100 + 75 * sin(angle));
                 affichercanard(canard, renderer, window, 500 + 275 * cos(angle + M_PI), 100 + 90 * sin(angle + M_PI));

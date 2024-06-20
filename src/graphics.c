@@ -142,12 +142,12 @@ void draw_blocage(ui_t *ui,game_t * game,int x,int y){
     if (text_texture2 == NULL) end_sdl(0, "Can't create texture from surface", ui->window, ui->renderer);
     SDL_FreeSurface(text_surface2);                                       // la texture ne sert plus à rien
 
-    SDL_Rect pos = {500, 0, 550, 75};                                         // rectangle où le texte va être prositionné
+    SDL_Rect pos = {500, 0, 600, 75};                                         // rectangle où le texte va être prositionné
     SDL_QueryTexture(text_texture, NULL, NULL, &pos.w, &pos.h);          // récupération de la taille (w, h) du texte 
     SDL_RenderCopy(ui->renderer, text_texture, NULL, &pos);                  // Ecriture du texte dans le renderer   
     SDL_DestroyTexture(text_texture);  
 
-    SDL_Rect pos2 = {600, 0, 650, 75};                                         // rectangle où le texte va être prositionné
+    SDL_Rect pos2 = {600, 0, 700, 75};                                         // rectangle où le texte va être prositionné
     SDL_QueryTexture(text_texture2, NULL, NULL, &pos2.w, &pos2.h);          // récupération de la taille (w, h) du texte 
     SDL_RenderCopy(ui->renderer, text_texture2, NULL, &pos2);                  // Ecriture du texte dans le renderer   
     SDL_DestroyTexture(text_texture2);  

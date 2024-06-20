@@ -37,14 +37,14 @@ void draw_selected_case(ui_t *ui, input_t *input)
     if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1)
     {
         SDL_Rect selected_rect = {ui->screen_w / 2 - 300 + input->selected_case_1->x * 99 + 5, ui->screen_h / 2 - 300 + input->selected_case_1->y * 99 + 5, 95, 95};
-        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 128);
         SDL_RenderFillRect(ui->renderer, &selected_rect);
     }
 
     if (input->selected_case_2->x != -1 && input->selected_case_2->y != -1)
     {
         SDL_Rect selected_rect = {ui->screen_w / 2 - 300 + input->selected_case_2->x * 99 + 5, ui->screen_h / 2 - 300 + input->selected_case_2->y * 99 + 5, 95, 95};
-        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 128);
         SDL_RenderFillRect(ui->renderer, &selected_rect);
     }
 }
@@ -102,7 +102,7 @@ void draw_bird(ui_t *ui, board_t *board)
     {
         SDL_Rect bird_rect = {ui->screen_w / 2 - 300 + board->bird->x * 99 + 5, ui->screen_h / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
         SDL_Rect white_rect = {ui->screen_w / 2 - 300 + board->bird->x * 99 + 5, ui->screen_h / 2 - 300 + board->bird->y * 99 + 5, 95, 95};
-        SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 128);
         SDL_RenderFillRect(ui->renderer, &white_rect);
         SDL_RenderCopy(ui->renderer, ui->textures[9], NULL, &bird_rect);
     }
@@ -223,9 +223,48 @@ void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
     return;
 }
 
+/*rendu du menu pause*/
+void draw_menu_pause(ui_t *ui) {
+    int text_width, text_height;
+
+    // La taille et la position du bouton "continue" et "quit"
+
+    SDL_QueryTexture(ui->textures_pause[1], NULL, NULL, &text_width, &text_height);
+    SDL_Rect continue_text_rect = {ui->screen_w / 2 - text_width / 2 - 5, 250, text_width, text_height}; // Déplacement vers le bas
+    SDL_Rect continue_button_rect = {ui->screen_w / 2 - 100 - 5, continue_text_rect.y - 10, 200, text_height + 20};
+
+    SDL_QueryTexture(ui->textures_pause[2], NULL, NULL, &text_width, &text_height);
+    SDL_Rect quit_text_rect = {ui->screen_w / 2 - text_width / 2, ui->screen_h - 200, text_width, text_height};
+    SDL_Rect quit_button_rect = {ui->screen_w / 2 - 100, quit_text_rect.y - 10, 200, text_height + 20};
+
+    // Dessiner un rectangle semi-transparent pour l'effet de pause
+    SDL_SetRenderDrawColor(ui->renderer, 134, 182, 240, 100); 
+    SDL_Rect semi_transparent_rect = {0, 0, ui->screen_w, ui->screen_h};
+    SDL_RenderFillRect(ui->renderer, &semi_transparent_rect);
+
+    // Dessiner l'arrière-plan
+    SDL_RenderCopy(ui->renderer, ui->textures_pause[0], NULL, NULL);
+
+    // Dessiner le bouton "Continue"
+    SDL_SetRenderDrawColor(ui->renderer, 41, 34, 115, 255); // Bouton bleu marine
+    SDL_RenderFillRect(ui->renderer, &continue_button_rect);
+    SDL_RenderCopy(ui->renderer, ui->textures_pause[1], NULL, &continue_text_rect);
+
+    // Dessiner le bouton "Quit"
+    SDL_SetRenderDrawColor(ui->renderer, 47, 10, 64, 255); // Bouton violet foncé
+    SDL_RenderFillRect(ui->renderer, &quit_button_rect);
+    SDL_RenderCopy(ui->renderer, ui->textures_pause[2], NULL, &quit_text_rect);
+
+}
+
 /* Rendu globale */
 void draw(ui_t *ui, game_state_t *game_state, input_t *input)
 {
+    if(ui->in_pause)
+    {
+        draw_menu_pause(ui);
+        return;
+    }
     draw_background(ui);
     draw_board(ui, game_state->board);
     draw_indicator(ui, game_state, input);

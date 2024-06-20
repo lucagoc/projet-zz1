@@ -1,2 +1,0 @@
-#define ANIMATIONS_H
-

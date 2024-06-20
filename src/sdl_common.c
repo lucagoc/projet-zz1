@@ -6,6 +6,9 @@
 #include "headers/rules.h"
 
 #define GRID_SIZE 6
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+#define BOARD_SIZE 600
 
 /**
  * @file sdl_common.c
@@ -23,6 +26,7 @@
  * @param window Fenêtre à fermer
  * @param renderer Renderer à fermer
  */
+
 void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *renderer)
 {
     char msg_formated[255];
@@ -83,6 +87,32 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
     return my_texture;
 }
 
+SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color color, int font_size, SDL_Renderer *renderer)
+{
+    TTF_Font *font = TTF_OpenFont(font_file, font_size);
+    if (!font)
+    {
+        SDL_Log("ERROR: Unable to open font %s: %s\n", font_file, TTF_GetError());
+        return NULL;
+    }
+    SDL_Surface *surface = TTF_RenderText_Blended(font, message, color);
+    if (!surface)
+    {
+        SDL_Log("ERROR: Unable to create text surface: %s\n", TTF_GetError());
+        TTF_CloseFont(font);
+        return NULL;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(font);
+    if (!texture)
+    {
+        SDL_Log("ERROR: Unable to create texture from text: %s\n", SDL_GetError());
+        return NULL;
+    }
+    return texture;
+}
+
 /**
  * @brief Charge toutes les textures du jeu
  *
@@ -90,7 +120,7 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
  * @param renderer Renderer SDL
  * @param window Fenêtre SDL
  */
-void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window *window)
+void load_textures(SDL_Texture *textures[10], SDL_Texture *textures_pause[10], SDL_Renderer *renderer, SDL_Window *window)
 {
     /* Assets d'images */
     // textures[0] = load_texture_from_image("assets/board/board.png", window, renderer);
@@ -103,15 +133,13 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
     textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
 
     /* Assets de texte */
-    TTF_Font *metal_lord = TTF_OpenFont("assets/otf/metal_lord.otf", 100);
-    SDL_Color Black = {0, 0, 0, 255};
-    SDL_Surface *surfaceMessage = TTF_RenderText_Blended(metal_lord, "Mana", Black);
-    if (surfaceMessage == NULL)
-        end_sdl(0, "Erreur lors de la création de la surface de texte", window, renderer);
-    textures[8] = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-    SDL_FreeSurface(surfaceMessage);
-
+    textures[8] = render_text("Mana", "assets/otf/metal_lord.otf", (SDL_Color){255, 255, 255, 255}, 48, renderer);
     textures[9] = load_texture_from_image("assets/pieces/bird.png", window, renderer);
+
+    /* --------------------------------------------- MENU PAUSE --------------------------------------------- */
+    textures_pause[0] = load_texture_from_image("assets/image_menu/menu_pause.png", window, renderer);
+    textures_pause[1] = render_text("Continue", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, renderer);
+    textures_pause[2] = render_text("Quit", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, renderer);
 
     return;
 }
@@ -144,7 +172,10 @@ void init_sdl(ui_t *ui)
         end_sdl(0, "Couldn't initialize SDL TTF", ui->window, ui->renderer);
 
     /* Loading de toutes les textures dans un tableau */
-    load_textures(ui->textures, ui->renderer, ui->window);
+    load_textures(ui->textures, ui->textures_pause, ui->renderer, ui->window);
+
+    // Activer le mode de mélange pour la transparence
+    SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
 /**
@@ -164,39 +195,44 @@ void unload_textures(SDL_Texture *textures[10])
     SDL_DestroyTexture(textures[8]);
 }
 
-/**
- * @brief Charge la police d'écriture
- *
- * @param message Message afficher
- * @param font_file Le path à charger
- * @param color  La couleur de la police
- * @param font_size La taille de la police
- * @param renderer Renderer SDL
- */
-SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color color, int font_size, SDL_Renderer *renderer)
+void init_ui(ui_t *ui)
 {
-    TTF_Font *font = TTF_OpenFont(font_file, font_size);
-    if (!font)
+    ui->screen_w = SCREEN_WIDTH;
+    ui->screen_h = SCREEN_HEIGHT;
+    ui->board_size = BOARD_SIZE;
+    ui->selected_case = malloc(sizeof(pos_t));
+    if (ui->selected_case == NULL)
     {
-        SDL_Log("ERROR: Unable to open font %s: %s\n", font_file, TTF_GetError());
-        return NULL;
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
     }
-    SDL_Surface *surface = TTF_RenderText_Blended(font, message, color);
-    if (!surface)
+
+    init_sdl(ui);
+    ui->in_pause = false;
+    ui->program_on = true;
+}
+
+void init_input(input_t *input)
+{
+    input->selected_case_1 = malloc(sizeof(pos_t));
+    if (input->selected_case_1 == NULL)
     {
-        SDL_Log("ERROR: Unable to create text surface: %s\n", TTF_GetError());
-        TTF_CloseFont(font);
-        return NULL;
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
     }
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    TTF_CloseFont(font);
-    if (!texture)
+    input->selected_case_1->x = -1;
+    input->selected_case_1->y = -1;
+    input->selected_case_2 = malloc(sizeof(pos_t));
+    if (input->selected_case_2 == NULL)
     {
-        SDL_Log("ERROR: Unable to create texture from text: %s\n", SDL_GetError());
-        return NULL;
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
     }
-    return texture;
+    input->selected_case_2->x = -1;
+    input->selected_case_2->y = -1;
+
+    input->possible_moves = NULL;
+    input->is_bird = false;
 }
 
 pos_t cord2grid(ui_t *ui, int x, int y)
@@ -205,6 +241,10 @@ pos_t cord2grid(ui_t *ui, int x, int y)
     pos.x = (x - (ui->screen_w / 2 - ui->board_size / 2)) / 100;
     pos.y = (y - (ui->screen_h / 2 - ui->board_size / 2)) / 100;
     return pos;
+}
+
+bool is_mouse_over_button(SDL_Rect button, int mouse_x, int mouse_y) {                                                                          
+    return mouse_x > button.x && mouse_x < (button.x + button.w) && mouse_y > button.y && mouse_y < (button.y + button.h);
 }
 
 /*
@@ -232,23 +272,48 @@ void get_input(ui_t *ui, input_t *input)
         case SDL_MOUSEBUTTONDOWN: // Clic souris
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                int x = ui->event.button.x;
-                int y = ui->event.button.y;
-
-                pos_t case_grid = cord2grid(ui, x, y);
-
-                if (selection == 1)
+                if (ui->in_pause)
                 {
-                    input->selected_case_1->x = case_grid.x;
-                    input->selected_case_1->y = case_grid.y;
+                    SDL_Rect continue_button_rect = {ui->screen_w / 2 - 100 - 5, 250, 200, 40};
+                    SDL_Rect quit_button_rect = {ui->screen_w / 2 - 100, ui->screen_h - 200, 200, 40};
+                    if (is_mouse_over_button(continue_button_rect, ui->event.button.x, ui->event.button.y))
+                    {
+                        ui->in_pause = false;
+                    }
+                    else if (is_mouse_over_button(quit_button_rect, ui->event.button.x, ui->event.button.y))
+                    {
+                        SDL_Log("Quit button clicked!");
+                        ui->program_on = false;
+                    }
                 }
                 else
                 {
-                    input->selected_case_2->x = case_grid.x;
-                    input->selected_case_2->y = case_grid.y;
+
+                    int x = ui->event.button.x;
+                    int y = ui->event.button.y;
+
+                    pos_t case_grid = cord2grid(ui, x, y);
+
+                    if (selection == 1)
+                    {
+                        input->selected_case_1->x = case_grid.x;
+                        input->selected_case_1->y = case_grid.y;
+                    }
+                    else
+                    {
+                        input->selected_case_2->x = case_grid.x;
+                        input->selected_case_2->y = case_grid.y;
+                    }
                 }
             }
             break;
+        case SDL_KEYDOWN:
+            switch (ui->event.key.keysym.sym)
+            {
+            case SDLK_ESCAPE:
+                ui->in_pause = !ui->in_pause;
+                break;
+            }
         }
     }
 }

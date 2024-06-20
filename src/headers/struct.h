@@ -13,24 +13,25 @@ typedef struct pos_s pos_t;
 
 struct list_s
 {
-    pos_t value;        // Valeur de la case
-    struct list_s *next;// Case suivante
+    pos_t value;            // Valeur de la case
+    struct list_s *next;    // Case suivante
 };
 typedef struct list_s list_t;
 
 struct ui_s
 {
-    SDL_Renderer *renderer;     // Rendu SDL
-    SDL_Window *window;         // Fenêtre SDL
-    SDL_Event event;            // Évènement SDL
-    SDL_Texture *textures[10];  // Textures
+    SDL_Renderer *renderer;             // Rendu SDL
+    SDL_Window *window;                 // Fenêtre SDL
+    SDL_Event event;                    // Évènement SDL
+    SDL_Texture *textures[10];          // Textures
+    SDL_Texture *textures_pause[10];    // Textures pour la pause
 
-    int screen_w;           // Largeur de l'écran
+    int screen_w;          // Largeur de l'écran
     int screen_h;          // Hauteur de l'écran
-    int board_size;             // Taille du plateau
+    int board_size;        // Taille du plateau
 
     pos_t* selected_case;       // Case sélectionnée
-    bool in_pause;               // Booléen pour la pause
+    bool in_pause;              // Booléen pour la pause
     bool program_on;            // Booléen pour le programme
 };
 typedef struct ui_s ui_t;

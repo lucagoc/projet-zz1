@@ -452,6 +452,51 @@ bool respawn_piece(int player, int captured_white_piece, int captured_black_piec
 
     return respawn_possible;
 }
+
+
+bool respawning_possible(game_t *game, board_t *board, pos_t destination){
+
+    int respawn_possible = 0;
+
+    if (game->playing_player == 1)  //joueur noir
+    {
+        if (board->captured_black_pieces > 0 && board->board_piece[destination.x][destination.y] == 0)
+        {
+            respawn_possible = 1;
+        }
+    }
+    else //joueur blanc
+    {
+        if (board->captured_white_pieces > 0 && board->board_piece[destination.x][destination.y] == 0)
+        {
+            respawn_possible = 1;
+        }
+    }
+
+    return respawn_possible;
+}
+
+void respawning(game_t *game, board_t *board, pos_t destination)
+{
+
+    if (game->playing_player == 1)  //joueur noir
+    {
+        if (board->captured_black_pieces > 0 && board->board_piece[destination.x][destination.y] == 0)
+        {
+            board->board_piece[destination.x][destination.y]=1; // on place un ronin noir
+            board->captured_black_pieces-=1;
+        }
+    }
+    else //joueur blanc
+    {
+        if (board->captured_white_pieces > 0 && board->board_piece[destination.x][destination.y] == 0)
+        {
+            board->board_piece[destination.x][destination.y]=2; // on place un ronin blanc
+            board->captured_white_pieces-=1;
+        }
+    }
+
+}
   
 bool is_movement_valid(game_t *game, board_t *board, pos_t destination)
 {   

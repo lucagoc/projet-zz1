@@ -262,10 +262,11 @@ void init_predictions(game_t *game)
 bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
 {
     // Si la pièce n'est pas sur la dernière case sélectionnée.
-    if (board->board_case[i][j] != game->last_case_value)
+    /*if (board->board_case[i][j] != game->last_case_value)
     {
         return true;
-    }
+    }*/
+
     init_predictions(game);
     predictions_calculations(game, board, (pos_t){i, j}, board->board_case[i][j], 1);
     for (int k = 0; k < GRID_SIZE; k++)
@@ -280,14 +281,34 @@ bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
     }
 }
 
-// Pour qu'un joueur soit bloqué, il faut que toutes ses pièces soient bloquées
+// blocage total: aucune pièce positionnée sur une case de bonne valeur ?
 bool is_active_player_blocked(game_t *game, board_t *board)
 {
     for (int i = 0; i < GRID_SIZE; i++)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
-            if ((board->board_piece[i][j] == 1 || board->board_piece[i][j] == 3) && game->playing_player == 1)
+            if (game->playing_player==1){  //joueur noir
+                if (board->board_piece[i][j]==1 || board->board_piece[i][j]==3){
+                    //si on a une piece noire
+                    if (game->last_case_value==board->board_case[i][j]){
+                        //et qu'elle est sur une case bonne valeur
+                        return false;
+                    }
+                }
+            } else {  //joueur blanc
+                if (board->board_piece[i][j]==2 || board->board_piece[i][j]==4){
+                    //si on a une pièce blanche
+                    if (game->last_case_value==board->board_case[i][j]){
+                        //et qu'elle est sur une case bonne valeur
+
+                        return false;
+                    }
+                }
+            }
+            
+            
+            /*if ((board->board_piece[i][j] == 1 || board->board_piece[i][j] == 3) && game->playing_player == 1)
             {
                 if (!is_piece_blocked(game, board, i, j))
                 {
@@ -300,11 +321,11 @@ bool is_active_player_blocked(game_t *game, board_t *board)
                 {
                     return false;
                 }
-            }
+            }*/
         }
     }
 
-    return true;
+    return true; //aucune pièce sur une case de bonne valeur
 }
 
 void capturing_piece(game_t *game, board_t *board, pos_t destination)
@@ -325,6 +346,48 @@ void capturing_piece(game_t *game, board_t *board, pos_t destination)
     }
 }
 
+//blocage partiel: une pièce est sur une case de bonne valeur mais elle ne peut être jouée ?
+bool pieces_are_blocked(game_t *game, board_t *board){
+
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        for (int j = 0; j < GRID_SIZE; j++)
+        {
+            if (game->playing_player==1){  //joueur noir
+                if (board->board_piece[i][j]==1 || board->board_piece[i][j]==3){
+                    //si on a une piece noire
+                    if (game->last_case_value==board->board_case[i][j] && is_piece_blocked(game, board, i, j)){
+                        //et qu'elle est sur une case bonne valeur mais est bloquée
+                        return true;
+                    }
+                }
+            } else {  //joueur blanc
+                if (board->board_piece[i][j]==2 || board->board_piece[i][j]==4){
+                    //si on a une pièce blanche
+                    if (game->last_case_value==board->board_case[i][j] && is_piece_blocked(game, board, i, j)){
+                        //et qu'elle est sur une case bonne valeur mais est bloquée
+
+                        return true;
+                    }
+                }
+            }
+
+        }
+        
+    }
+    return false;    
+}
+
+void player_change(game_t * game){
+    if (game->playing_player == 1)
+    {
+        game->playing_player = 2;
+    }
+    else
+    {
+        game->playing_player = 1;
+    }
+}
 /*
  * @brief Fonction pour récupérer les événements
  *
@@ -364,7 +427,39 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     {
                         if (game->case_is_selected)
                         {
-                            if (game->predictions[case_grid.x][case_grid.y] == 1)
+                            if (is_active_player_blocked(game, board)) //blocage total
+                            {
+                                //printf("Joueur %d bloqué\n", game->playing_player);
+                                //init_predictions(game);
+
+                                if (game->playing_player==1){
+                                    game->blocage=1;
+                                } else {
+                                    game->blocage=2;
+
+                                }
+
+                                if (respawning_possible(game, board, case_grid)){
+                                    respawning(game, board, case_grid);
+                                    game->blocage=0;
+                                }
+                                player_change(game);
+
+                            } else if (pieces_are_blocked(game, board)) { //blocage partiel
+                                player_change(game);
+                                if (game->playing_player==1){
+                                    game->blocage=1;
+                                } else {
+                                    game->blocage=2;
+
+                                }
+                                if (respawning_possible(game, board, case_grid)){
+                                    respawning(game, board, case_grid);
+                                    game->blocage=0;
+                                }                            
+                                player_change(game);
+
+                            } else if (game->predictions[case_grid.x][case_grid.y] == 1)
                             {
                                 // Déplacer le pion sur la case
                                 capturing_piece(game, board, case_grid);
@@ -417,19 +512,8 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                             game->bird_is_selected = false;
 
                             // Changement de joueur
-                            if (game->playing_player == 1)
-                            {
-                                game->playing_player = 2;
-                            }
-                            else
-                            {
-                                game->playing_player = 1;
-                            }
-                            if (is_active_player_blocked(game, board))
-                            {
-                                printf("Joueur %d bloqué\n", game->playing_player);
-                                init_predictions(game);
-                            }
+                            player_change(game);
+
                         }
                         else
                         {

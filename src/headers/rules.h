@@ -6,3 +6,5 @@ void initialise_pieces(int pieces_position[6][6], int king_black_position, int k
 list_t* predictions_calculations(game_t *game, board_t *board, pos_t piece_pos, int step, int player);
 void bird_predictions_calculations(game_t *game, board_t *board);
 int who_wins(board_t *board);
+void respawning(game_t *game, board_t *board, pos_t destination);
+bool respawning_possible(game_t *game, board_t *board, pos_t destination);

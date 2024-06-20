@@ -91,6 +91,8 @@ int main(int argc, char const *argv[])
     board->captured_black_pieces=0;
     board->captured_white_pieces=0;
 
+    game->blocage=0; //0 si pas de blocage, 1 si joueur sans pièce sur une case valide, 2 si pièce bloquée
+
     /*
     // Charger les ressources pour le menu pause
     SDL_Texture *background_texture = NULL;

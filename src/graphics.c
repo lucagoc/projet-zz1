@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include "headers/struct.h"
+#include <SDL2/SDL_ttf.h>                                            // Charger la bibliothèque
 
 #define GRID_SIZE 6
 
@@ -112,13 +113,30 @@ void draw_bird(ui_t *ui, board_t *board)
     }
 }
 
-void draw_blocage(game_t * game){
-    if (game->blocage==1){
-        printf("joueur noir bloqué \n");
-    } else if (game->blocage==2){
-        printf("joueur blanc bloqué \n");
+void draw_blocage(ui_t *ui,game_t * game,int x,int y){
+    
+    if (TTF_Init() < 0) end_sdl(0, "Couldn't initialize SDL TTF", ui->window, ui->renderer);
 
-    }
+    TTF_Font* font = NULL;                                               // la variable 'police de caractère'
+    font = TTF_OpenFont("./Pacifico.ttf", 25);                     // La police à charger, la taille désirée
+    if (font == NULL) end_sdl(0, "Can't load font", ui->window, ui->renderer);
+
+    TTF_SetFontStyle(font, TTF_STYLE_ITALIC | TTF_STYLE_BOLD);           // en italique, gras
+
+    SDL_Color color = {20, 0, 40, 255};                                  // la couleur du texte
+    SDL_Surface* text_surface = NULL;                                    // la surface  (uniquement transitoire)
+    text_surface = TTF_RenderText_Blended(font, "    jouer           revivre", color); // création du texte dans la surface 
+    if (text_surface == NULL) end_sdl(0, "Can't create text surface", ui->window, ui->renderer);
+
+    SDL_Texture* text_texture = NULL;                                    // la texture qui contient le texte
+    text_texture = SDL_CreateTextureFromSurface(ui->renderer, text_surface); // transfert de la surface à la texture
+    if (text_texture == NULL) end_sdl(0, "Can't create texture from surface", ui->window, ui->renderer);
+    SDL_FreeSurface(text_surface);                                       // la texture ne sert plus à rien
+
+    SDL_Rect pos = {x-100, 0, x+50, 75};                                         // rectangle où le texte va être prositionné
+    SDL_QueryTexture(text_texture, NULL, NULL, &pos.w, &pos.h);          // récupération de la taille (w, h) du texte 
+    SDL_RenderCopy(ui->renderer, text_texture, NULL, &pos);                  // Ecriture du texte dans le renderer   
+    SDL_DestroyTexture(text_texture);  
 }
 
 /**
@@ -168,7 +186,7 @@ void draw_board(ui_t *ui, board_t *board, game_t *game)
     }
 
     if (game->blocage==1 || game->blocage==2){
-        draw_blocage(game);
+        draw_blocage(ui, game,x,y);
     }
 
     if (game->case_is_selected)

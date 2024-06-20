@@ -236,7 +236,15 @@ void free_list(list_t *list)
 
 bool can_be_selected(game_t *game, board_t *board, pos_t pos_grid)
 {
-    return board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player || board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player + 2;
+    bool good_player = board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player || board->board_piece[pos_grid.x][pos_grid.y] == game->playing_player + 2;
+    if (game->last_case_value == 0)
+    {
+        return good_player;
+    }
+    else
+    {
+        return good_player && board->board_case[pos_grid.x][pos_grid.y] == game->last_case_value;
+    }
 }
 
 void init_predictions(game_t *game)
@@ -253,6 +261,11 @@ void init_predictions(game_t *game)
 // Vérifie si une pièce est bloquée
 bool is_piece_blocked(game_t *game, board_t *board, int i, int j)
 {
+    // Si la pièce n'est pas sur la dernière case sélectionnée. 
+    if (board->board_case[i][j] != game->last_case_value)
+    {
+        return true;
+    }
     init_predictions(game);
     predictions_calculations(game, board, (pos_t){i, j}, board->board_case[i][j], 1);
     for (int k = 0; k < GRID_SIZE; k++)

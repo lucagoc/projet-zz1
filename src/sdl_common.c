@@ -428,9 +428,9 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
 
         switch (game->event.type)
         {
-            case SDL_QUIT:
-                game->program_on = SDL_FALSE;
-                break;
+        case SDL_QUIT:
+            game->program_on = SDL_FALSE;
+            break;
             if (game->inPause)
             {
                 /*handle_events(&game->event, &game->program_on, &game->inPause, ui->continue_button_rect, ui->quit_button_rect);*/
@@ -446,14 +446,16 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     printf("blocage %d player %d lastvalue %d \n", game->blocage, game->playing_player, game->last_case_value);
 
                     pos_t case_grid = cord2grid(ui, x, y);
+                    
+                    printf(" pièce cliquée %d \n",board->board_piece[case_grid.x][case_grid.y] );
 
                     // Cliquer dans le plateau
 
-                    if (game->blocage > 0 && x >= 500 && x <= 600 && case_grid.y >= 0 && case_grid.y <= 75)
+                    if (game->blocage <3 && game->blocage > 0 && x >= 500 && x <= 600 && case_grid.y >= 0 && case_grid.y <= 75)
                     {
                         game->blocage = 3;
                     }
-                    else if (game->blocage > 0 && x > 600 && x <= 700 && case_grid.y >= 0 && case_grid.y <= 75)
+                    else if (game->blocage <3 && game->blocage > 0 && x > 600 && x <= 700 && case_grid.y >= 0 && case_grid.y <= 75)
                     {
                         if (game->playing_player == 1)
                         { // joueur noir
@@ -473,7 +475,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                     else if (case_grid.x >= 0 && case_grid.x < GRID_SIZE && case_grid.y >= 0 && case_grid.y < GRID_SIZE)
                     {
 
-                        if (!game->bird_is_selected && is_active_player_blocked(game, board)) // blocage total
+                        if (game->blocage < 3 && !game->bird_is_selected && is_active_player_blocked(game, board)) // blocage total
                         {
                             // printf("Joueur %d bloqué\n", game->playing_player);
                             // init_predictions(game);
@@ -495,7 +497,7 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                                 game->enable_respawn = 0;
                             }
                         }
-                        else if (!game->bird_is_selected && pieces_are_blocked(game, board))
+                        else if (game->blocage < 3 && !game->bird_is_selected && pieces_are_blocked(game, board))
                         { // blocage partiel
 
                             printf("piece bloquée \n");
@@ -520,7 +522,8 @@ void get_input(ui_t *ui, game_t *game, board_t *board)
                         { // si on a un coup libre à jouer
 
                             // si on choisit une pièce noire (librement, sans contrainte du coup précédent)
-                            if ((game->playing_player == 1 && game->blocage == 3 && (board->board_piece[case_grid.x][case_grid.y] == 1 || board->board_piece[case_grid.x][case_grid.y] == 3)) || (game->playing_player == 2 && game->blocage == 3 && (board->board_piece[case_grid.x][case_grid.y] == 2 || board->board_piece[case_grid.x][case_grid.y] == 4)))
+                            if ((game->playing_player == 1 && game->blocage == 3 && (board->board_piece[case_grid.x][case_grid.y] == 1 || board->board_piece[case_grid.x][case_grid.y] == 3)) 
+                             || (game->playing_player == 2 && game->blocage == 3 && (board->board_piece[case_grid.x][case_grid.y] == 2 || board->board_piece[case_grid.x][case_grid.y] == 4)))
                             {
                                 game->blocage = 4;
 

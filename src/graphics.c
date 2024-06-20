@@ -148,6 +148,7 @@ void draw_board(ui_t *ui, board_t *board)
         for (int j = 0; j < GRID_SIZE; j++)
         {
             draw_case(ui, board->cases[i][j], x_case + i * 99 + 5, y_case + j * 99 + 5);
+            
             if(board->pieces[i][j] == 1){
                 if(board->daimyo_1->x == i && board->daimyo_1->y == j)
                 {

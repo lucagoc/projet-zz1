@@ -251,7 +251,7 @@ list_t *list_rhonin_possible_moves(pos_t position, board_t *board, int step, int
         }
     }
 
-    list_t *res;
+    list_t *res = NULL;
     // Déplacement vers le haut;
     res = concat_list(res, list_rhonin_possible_moves_aux((pos_t){position.x, position.y - 1}, board, step - 1, player, previous_moves));
     // Déplacement vers le bas
@@ -286,27 +286,35 @@ list_t *list_bird_possible_moves(board_t *board)
     return possible_moves_list;
 }
 
-// Déplace une pièce à l'emplacement choisie
-void move_piece(pos_t origin, pos_t destination, board_t *board)
+// Déplace une pièce à l'emplacement choisie en actualisant les donnée de game
+void move_piece(pos_t origin, pos_t destination, game_state_t *game_state)
 {
     // Si c'est un daimyo, il faut déplacer ses coordonnée aussi
-    if (is_daimyo(origin, board))
+    if (is_daimyo(origin, game_state->board))
     {
-        board->daimyo_1->x = destination.x;
-        board->daimyo_1->y = destination.y;
+        if (game_state->player == 1)
+        {
+            game_state->board->daimyo_1->x = destination.x;
+            game_state->board->daimyo_1->y = destination.y;
+        }
+        else
+        {
+            game_state->board->daimyo_2->x = destination.x;
+            game_state->board->daimyo_2->y = destination.y;
+        }
     }
-    board->pieces[destination.x][destination.y] = board->pieces[origin.x][origin.y];
-    board->pieces[origin.x][origin.y] = 0;
+    game_state->board->pieces[destination.x][destination.y] = game_state->board->pieces[origin.x][origin.y];
+    game_state->board->pieces[origin.x][origin.y] = 0;
 }
 
 // Si la position du daimyo ne correspond plus à une position valide, le joueur a perdu
 int who_wins(board_t *board)
 {
-    if (board->cases[board->daimyo_1->x][board->daimyo_1->y] != 1)
+    if (board->pieces[board->daimyo_1->x][board->daimyo_1->y] != 1)
     {
         return 2;
     }
-    if (board->cases[board->daimyo_2->x][board->daimyo_2->y] != 2)
+    if (board->pieces[board->daimyo_2->x][board->daimyo_2->y] != 2)
     {
         return 1;
     }
@@ -366,97 +374,143 @@ bool is_player_blocked(game_state_t *game_state, int player)
 
 void game_logic(game_state_t *game_state, input_t *input)
 {
-    // Vérification si il y a une input valide
-    if (input->selected_case_1->x == -1 && input->selected_case_1->y == -1 && input->selected_case_2->x == -1 && input->selected_case_2->y == -1)
+    int winner = who_wins(game_state->board);
+    if (winner != 0)
     {
+        printf("Joueur %d a gagné\n", who_wins(game_state->board));
         return;
     }
-
-    // Sélection d'un pion
-    if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1) // Case 1 sélectionné
+    else
     {
-        if (game_state->phase == 0) // Phase de choix du pion
+        if (game_state->player_blocked)
         {
-            // Vérifier si le pion peut être sélectionné
-            if (is_pos_occupied(*input->selected_case_1, game_state->board) == game_state->player && (game_state->last_case == 0 || game_state->last_case == game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y]))
+            if ((input->selected_case_1->x < -1 || input->selected_case_1->x > 6) && game_state->captured_pieces[game_state->player] != 0) // Un peu sale
             {
-                if (input->selected_case_2->x != -1 && input->selected_case_2->y != -1) // Case 2 sélectionné
+                // Cliquer en dehors du plateau prend la décision de ressuciter une pièce
+                if (input->selected_case_2->x != -1 && input->selected_case_2->y != -1)
                 {
-                    // Déplacer le pion
-                    if (is_move_valid_play(*input->selected_case_2, game_state->board, input, game_state->player))
-                    {
-                        move_piece(*input->selected_case_1, *input->selected_case_2, game_state->board);
-                        game_state->last_case = game_state->board->cases[input->selected_case_2->x][input->selected_case_2->y];
+                    input->selected_case_1->x = input->selected_case_2->x;
+                    input->selected_case_1->y = input->selected_case_2->y;
+                    input->selected_case_2->x = -1;
+                    input->selected_case_2->y = -1;
 
+                    if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == 0)
+                    {
+                        game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] = game_state->player;
+                        game_state->captured_pieces[game_state->player]--;
                         game_state->phase = 1;
                     }
-                    else
+                }
+            }
+            else
+            {
+                // Cliquer dans le plateau prend la décision jouer un pion sans restriction de case.
+                input->selected_case_1->x = -1;
+                input->selected_case_1->y = -1;
+                input->selected_case_2->x = -1;
+                input->selected_case_2->y = -1;
+                game_state->last_case = 0;
+                game_state->player_blocked = false;
+            }
+        }
+        // Vérification si il y a une input valide
+        if (input->selected_case_1->x == -1 && input->selected_case_1->y == -1 && input->selected_case_2->x == -1 && input->selected_case_2->y == -1)
+        {
+            return;
+        }
+
+        // Sélection d'un pion
+        if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1) // Case 1 sélectionné
+        {
+            if (game_state->phase == 0) // Phase de choix du pion
+            {
+                // Vérifier si le pion peut être sélectionné
+                if (is_pos_occupied(*input->selected_case_1, game_state->board) == game_state->player && (game_state->last_case == 0 || game_state->last_case == game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y]))
+                {
+                    if (input->selected_case_2->x != -1 && input->selected_case_2->y != -1) // Case 2 sélectionné
                     {
-                        fprintf(stderr, "Mouvement invalide\n");
+                        // Déplacer le pion
+                        if (is_move_valid_play(*input->selected_case_2, game_state->board, input, game_state->player))
+                        {
+                            move_piece(*input->selected_case_1, *input->selected_case_2, game_state);
+                            game_state->last_case = game_state->board->cases[input->selected_case_2->x][input->selected_case_2->y];
+
+                            game_state->phase = 1;
+                        }
+                        else
+                        {
+                            fprintf(stderr, "Mouvement invalide\n");
+                        }
+                        input->selected_case_1->x = -1;
+                        input->selected_case_1->y = -1;
+                        input->selected_case_2->x = -1;
+                        input->selected_case_2->y = -1;
+                        input->possible_moves = free_list(input->possible_moves);
                     }
+                    else // Case 1 sélectionné, pas de case 2
+                    {
+                        // Calcul des mouvements possibles
+                        if (input->possible_moves != NULL)
+                        {
+                            free_list(input->possible_moves);
+                        }
+
+                        // Si c'est un rhonin
+                        if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player && game_state->phase == 0)
+                        {
+                            input->possible_moves = list_rhonin_possible_moves(*input->selected_case_1, game_state->board, game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y], game_state->player);
+                        }
+                        else if (game_state->phase == 1)
+                        {
+                            input->possible_moves = list_bird_possible_moves(game_state->board);
+                            print_list(input->possible_moves);
+                        }
+                    }
+                }
+                else
+                {
                     input->selected_case_1->x = -1;
                     input->selected_case_1->y = -1;
                     input->selected_case_2->x = -1;
                     input->selected_case_2->y = -1;
-                    input->possible_moves = free_list(input->possible_moves);
-                }
-                else // Case 1 sélectionné, pas de case 2
-                {
-                    // Calcul des mouvements possibles
-                    if (input->possible_moves != NULL)
-                    {
-                        free_list(input->possible_moves);
-                    }
-
-                    // Si c'est un rhonin
-                    if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player && game_state->phase == 0)
-                    {
-                        input->possible_moves = list_rhonin_possible_moves(*input->selected_case_1, game_state->board, game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y], game_state->player);
-                    }
-                    else if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == 3 && game_state->phase == 1)
-                    {
-                        input->possible_moves = list_bird_possible_moves(game_state->board);
-                    }
                 }
             }
-            else
+            else if (game_state->phase == 1) // Choix de l'emplacement de l'oiseau si valide
             {
-                input->selected_case_1->x = -1;
-                input->selected_case_1->y = -1;
-                input->selected_case_2->x = -1;
-                input->selected_case_2->y = -1;
+                if (is_pos_valid(*input->selected_case_1) && is_pos_empty(*input->selected_case_1, game_state->board) && game_state->last_case == game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y])
+                {
+                    game_state->board->bird->x = input->selected_case_1->x;
+                    game_state->board->bird->y = input->selected_case_1->y;
+                    game_state->player = game_state->player == 1 ? 2 : 1;
+                    game_state->phase = 0;
+                    game_state->round++;
+
+                    if (is_player_blocked(game_state, game_state->player))
+                    {
+                        game_state->player_blocked = true;
+                        fprintf(stderr, "Joueur %d bloqué\n", game_state->player);
+                    }
+                    else
+                    {
+                        game_state->player_blocked = false;
+                    }
+                }
+                else
+                {
+                    input->selected_case_1->x = -1;
+                    input->selected_case_1->y = -1;
+                    input->selected_case_2->x = -1;
+                    input->selected_case_2->y = -1;
+                }
             }
         }
-        else if (game_state->phase == 1) // Choix de l'emplacement de l'oiseau si valide
+        else
         {
-            if (is_pos_valid(*input->selected_case_1) && is_pos_empty(*input->selected_case_1, game_state->board) && game_state->last_case == game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y])
+            // Clear de la liste
+            if (input->possible_moves != NULL)
             {
-                game_state->board->bird->x = input->selected_case_1->x;
-                game_state->board->bird->y = input->selected_case_1->y;
-                game_state->player = game_state->player == 1 ? 2 : 1;
-                game_state->phase = 0;
-                game_state->round++;
-
-                if(is_player_blocked(game_state, game_state->player))
-                {
-                    fprintf(stderr, "Joueur %d bloqué\n", game_state->player);
-                }
+                input->possible_moves = free_list(input->possible_moves);
             }
-            else
-            {
-                input->selected_case_1->x = -1;
-                input->selected_case_1->y = -1;
-                input->selected_case_2->x = -1;
-                input->selected_case_2->y = -1;
-            }
-        }
-    }
-    else
-    {
-        // Clear de la liste
-        if (input->possible_moves != NULL)
-        {
-            input->possible_moves = free_list(input->possible_moves);
         }
     }
 }

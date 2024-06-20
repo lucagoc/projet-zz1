@@ -52,6 +52,8 @@ struct game_state_s
     bool player_blocked;    // Indique si le joueur est bloqué
     int round;              // Indique le tour actuel
     int last_case;          // Indique la valeur de la dernière case jouée
+
+    int captured_pieces[3]; // Nombre de pièces capturées par chaque joueur
     board_t *board;          // Plateau de jeu
 };
 typedef struct game_state_s game_state_t;
@@ -66,3 +68,4 @@ struct input_s
 typedef struct input_s input_t;
 
 list_t* free_list(list_t *list);
+void print_list(list_t *list);

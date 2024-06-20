@@ -215,7 +215,7 @@ pos_t cord2grid(ui_t *ui, int x, int y)
 void get_input(ui_t *ui, input_t *input)
 {
     int selection = 1;
-    if (input->selected_case_1->x != -1 && input->selected_case_1 != -1)
+    if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1)
     {
         selection = 2;
     }

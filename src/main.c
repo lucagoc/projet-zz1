@@ -34,6 +34,10 @@ void init_game_state(game_state_t *game_state)
     game_state->last_case = 0;
     game_state->player_blocked = false;
     game_state->phase = 0;
+
+    game_state->captured_pieces[0] = 0; // Inutilisé
+    game_state->captured_pieces[1] = 0;
+    game_state->captured_pieces[2] = 0;
 }
 
 void init_ui(ui_t *ui)

@@ -16,6 +16,121 @@
  * @author Team 21
  */
 
+/**
+ * @brief Fonction qui compte le nombre de pièce au centre
+ * 
+ * @param board Plateau de jeu
+ */
+int count_center_piece(board_t *board){
+    int count = 0;
+    board_t *current = board;
+    
+    for (int i = 2; i < 4 ; i++){
+        for (int j = 2; j < 4; j++){
+            if (current->pieces[i][j] != 0){
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+/**
+ * @brief Renvoie la case la plus au centre parmi une liste de cases (la première s'il y en a plusieurs de même distance)
+ *
+ * @param L list_t de cases sur le plateau
+ * @return la position pos_t la plus centrée
+ */
+pos_t center_position(list_t * L){
+    
+    list_t * parcours =L;
+
+    if (parcours!=NULL){
+
+        pos_t center;
+        center.x=parcours->value.x;
+        center.y=parcours->value.y;
+        pos_t elt;
+
+        while(parcours!=NULL){
+            
+            elt.x=parcours->value.x;
+            elt.y=parcours->value.y;
+
+            if ((1<elt.x && elt.x<4) && (1<elt.y && elt.y<4)){
+                return elt; //si on a un élément centré on le renvoie direct
+
+            } else if ((elt.x!=0 && elt.x!=5) && (elt.y!=0 && elt.y!=5)){
+                //si on a un élément pas au bord
+
+                if ( (center.x==0 || center.x==5) && (center.y==0 || center.y==5) ){
+                    //mais que le centre précédent est au bord
+
+                    center.x=elt.x;
+                    center.y=elt.y;
+
+                    //alors on a le centre qui prend cette valeur
+                }
+            }
+
+            parcours = parcours->next;
+
+        }
+
+        return center;
+    } else {
+
+        //si la liste des positions est vide
+
+        pos_t erreur;
+        erreur.x=-1;
+        erreur.y=-1;
+
+        return erreur;
+    }
+
+}
+
+/**
+ * @brief Liste des cases vides 
+ * 
+ * @param board plateau de jeu
+ */
+list_t *list_empty_cases(board_t *board){
+    list_t * list_empty = malloc(sizeof(list_t));
+
+    if (list_empty == NULL){
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        return NULL;
+    } 
+    
+    board_t * current = board;
+    int i, j;
+
+    for (i = 0; i < GRID_SIZE; i++){
+        for(j = 0; j < GRID_SIZE; j++ ){
+            if (current->pieces[i][j] == 0){
+                list_t *new_list_empty = malloc(sizeof(list_t));
+                if (new_list_empty == NULL){
+                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
+                    return NULL;
+                }
+                pos_t *pos = malloc(sizeof(pos_t));
+                if (pos == NULL){
+                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
+                    return NULL;
+                }
+                pos->x = i;
+                pos->y = j;
+                new_list_empty->value = *pos;
+                new_list_empty->next = NULL;
+                list_empty->next = new_list_empty;
+            }
+        }
+    }
+    return list_empty;
+}
+
 int max(int a, int b)
 {
     return a > b ? a : b;
@@ -304,6 +419,7 @@ pos_t *best_move(game_state_t *game_state)
     }
     while (current != NULL) // Pour tous les coups
     {
+        fprintf(stderr, "j'y suis !");
         list_t *current_possibility = current->possibilities;
         while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
         {

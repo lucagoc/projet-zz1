@@ -7,6 +7,14 @@
 
 #define GRID_SIZE 6
 
+/**
+ * @file opponent.c
+ * @brief Fonctions correspondant aux actions de l'adversaire
+ * @version 1.0
+ * @date 2023-06-19
+ * @author Team 21
+ */
+
 // Fonction d'évaluation ultra naïve basé sur le nombre de pièces de chaque joueur
 int evaluate(game_state_t *game_state)
 {

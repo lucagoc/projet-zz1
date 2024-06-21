@@ -6,6 +6,14 @@
 #define GRID_SIZE 6
 
 /**
+ * @file graphics.c
+ * @brief Fonctions correspondant aux graphiques du jeu (SDL)
+ * @version 1.0
+ * @date 2023-06-19
+ * @author Team 21
+ */
+
+/**
  * @brief Dessine le fond de l'écran
  *
  * @param ui Interface utilisateur

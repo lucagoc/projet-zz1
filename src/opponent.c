@@ -39,11 +39,11 @@ int evaluate(game_state_t *game_state)
         {
             if (game_state->board->pieces[i][j] == 1)
             {
-                score += 1;
+                score += 2;
             }
             else if (game_state->board->pieces[i][j] == 2)
             {
-                score -= 1;
+                score -= 2;
             }
              /*On privilège les pièces au centre*/
             else if (count_center_piece(game_state->board) > 2){ /*On privilège les pièces au centre*/

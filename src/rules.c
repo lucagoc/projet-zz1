@@ -26,6 +26,7 @@ void init_game_state(game_state_t *game_state)
     game_state->last_case = 0;
     game_state->player_blocked = false;
     game_state->phase = 0;
+    game_state->winner = 0;
 
     game_state->captured_pieces[0] = 0; // Inutilisé
     game_state->captured_pieces[1] = 0;
@@ -366,7 +367,7 @@ list_t *list_bird_possible_moves(game_state_t *game_state)
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            if (is_pos_valid((pos_t){i, j}) && is_pos_occupied((pos_t){i, j}, game_state->board) == 0 && (game_state->board->cases[i][j] == game_state->last_case))
+            if (is_pos_valid((pos_t){i, j}) && is_pos_occupied((pos_t){i, j}, game_state->board) == 0 && (game_state->board->cases[i][j] == game_state->last_case) && (i != game_state->board->bird->x && j != game_state->board->bird->y))
             {
                 list_t *new_move = (list_t *)malloc(sizeof(list_t));
                 new_move->value = (pos_t){i, j};
@@ -402,6 +403,13 @@ void move_piece(pos_t origin, pos_t destination, game_state_t *game_state)
             game_state->board->daimyo_2->x = destination.x;
             game_state->board->daimyo_2->y = destination.y;
         }
+    }
+
+    // Si il y a une pièce à capturer, incrémenter le compteur de pièces capturées
+    int piece_captured = is_pos_occupied(destination, game_state->board);
+    if (piece_captured != 0)
+    {
+        game_state->captured_pieces[piece_captured]++;
     }
     game_state->board->pieces[destination.x][destination.y] = game_state->board->pieces[origin.x][origin.y];
     game_state->board->pieces[origin.x][origin.y] = 0;
@@ -528,6 +536,7 @@ void game_logic(game_state_t *game_state, input_t *input)
     int winner = who_wins(game_state->board);
     if (winner != 0)
     {
+        game_state->winner = winner;
         printf("Joueur %d a gagné\n", who_wins(game_state->board));
         return;
     }

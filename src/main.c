@@ -65,7 +65,7 @@ int main(int argc, char const *argv[])
     }
 
     free(game_state); // Attention à bien free imbriqué dedans !
-    unload_textures(ui->textures);
+    unload_textures(ui);
     end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
     free(ui);
 

@@ -131,15 +131,16 @@ void load_textures(SDL_Texture *textures[10], SDL_Texture *textures_pause[10], S
     textures[5] = load_texture_from_image("assets/board/case1.png", window, renderer);
     textures[6] = load_texture_from_image("assets/board/case2.png", window, renderer);
     textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
+    textures[9] = load_texture_from_image("assets/pieces/bird.png", window, renderer);
 
     /* Assets de texte */
     textures[8] = render_text("Mana", "assets/otf/metal_lord.otf", (SDL_Color){255, 255, 255, 255}, 48, renderer);
-    textures[9] = load_texture_from_image("assets/pieces/bird.png", window, renderer);
 
     /* --------------------------------------------- MENU PAUSE --------------------------------------------- */
     textures_pause[0] = load_texture_from_image("assets/image_menu/menu_pause.png", window, renderer);
     textures_pause[1] = render_text("Continue", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, renderer);
     textures_pause[2] = render_text("Quit", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, renderer);
+    textures_pause[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, renderer);
 
     return;
 }
@@ -183,16 +184,22 @@ void init_sdl(ui_t *ui)
  *
  * @param textures Tableau de textures
  */
-void unload_textures(SDL_Texture *textures[10])
+void unload_textures(ui_t *ui)
 {
-    SDL_DestroyTexture(textures[1]);
-    SDL_DestroyTexture(textures[2]);
-    SDL_DestroyTexture(textures[3]);
-    SDL_DestroyTexture(textures[4]);
-    SDL_DestroyTexture(textures[5]);
-    SDL_DestroyTexture(textures[6]);
-    SDL_DestroyTexture(textures[7]);
-    SDL_DestroyTexture(textures[8]);
+    SDL_DestroyTexture(ui->textures[1]);
+    SDL_DestroyTexture(ui->textures[2]);
+    SDL_DestroyTexture(ui->textures[3]);
+    SDL_DestroyTexture(ui->textures[4]);
+    SDL_DestroyTexture(ui->textures[5]);
+    SDL_DestroyTexture(ui->textures[6]);
+    SDL_DestroyTexture(ui->textures[7]);
+    SDL_DestroyTexture(ui->textures[8]);
+    SDL_DestroyTexture(ui->textures[9]);
+
+    SDL_DestroyTexture(ui->textures_pause[0]);
+    SDL_DestroyTexture(ui->textures_pause[1]);
+    SDL_DestroyTexture(ui->textures_pause[2]);
+    SDL_DestroyTexture(ui->textures_pause[3]);
 }
 
 void init_ui(ui_t *ui)
@@ -316,9 +323,3 @@ void get_input(ui_t *ui, input_t *input)
         }
     }
 }
-
-// Libération des ressources et nettoyage
-/*
-SDL_DestroyTexture(background_texture);
-SDL_DestroyTexture(continue_text);
-SDL_DestroyTexture(quit_text);*/

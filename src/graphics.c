@@ -71,6 +71,19 @@ void draw_selected_case(ui_t *ui, input_t *input)
     }
 }
 
+/*
+ * @brief Affiche le message de victoire
+ *
+ * @param ui Interface utilisateur
+ * @param game Etat du jeu
+ * @param y Coordonnée y du message
+ */
+void draw_victory(ui_t *ui)
+{
+    SDL_Rect win_rect = {950, 100, 300, 60};
+    SDL_RenderCopy(ui->renderer, ui->textures_pause[3], NULL, &win_rect);
+}
+
 /**
  * @brief Affiche un rectangle rouge autour de la case prédite
  *
@@ -86,9 +99,9 @@ void draw_possible_move(ui_t *ui, int x, int y, int phase)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
     }
-    else
+    else // Pour l'oiseau
     {
-        SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 128);
+        SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 128);
     }
     SDL_RenderFillRect(ui->renderer, &prediction_rect);
 }
@@ -269,6 +282,22 @@ void draw_indicator(ui_t *ui, game_state_t *game_state, input_t *input)
         draw_all_possible_moves(ui, input->possible_moves, game_state->phase);
     }
 
+    /************************ AFFICHAGE PIECES CAPTURES *************************/
+    int captured_black = game_state->captured_pieces[1];
+    int captured_white = game_state->captured_pieces[2];
+
+    while (captured_black > 0)
+    {
+        draw_piece(ui, 1, 150, captured_black * 100 + 100);
+        captured_black--;
+    }
+
+    while (captured_white > 0)
+    {
+        draw_piece(ui, 2, ui->screen_w - 150, captured_white * 100 + 100);
+        captured_white--;
+    }
+
     return;
 }
 
@@ -319,13 +348,18 @@ void draw_menu_pause(ui_t *ui)
  */
 void draw(ui_t *ui, game_state_t *game_state, input_t *input)
 {
+    draw_background(ui);
+    draw_logo(ui);
     if (ui->in_pause)
     {
         draw_menu_pause(ui);
         return;
     }
-    draw_background(ui);
     draw_board(ui, game_state->board);
     draw_indicator(ui, game_state, input);
-    draw_logo(ui);
+    if (game_state->winner != 0)
+    {
+        draw_victory(ui);
+        return;
+    }
 }

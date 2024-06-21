@@ -163,3 +163,44 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
         return best;
     }
 } */
+
+
+/**
+ * @brief Liste des cases vides 
+ * 
+ * @param board plateau de jeu
+ */
+list_t *list_empty_cases(board_t *board){
+    list_t * list_empty = malloc(sizeof(list_t));
+
+    if (list_empty == NULL){
+        fprintf(stderr, "Erreur d'allocation de mémoire\n");
+        return NULL;
+    } 
+    
+    board_t * current = board;
+    int i, j;
+
+    for (i = 0; i < GRID_SIZE; i++){
+        for(j = 0; j < GRID_SIZE; j++ ){
+            if (current->pieces[i][j] == 0){
+                list_t *new_list_empty = malloc(sizeof(list_t));
+                if (new_list_empty == NULL){
+                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
+                    return NULL;
+                }
+                pos_t *pos = malloc(sizeof(pos_t));
+                if (pos == NULL){
+                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
+                    return NULL;
+                }
+                pos->x = i;
+                pos->y = j;
+                new_list_empty->value = *pos;
+                new_list_empty->next = NULL;
+                list_empty->next = new_list_empty;
+            }
+        }
+    }
+    return list_empty;
+}

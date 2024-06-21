@@ -308,6 +308,10 @@ list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step,
             // Déplacement vers la droite
             possible_moves_list = concat_list(possible_moves_list, list_rhonin_possible_moves_aux((pos_t){position.x + 1, position.y}, board, step - 1, player, previous_moves));
 
+            for (int i = 0; i < GRID_SIZE; i++)
+            {
+                free(previous_moves[i]);
+            }
             free(previous_moves);
             return possible_moves_list;
         }
@@ -349,6 +353,10 @@ list_t *list_rhonin_possible_moves(pos_t position, board_t *board, int step, int
     // Déplacement vers la droite
     res = concat_list(res, list_rhonin_possible_moves_aux((pos_t){position.x + 1, position.y}, board, step - 1, player, previous_moves));
 
+    for (int i = 0; i < GRID_SIZE; i++)
+    {
+        free(previous_moves[i]);
+    }
     free(previous_moves);
     return res;
 }
@@ -495,6 +503,7 @@ bool is_player_partially_blocked(game_state_t *game_state, int player)
                 {
                     return false;
                 }
+                possible_moves = free_list(possible_moves);
             }
         }
     }
@@ -658,8 +667,8 @@ void game_logic(game_state_t *game_state, input_t *input)
                         game_state->player_blocked = true;
                     }
                     else
-                    {   
-                        if(player_1_blocked)
+                    {
+                        if (player_1_blocked)
                         {
                             game_state->player_blocked = true;
                             fprintf(stderr, "Joueur %d bloqué totalement\n", game_state->player);

@@ -15,6 +15,7 @@ EXEC := $(BIN_DIR)/mana
 CC := gcc
 CFLAGS := -Wall -Wextra -Werror -g -I$(SRC_DIR)
 LIBS := -lm -lSDL2 -lSDL2_image -lSDL2_ttf
+SANITIZE := -fsanitize=address
 
 # Cible par défaut
 all: $(EXEC)
@@ -22,12 +23,12 @@ all: $(EXEC)
 # Règle pour créer l'exécutable
 $(EXEC): $(OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(OBJS) -o $@ $(LIBS)
+	$(CC) $(SANITIZE) $(OBJS) -o $@ $(LIBS)
 
 # Règle pour créer les fichiers objets
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@ $(LIBS)
+	$(CC) $(SANITIZE) $(CFLAGS) -c $< -o $@ $(LIBS)
 
 # Règle pour nettoyer le projet
 clean:

@@ -24,9 +24,11 @@ void free_input(input_t *input)
     {
         free_list(input->possible_moves);
     }
+
     free(input->selected_case_1);
     free(input->selected_case_2);
     free(input->possible_moves);
+    free(input);
 }
 
 void free_board(board_t *board)

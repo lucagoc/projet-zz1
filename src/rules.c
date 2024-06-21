@@ -375,7 +375,7 @@ list_t *list_bird_possible_moves(game_state_t *game_state)
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            if (is_pos_valid((pos_t){i, j}) && is_pos_occupied((pos_t){i, j}, game_state->board) == 0 && (game_state->board->cases[i][j] == game_state->last_case) && (i != game_state->board->bird->x && j != game_state->board->bird->y))
+            if (is_pos_valid((pos_t){i, j}) && is_pos_occupied((pos_t){i, j}, game_state->board) == 0 && (game_state->board->cases[i][j] == game_state->last_case) && (i != game_state->board->bird->x || j != game_state->board->bird->y))
             {
                 list_t *new_move = (list_t *)malloc(sizeof(list_t));
                 new_move->value = (pos_t){i, j};

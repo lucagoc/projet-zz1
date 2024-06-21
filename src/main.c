@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
         get_input(ui, input);
         if (!ui->in_pause)
         {
-            game_logic(game_state, input);
+            game_logic_2(game_state, input);
         }
         draw(ui, game_state, input);
         SDL_RenderPresent(ui->renderer);

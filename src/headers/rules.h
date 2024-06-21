@@ -13,3 +13,4 @@ list_t *list_bird_possible_moves(board_t *board);
 void move_piece(pos_t origin, pos_t destination, game_state_t *game_state);
 int who_wins(board_t *board);
 void game_logic(game_state_t *game_state, input_t *input);
+void game_logic_2(game_state_t *game_state, input_t *input);

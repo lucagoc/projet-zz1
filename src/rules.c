@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
+
 #include "headers/struct.h"
+#include "headers/opponent.h"
 
 #define GRID_SIZE 6
 #define BOARD_SIZE 6
@@ -694,5 +696,18 @@ void game_logic(game_state_t *game_state, input_t *input)
                 input->possible_moves = free_list(input->possible_moves);
             }
         }
+    }
+}
+
+
+// Fonction logique du jeu, en prenant compte un adversaire qui joue avec min-max
+void game_logic_2(game_state_t *game_state, input_t *input)
+{
+    if(game_state->player == 1){
+        game_logic(game_state, input);
+    }
+    else // Adversaire qui joue avec min-max
+    {
+        play_opponent(game_state);
     }
 }

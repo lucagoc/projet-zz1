@@ -588,6 +588,12 @@ void game_logic(game_state_t *game_state, input_t *input)
             return;
         }
 
+        // Vérification si l'entrée est valide
+        if(!is_pos_valid(*input->selected_case_1)){
+            input->selected_case_1->x = -1;
+            input->selected_case_1->y = -1;
+        }
+
         // Sélection d'un pion
         if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1) // Case 1 sélectionné
         {

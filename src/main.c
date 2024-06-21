@@ -64,10 +64,11 @@ int main(int argc, char const *argv[])
         SDL_Delay(15); // ~ 60 FPS
     }
 
-    free(game_state); // Attention à bien free imbriqué dedans !
-    unload_textures(ui);
-    end_sdl(0, "Le programme s'est terminé correctement", ui->window, ui->renderer);
-    free(ui);
+    
+    // Libération de la mémoire
+    free_input(input);
+    free_game_state(game_state);
+    free_ui(ui);
 
     return 0;
 }

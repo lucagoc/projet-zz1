@@ -18,6 +18,31 @@
  * @author Team 21
  */
 
+void free_input(input_t *input)
+{
+    if(input->possible_moves != NULL)
+    {
+        free_list(input->possible_moves);
+    }
+    free(input->selected_case_1);
+    free(input->selected_case_2);
+    free(input->possible_moves);
+}
+
+void free_board(board_t *board)
+{
+    free(board->bird);
+    free(board->daimyo_1);
+    free(board->daimyo_2);
+    free(board);
+}
+
+void free_game_state(game_state_t *game_state)
+{
+    free_board(game_state->board);
+    free(game_state);
+}
+
 /**
  * @brief Fermeture de la SDL
  *
@@ -44,20 +69,50 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     if (renderer != NULL)
     {                                  // Destruction si nécessaire du renderer
         SDL_DestroyRenderer(renderer); // Attention : on suppose que les NULL sont maintenus !!
-        renderer = NULL;
     }
     if (window != NULL)
     {                              // Destruction si nécessaire de la fenêtre
         SDL_DestroyWindow(window); // Attention : on suppose que les NULL sont maintenus !!
-        window = NULL;
     }
-
+    TTF_Quit();
     SDL_Quit();
 
     if (!ok)
     {
         exit(EXIT_FAILURE);
     }
+}
+
+/**
+ * @brief Décharge toutes les textures du jeu
+ *
+ * @param textures Tableau de textures
+ */
+void unload_textures(ui_t *ui)
+{
+    SDL_DestroyTexture(ui->textures[1]);
+    SDL_DestroyTexture(ui->textures[2]);
+    SDL_DestroyTexture(ui->textures[3]);
+    SDL_DestroyTexture(ui->textures[4]);
+    SDL_DestroyTexture(ui->textures[5]);
+    SDL_DestroyTexture(ui->textures[6]);
+    SDL_DestroyTexture(ui->textures[7]);
+    SDL_DestroyTexture(ui->textures[8]);
+    SDL_DestroyTexture(ui->textures[9]);
+
+    SDL_DestroyTexture(ui->textures_pause[0]);
+    SDL_DestroyTexture(ui->textures_pause[1]);
+    SDL_DestroyTexture(ui->textures_pause[2]);
+    SDL_DestroyTexture(ui->textures_pause[3]);
+}
+
+void free_ui(ui_t *ui)
+{
+    SDL_DestroyRenderer(ui->renderer);
+    free(ui->selected_case);
+    SDL_DestroyWindow(ui->window);
+    unload_textures(ui);
+    free(ui);
 }
 
 /**
@@ -177,29 +232,6 @@ void init_sdl(ui_t *ui)
 
     // Activer le mode de mélange pour la transparence
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
-}
-
-/**
- * @brief Décharge toutes les textures du jeu
- *
- * @param textures Tableau de textures
- */
-void unload_textures(ui_t *ui)
-{
-    SDL_DestroyTexture(ui->textures[1]);
-    SDL_DestroyTexture(ui->textures[2]);
-    SDL_DestroyTexture(ui->textures[3]);
-    SDL_DestroyTexture(ui->textures[4]);
-    SDL_DestroyTexture(ui->textures[5]);
-    SDL_DestroyTexture(ui->textures[6]);
-    SDL_DestroyTexture(ui->textures[7]);
-    SDL_DestroyTexture(ui->textures[8]);
-    SDL_DestroyTexture(ui->textures[9]);
-
-    SDL_DestroyTexture(ui->textures_pause[0]);
-    SDL_DestroyTexture(ui->textures_pause[1]);
-    SDL_DestroyTexture(ui->textures_pause[2]);
-    SDL_DestroyTexture(ui->textures_pause[3]);
 }
 
 void init_ui(ui_t *ui)
@@ -323,3 +355,4 @@ void get_input(ui_t *ui, input_t *input)
         }
     }
 }
+

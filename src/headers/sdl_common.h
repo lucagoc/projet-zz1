@@ -9,3 +9,8 @@ void load_textures(SDL_Texture *textures[10], SDL_Renderer *renderer, SDL_Window
 void unload_textures(ui_t *ui);
 SDL_Texture* render_text(const char* message, const char* font_file, SDL_Color color, int font_size, SDL_Renderer* renderer);
 void get_input(ui_t *ui, input_t *input);
+
+void free_input(input_t *input);
+void free_ui(ui_t *ui);
+void free_board(board_t *board);
+void free_game_state(game_state_t *game_state);

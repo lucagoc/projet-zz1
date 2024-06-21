@@ -18,16 +18,20 @@
 
 /**
  * @brief Fonction qui compte le nombre de pièce au centre
- * 
+ *
  * @param board Plateau de jeu
  */
-int count_center_piece(board_t *board){
+int count_center_piece(board_t *board)
+{
     int count = 0;
     board_t *current = board;
-    
-    for (int i = 2; i < 4 ; i++){
-        for (int j = 2; j < 4; j++){
-            if (current->pieces[i][j] != 0){
+
+    for (int i = 2; i < 4; i++)
+    {
+        for (int j = 2; j < 4; j++)
+        {
+            if (current->pieces[i][j] != 0)
+            {
                 count++;
             }
         }
@@ -41,82 +45,95 @@ int count_center_piece(board_t *board){
  * @param L list_t de cases sur le plateau
  * @return la position pos_t la plus centrée
  */
-pos_t center_position(list_t * L){
-    
-    list_t * parcours =L;
+pos_t center_position(list_t *L)
+{
 
-    if (parcours!=NULL){
+    list_t *parcours = L;
+
+    if (parcours != NULL)
+    {
 
         pos_t center;
-        center.x=parcours->value.x;
-        center.y=parcours->value.y;
+        center.x = parcours->value.x;
+        center.y = parcours->value.y;
         pos_t elt;
 
-        while(parcours!=NULL){
-            
-            elt.x=parcours->value.x;
-            elt.y=parcours->value.y;
+        while (parcours != NULL)
+        {
 
-            if ((1<elt.x && elt.x<4) && (1<elt.y && elt.y<4)){
-                return elt; //si on a un élément centré on le renvoie direct
+            elt.x = parcours->value.x;
+            elt.y = parcours->value.y;
 
-            } else if ((elt.x!=0 && elt.x!=5) && (elt.y!=0 && elt.y!=5)){
-                //si on a un élément pas au bord
+            if ((1 < elt.x && elt.x < 4) && (1 < elt.y && elt.y < 4))
+            {
+                return elt; // si on a un élément centré on le renvoie direct
+            }
+            else if ((elt.x != 0 && elt.x != 5) && (elt.y != 0 && elt.y != 5))
+            {
+                // si on a un élément pas au bord
 
-                if ( (center.x==0 || center.x==5) && (center.y==0 || center.y==5) ){
-                    //mais que le centre précédent est au bord
+                if ((center.x == 0 || center.x == 5) && (center.y == 0 || center.y == 5))
+                {
+                    // mais que le centre précédent est au bord
 
-                    center.x=elt.x;
-                    center.y=elt.y;
+                    center.x = elt.x;
+                    center.y = elt.y;
 
-                    //alors on a le centre qui prend cette valeur
+                    // alors on a le centre qui prend cette valeur
                 }
             }
 
             parcours = parcours->next;
-
         }
 
         return center;
-    } else {
+    }
+    else
+    {
 
-        //si la liste des positions est vide
+        // si la liste des positions est vide
 
         pos_t erreur;
-        erreur.x=-1;
-        erreur.y=-1;
+        erreur.x = -1;
+        erreur.y = -1;
 
         return erreur;
     }
-
 }
 
 /**
- * @brief Liste des cases vides 
- * 
+ * @brief Liste des cases vides
+ *
  * @param board plateau de jeu
  */
-list_t *list_empty_cases(board_t *board){
-    list_t * list_empty = malloc(sizeof(list_t));
+list_t *list_empty_cases(board_t *board)
+{
+    list_t *list_empty = malloc(sizeof(list_t));
 
-    if (list_empty == NULL){
+    if (list_empty == NULL)
+    {
         fprintf(stderr, "Erreur d'allocation de mémoire\n");
         return NULL;
-    } 
-    
-    board_t * current = board;
+    }
+
+    board_t *current = board;
     int i, j;
 
-    for (i = 0; i < GRID_SIZE; i++){
-        for(j = 0; j < GRID_SIZE; j++ ){
-            if (current->pieces[i][j] == 0){
+    for (i = 0; i < GRID_SIZE; i++)
+    {
+        for (j = 0; j < GRID_SIZE; j++)
+        {
+            if (current->pieces[i][j] == 0)
+            {
                 list_t *new_list_empty = malloc(sizeof(list_t));
-                if (new_list_empty == NULL){
+                if (new_list_empty == NULL)
+                {
                     fprintf(stderr, "Erreur d'allocation de mémoire\n");
                     return NULL;
                 }
                 pos_t *pos = malloc(sizeof(pos_t));
-                if (pos == NULL){
+                if (pos == NULL)
+                {
                     fprintf(stderr, "Erreur d'allocation de mémoire\n");
                     return NULL;
                 }
@@ -318,7 +335,10 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
                 if (copy->phase == 1)
                 {
                     // L'oiseau est placé sur la case la plus proche du centre
-                    // Input = ...
+                    input->possible_moves = list_bird_possible_moves(game_state->board);
+                    pos_t center = center_position(input->possible_moves);
+                    input->selected_case_1->x = center.x;
+                    input->selected_case_1->y = center.y;
 
                     game_logic(copy, input); // Jouer le coup
                 }
@@ -373,7 +393,10 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
                 if (copy->phase == 1)
                 {
                     // L'oiseau est placé sur la case la plus proche du centre
-                    // Input = ...
+                    input->possible_moves = list_bird_possible_moves(game_state->board);
+                    pos_t center = center_position(input->possible_moves);
+                    input->selected_case_1->x = center.x;
+                    input->selected_case_1->y = center.y;
 
                     game_logic(copy, input); // Jouer le coup
                 }
@@ -430,6 +453,8 @@ pos_t *best_move(game_state_t *game_state)
                 best_move->x = current->pos->x;
                 best_move->y = current->pos->y;
             }
+
+            current_possibility = current_possibility->next;
         }
 
         // Passage au prochain coup
@@ -446,13 +471,17 @@ void play_opponent(game_state_t *game_state)
     init_input(input);
     input->selected_case_1->x = best->x;
     input->selected_case_1->y = best->y;
+
     game_logic(game_state, input);
 
     // Placement de l'oiseau
     if (game_state->phase == 1)
     {
         // L'oiseau est placé sur la case la plus proche du centre
-        // Input = ...
+        input->possible_moves = list_bird_possible_moves(game_state->board);
+        pos_t center = center_position(input->possible_moves);
+        input->selected_case_1->x = center.x;
+        input->selected_case_1->y = center.y;
 
         game_logic(game_state, input); // Jouer le coup
     }

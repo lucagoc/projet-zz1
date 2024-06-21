@@ -614,7 +614,6 @@ void game_logic(game_state_t *game_state, input_t *input)
                         }
                         else
                         {
-                            fprintf(stderr, "Mouvement invalide\n");
                             input->possible_moves = free_list(input->possible_moves);
                         }
                         input->selected_case_1->x = -1;

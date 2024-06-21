@@ -7,6 +7,27 @@
 
 #define GRID_SIZE 6
 
+
+/**
+ * @brief Fonction qui compte le nombre de pièce au centre
+ * 
+ * @param board Plateau de jeu
+ */
+int count_center_piece(board_t *board){
+    int count = 0;
+    board_t *current = board;
+    
+    for (int i = 2; i < 4 ; i++){
+        for (int j = 2; j < 4; j++){
+            if (current->pieces[i][j] != 0){
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+
 // Fonction d'évaluation ultra naïve basé sur le nombre de pièces de chaque joueur
 int evaluate(game_state_t *game_state)
 {
@@ -22,6 +43,13 @@ int evaluate(game_state_t *game_state)
             }
             else if (game_state->board->pieces[i][j] == 2)
             {
+                score -= 1;
+            }
+             /*On privilège les pièces au centre*/
+            else if (count_center_piece(game_state->board) > 2){ /*On privilège les pièces au centre*/
+                score += 1;
+            }
+            else if (count_center_piece(game_state->board) < 2){
                 score -= 1;
             }
         }
@@ -204,3 +232,6 @@ list_t *list_empty_cases(board_t *board){
     }
     return list_empty;
 }
+
+
+

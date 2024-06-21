@@ -12,7 +12,7 @@
  */
 void draw_background(ui_t *ui)
 {
-    SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255); // R G B A
+    SDL_SetRenderDrawColor(ui->renderer, 208, 240, 245, 255); // R G B A
     SDL_RenderClear(ui->renderer);
     return;
 }

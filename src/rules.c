@@ -555,31 +555,26 @@ void game_logic(game_state_t *game_state, input_t *input)
         {
             if ((input->selected_case_1->x < -1 || input->selected_case_1->x > 6) && game_state->captured_pieces[game_state->player] != 0) // Un peu sale
             {
-                // Cliquer en dehors du plateau prend la décision de ressuciter une pièce
-                if (input->selected_case_2->x != -1 && input->selected_case_2->y != -1)
-                {
-                    input->selected_case_1->x = input->selected_case_2->x;
-                    input->selected_case_1->y = input->selected_case_2->y;
-                    input->selected_case_2->x = -1;
-                    input->selected_case_2->y = -1;
-
-                    if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == 0)
-                    {
-                        game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] = game_state->player;
-                        game_state->captured_pieces[game_state->player]--;
-                        game_state->phase = 1;
-                    }
-                }
+                return;
             }
             else
             {
+                if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == 0 && game_state->captured_pieces[game_state->player] != 0 && game_state->board->bird->x != input->selected_case_1->x && game_state->board->bird->y != input->selected_case_1->y)
+                {
+                    game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] = game_state->player;
+                    game_state->captured_pieces[game_state->player]--;
+                    game_state->phase = 1;
+                }
+                else if(game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player)
+                {
+                    input->selected_case_1->x = -1;
+                    input->selected_case_1->y = -1;
+                    input->selected_case_2->x = -1;
+                    input->selected_case_2->y = -1;
+                    game_state->last_case = 0;
+                    game_state->player_blocked = false;
+                }
                 // Cliquer dans le plateau prend la décision jouer un pion sans restriction de case.
-                input->selected_case_1->x = -1;
-                input->selected_case_1->y = -1;
-                input->selected_case_2->x = -1;
-                input->selected_case_2->y = -1;
-                game_state->last_case = 0;
-                game_state->player_blocked = false;
             }
         }
         // Vérification si il y a une input valide
@@ -589,7 +584,8 @@ void game_logic(game_state_t *game_state, input_t *input)
         }
 
         // Vérification si l'entrée est valide
-        if(!is_pos_valid(*input->selected_case_1)){
+        if (!is_pos_valid(*input->selected_case_1))
+        {
             input->selected_case_1->x = -1;
             input->selected_case_1->y = -1;
         }

@@ -18,9 +18,14 @@
  * @author Team 21
  */
 
+/**
+ * @brief Libère la mémoire allouée pour les listes de cases jouables
+ *
+ * @param list Liste de cases jouables
+ */
 void free_input(input_t *input)
 {
-    if(input->possible_moves != NULL)
+    if (input->possible_moves != NULL)
     {
         free_list(input->possible_moves);
     }
@@ -31,6 +36,11 @@ void free_input(input_t *input)
     free(input);
 }
 
+/**
+ * @brief Libère la mémoire allouée pour une liste de cases jouables
+ *
+ * @param list Liste de cases jouables
+ */
 void free_board(board_t *board)
 {
     free(board->bird);
@@ -39,6 +49,11 @@ void free_board(board_t *board)
     free(board);
 }
 
+/**
+ * @brief Libère la mémoire allouée pour une liste de cases jouables
+ *
+ * @param list Liste de cases jouables
+ */
 void free_game_state(game_state_t *game_state)
 {
     free_board(game_state->board);
@@ -53,7 +68,6 @@ void free_game_state(game_state_t *game_state)
  * @param window Fenêtre à fermer
  * @param renderer Renderer à fermer
  */
-
 void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *renderer)
 {
     char msg_formated[255];
@@ -202,6 +216,11 @@ void load_textures(SDL_Texture *textures[10], SDL_Texture *textures_pause[10], S
     return;
 }
 
+/**
+ * @brief Initialisation de la SDL
+ *
+ * @param ui Structure de l'interface utilisateur
+ */
 void init_sdl(ui_t *ui)
 {
     /* Initialisation de la SDL */
@@ -236,6 +255,11 @@ void init_sdl(ui_t *ui)
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
+/**
+ * @brief Initialisation de l'interface utilisateur
+ *
+ * @param ui Structure de l'interface utilisateur
+ */
 void init_ui(ui_t *ui)
 {
     ui->screen_w = SCREEN_WIDTH;
@@ -253,6 +277,11 @@ void init_ui(ui_t *ui)
     ui->program_on = true;
 }
 
+/**
+ * @brief Initialisation de l'état du jeu
+ *
+ * @param game_state Structure de l'état du jeu
+ */
 void init_input(input_t *input)
 {
     input->selected_case_1 = malloc(sizeof(pos_t));
@@ -275,6 +304,14 @@ void init_input(input_t *input)
     input->possible_moves = NULL;
 }
 
+/**
+ * @brief Fonction pour convertir les coordonnées de la souris en coordonnées de la grille
+ *
+ * @param ui Structure de l'interface utilisateur
+ * @param x Coordonnée x
+ * @param y Coordonnée y
+ * @return pos_t Position dans la grille
+ */
 pos_t cord2grid(ui_t *ui, int x, int y)
 {
     pos_t pos;
@@ -283,14 +320,23 @@ pos_t cord2grid(ui_t *ui, int x, int y)
     return pos;
 }
 
-bool is_mouse_over_button(SDL_Rect button, int mouse_x, int mouse_y) {                                                                          
+/**
+ * @brief Indique si la souris est sur un bouton
+ * 
+ * @param button Rectangle du bouton
+ * @param mouse_x Coordonnée x de la souris
+ * @param mouse_y Coordonnée y de la souris
+ */
+bool is_mouse_over_button(SDL_Rect button, int mouse_x, int mouse_y)
+{
     return mouse_x > button.x && mouse_x < (button.x + button.w) && mouse_y > button.y && mouse_y < (button.y + button.h);
 }
 
 /*
  * @brief Fonction pour récupérer les événements
  *
- * @param game Structure de l'état du jeu
+ * @param ui Structure de l'interface utilisateur
+ * @param input Structure des entrées
  */
 void get_input(ui_t *ui, input_t *input)
 {
@@ -357,4 +403,3 @@ void get_input(ui_t *ui, input_t *input)
         }
     }
 }
-

@@ -5,7 +5,6 @@
 #include "headers/struct.h"
 #include "headers/rules.h"
 
-
 #define GRID_SIZE 6
 
 // Fonction d'évaluation ultra naïve basé sur le nombre de pièces de chaque joueur
@@ -75,6 +74,12 @@ l_path_t *playable_cases(game_state_t *game_state, int player)
     return res;
 }
 
+/**
+ * @brief Fonction qui copie un plateau
+ * 
+ * @param board Plateau à copier
+ * @return board_t* Copie du plateau
+ */
 board_t *copy_board(board_t *board)
 {
     board_t *copy = malloc(sizeof(board_t));
@@ -95,6 +100,12 @@ board_t *copy_board(board_t *board)
     return copy;
 }
 
+/**
+ * @brief Fonction qui copie un état de jeu
+ * 
+ * @param game_state Etat de jeu à copier
+ * @return game_state_t* Copie de l'état de jeu
+ */
 game_state_t *copy_game_state(game_state_t *game_state)
 {
     game_state_t *copy = malloc(sizeof(game_state_t));
@@ -126,8 +137,8 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
     if (is_max)
     {
         int best = -1000;
-        
-        
+
+
         l_path_t *cases = playable_cases(game_state, 1);
         l_path_t *current = cases;
         while (current != NULL)
@@ -138,7 +149,7 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
             {
                 // Faire une copie de la possibilité
                 // game_state_t *new_game_state = copy_game_state(game_state);
-                
+
 
             }
             current = current->next;

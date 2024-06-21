@@ -63,7 +63,6 @@ int main(int argc, char const *argv[])
         SDL_RenderPresent(ui->renderer);
         SDL_Delay(15); // ~ 60 FPS
     }
-
     
     // Libération de la mémoire
     free_input(input);

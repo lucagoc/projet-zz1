@@ -252,6 +252,10 @@ int evaluate(game_state_t *game_state)
             {
                 if (game_state->board->pieces[current_possibility->value.x][current_possibility->value.y] == 2)
                 {
+                    if(game_state->board->daimyo_2->x == current_possibility->value.x && game_state->board->daimyo_2->y == current_possibility->value.y)
+                    {
+                        score -= 200; // Si le daimyo est menacé c'est encore pire
+                    }
                     score -= 10;
                 }
                 current_possibility = current_possibility->next;
@@ -274,6 +278,10 @@ int evaluate(game_state_t *game_state)
             {
                 if (game_state->board->pieces[current_possibility->value.x][current_possibility->value.y] == 1)
                 {
+                    if(game_state->board->daimyo_1->x == current_possibility->value.x && game_state->board->daimyo_1->y == current_possibility->value.y)
+                    {
+                        score += 200; // Si le daimyo est menacé c'est lezzgo
+                    }
                     score += 10;
                 }
                 current_possibility = current_possibility->next;

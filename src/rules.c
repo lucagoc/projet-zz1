@@ -247,6 +247,10 @@ list_t *concat_list(list_t *list1, list_t *list2)
     {
         return list1;
     }
+    else if (list1 == NULL)
+    {
+        return list2;
+    }
     else
     {
         list_t *current = list2;
@@ -271,55 +275,43 @@ list_t *concat_list(list_t *list1, list_t *list2)
  * @return list_t* Liste des mouvements possibles
  * @return NULL Si aucun mouvement possible ou si la case est déjà visitée
  */
-list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step, int player, int **previous_tab)
-{
-    if (is_pos_valid(position) && previous_tab[position.x][position.y] == 0 && (position.x != board->bird->x || position.y != board->bird->y) && is_pos_occupied(position, board) != player)
-    {
-        if (step == 0 && is_move_valid(position, position, board, player))
-        {
+list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step, int player, int **previous_tab) {
+    if (is_pos_valid(position) && previous_tab[position.x][position.y] == 0 && 
+        (position.x != board->bird->x || position.y != board->bird->y) && 
+        is_pos_occupied(position, board) != player) {
+        
+        if (step == 0 && is_move_valid(position, position, board, player)) {
             list_t *new_move = (list_t *)malloc(sizeof(list_t));
             new_move->value = position;
             new_move->next = NULL;
             return new_move;
-        }
-        else if (step == 0 || is_pos_occupied(position, board) != 0)
-        {
+        } else if (step == 0 || is_pos_occupied(position, board) != 0) {
             return NULL;
-        }
-        else
-        {
-            // Copier le tableau previous_tab
-            int **previous_moves = malloc(GRID_SIZE * sizeof(int *));
-            for (int i = 0; i < GRID_SIZE; i++)
-            {
-                previous_moves[i] = (int *)malloc(GRID_SIZE * sizeof(int));
-                for (int j = 0; j < GRID_SIZE; j++)
-                {
-                    previous_moves[i][j] = previous_tab[i][j];
-                }
-            }
-            previous_moves[position.x][position.y] = 1;
+        } else {
+            previous_tab[position.x][position.y] = 1;
 
             list_t *possible_moves_list = NULL;
-            // Déplacement vers le haut;
-            possible_moves_list = concat_list(possible_moves_list, list_rhonin_possible_moves_aux((pos_t){position.x, position.y - 1}, board, step - 1, player, previous_moves));
-            // Déplacement vers le bas
-            possible_moves_list = concat_list(possible_moves_list, list_rhonin_possible_moves_aux((pos_t){position.x, position.y + 1}, board, step - 1, player, previous_moves));
-            // Déplacement vers la gauche
-            possible_moves_list = concat_list(possible_moves_list, list_rhonin_possible_moves_aux((pos_t){position.x - 1, position.y}, board, step - 1, player, previous_moves));
-            // Déplacement vers la droite
-            possible_moves_list = concat_list(possible_moves_list, list_rhonin_possible_moves_aux((pos_t){position.x + 1, position.y}, board, step - 1, player, previous_moves));
 
-            for (int i = 0; i < GRID_SIZE; i++)
-            {
-                free(previous_moves[i]);
-            }
-            free(previous_moves);
+            // Déplacement vers le haut
+            list_t *move_up = list_rhonin_possible_moves_aux((pos_t){position.x, position.y - 1}, board, step - 1, player, previous_tab);
+            possible_moves_list = concat_list(possible_moves_list, move_up);
+
+            // Déplacement vers le bas
+            list_t *move_down = list_rhonin_possible_moves_aux((pos_t){position.x, position.y + 1}, board, step - 1, player, previous_tab);
+            possible_moves_list = concat_list(possible_moves_list, move_down);
+
+            // Déplacement vers la gauche
+            list_t *move_left = list_rhonin_possible_moves_aux((pos_t){position.x - 1, position.y}, board, step - 1, player, previous_tab);
+            possible_moves_list = concat_list(possible_moves_list, move_left);
+
+            // Déplacement vers la droite
+            list_t *move_right = list_rhonin_possible_moves_aux((pos_t){position.x + 1, position.y}, board, step - 1, player, previous_tab);
+            possible_moves_list = concat_list(possible_moves_list, move_right);
+
+            previous_tab[position.x][position.y] = 0;
             return possible_moves_list;
         }
-    }
-    else
-    {
+    } else {
         return NULL;
     }
 }
@@ -625,12 +617,9 @@ void game_logic(game_state_t *game_state, input_t *input)
                     else // Case 1 sélectionné, pas de case 2
                     {
                         // Calcul des mouvements possibles
-                        if (input->possible_moves != NULL)
-                        {
-                            free_list(input->possible_moves);
-                        }
-
+                        input->possible_moves = free_list(input->possible_moves);
                         // Si c'est un rhonin
+                        
                         if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player && game_state->phase == 0)
                         {
                             input->possible_moves = list_rhonin_possible_moves(*input->selected_case_1, game_state->board, game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y], game_state->player);

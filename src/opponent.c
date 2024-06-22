@@ -541,6 +541,7 @@ void play_opponent(game_state_t *game_state)
     if (game_state->phase == 1)
     {
         // L'oiseau est placé sur la case la plus proche du centre
+        free_list(best->possible_moves);
         best->possible_moves = list_bird_possible_moves(game_state);
         pos_t center = center_position(best->possible_moves);
         best->selected_case_1->x = center.x;
@@ -549,8 +550,10 @@ void play_opponent(game_state_t *game_state)
         best->selected_case_2->y = -1;
 
         game_logic(game_state, best); // Jouer le coup
+
+        // A remplacer par une fonction qui pourra être ajustée
     }
 
     // Libération de la mémoire
-    free(best);
+    free_input(best);
 }

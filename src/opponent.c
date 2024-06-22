@@ -341,6 +341,23 @@ int evaluate(game_state_t *game_state)
 
         current = current->next;
     }
+
+    // Prise en compte si le joueur est bloqué
+    if (game_state->player_blocked && game_state->player == 1)
+    {
+        if (game_state->captured_pieces[game_state->player] > 0)
+        {
+            score -= 200;
+        }
+    }
+    else if (game_state->player_blocked && game_state->player == 2)
+    {
+        if (game_state->captured_pieces[game_state->player] > 0)
+        {
+            score += 200;
+        }
+    }
+
     free_l_path(cases);
 
     return score;
@@ -446,39 +463,30 @@ int min_max(game_state_t *game_state, int depth)
             // Si le joueur est bloqué, Restaurer le pion au plus proche du centre
             if (copy->player_blocked)
             {
-                if (copy->player == 1) // Exception si c'est le joueur adverse, on ne veut surtout pas ça (pire situation)
+
+                if (game_state->captured_pieces[game_state->player] > 0) // Restaurer un pion si possible.
                 {
-                    cases = free_l_path(cases);
-                    free_game_state(copy);
-                    free_input(input);
-                    return -999;
+                    list_t *empty_cases = list_empty_cases(copy->board);
+                    pos_t center = center_position(empty_cases);
+                    input->selected_case_1->x = center.x;
+                    input->selected_case_1->y = center.y;
+                    input->selected_case_2->x = -1;
+                    input->selected_case_2->y = -1;
+                    free_list(empty_cases);
                 }
                 else
                 {
-                    if (game_state->captured_pieces[game_state->player] > 0) // Restaurer un pion si possible.
-                    {
-                        list_t *empty_cases = list_empty_cases(copy->board);
-                        pos_t center = center_position(empty_cases);
-                        input->selected_case_1->x = center.x;
-                        input->selected_case_1->y = center.y;
-                        input->selected_case_2->x = -1;
-                        input->selected_case_2->y = -1;
-                        free_list(empty_cases);
-                    }
-                    else
-                    {
-                        input->selected_case_1->x = current->pos->x;
-                        input->selected_case_1->y = current->pos->y;
-                        input->selected_case_2->x = -1;
-                        input->selected_case_2->y = -1;
-                        game_logic(copy, input); // Prendre le focus dans la fonction...
-                        input->selected_case_1->x = current->pos->x;
-                        input->selected_case_1->y = current->pos->y;
-                        input->selected_case_2->x = current_possibility->value.x;
-                        input->selected_case_2->y = current_possibility->value.y;
-                    }
-                    game_logic(copy, input); // Jouer le coup
+                    input->selected_case_1->x = current->pos->x;
+                    input->selected_case_1->y = current->pos->y;
+                    input->selected_case_2->x = -1;
+                    input->selected_case_2->y = -1;
+                    game_logic(copy, input); // Prendre le focus dans la fonction...
+                    input->selected_case_1->x = current->pos->x;
+                    input->selected_case_1->y = current->pos->y;
+                    input->selected_case_2->x = current_possibility->value.x;
+                    input->selected_case_2->y = current_possibility->value.y;
                 }
+                game_logic(copy, input); // Jouer le coup
             }
             else // Situation normale
             {

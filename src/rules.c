@@ -661,7 +661,6 @@ void game_logic(game_state_t *game_state, input_t *input)
                     if (is_player_partially_blocked(game_state, game_state->player) && !player_blocked)
                     {
                         // Changement de joueur
-                        fprintf(stderr, "Joueur %d bloqué partiellement, changement de joueur\n", game_state->player);
                         game_state->player = game_state->player == 1 ? 2 : 1;
                         game_state->last_case = 0;
                         game_state->player_blocked = true;
@@ -672,7 +671,6 @@ void game_logic(game_state_t *game_state, input_t *input)
                         {
                             game_state->player_blocked = true;
                             game_state->last_case = 0;
-                            fprintf(stderr, "Joueur %d bloqué totalement\n", game_state->player);
                         }
                     }
                 }

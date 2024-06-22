@@ -158,28 +158,6 @@ int min(int a, int b)
     return a < b ? a : b;
 }
 
-// Fonction d'évaluation ultra naïve basé sur le nombre de pièces de chaque joueur
-int evaluate(game_state_t *game_state)
-{
-    int score = 0;
-    int i, j;
-    for (i = 0; i < GRID_SIZE; i++)
-    {
-        for (j = 0; j < GRID_SIZE; j++)
-        {
-            if (game_state->board->pieces[i][j] == 1)
-            {
-                score += 1;
-            }
-            else if (game_state->board->pieces[i][j] == 2)
-            {
-                score -= 1;
-            }
-        }
-    }
-    return score;
-}
-
 // Fonction qui liste toute les cases jouables pour le joueur donné
 // Retourne une liste de cases jouables
 l_path_t *playable_cases(game_state_t *game_state, int player)
@@ -224,6 +202,89 @@ l_path_t *playable_cases(game_state_t *game_state, int player)
     }
 
     return res;
+}
+
+l_path_t *free_l_path(l_path_t *l_path)
+{
+    l_path_t *tmp = l_path;
+    while (tmp != NULL)
+    {
+        l_path_t *next = tmp->next;
+        free_list(tmp->possibilities);
+        free(tmp->pos);
+        free(tmp);
+        tmp = next;
+    }
+    return NULL;
+}
+
+// Fonction d'évaluation ultra naïve basé sur le nombre de pièces de chaque joueur
+int evaluate(game_state_t *game_state)
+{
+    int score = 0;
+
+    // Comptage des pièces sur le plateau
+    int i, j;
+    for (i = 0; i < GRID_SIZE; i++)
+    {
+        for (j = 0; j < GRID_SIZE; j++)
+        {
+            if (game_state->board->pieces[i][j] == 1)
+            {
+                score += 1;
+            }
+            else if (game_state->board->pieces[i][j] == 2)
+            {
+                score -= 1;
+            }
+        }
+    }
+
+    // Vérification au nombre de pièces menacées
+    l_path_t *cases = playable_cases(game_state, 1);
+    l_path_t *current = cases;
+    while (current != NULL)
+    {
+        if(game_state->board->cases[current->pos->x][current->pos->y] == game_state->last_case)
+        {
+            list_t *current_possibility = current->possibilities;
+            while (current_possibility != NULL)
+            {
+                if (game_state->board->pieces[current_possibility->value.x][current_possibility->value.y] == 2)
+                {
+                    score -= 10;
+                }
+                current_possibility = current_possibility->next;
+            }
+        }
+
+        current = current->next;
+    }
+    free_l_path(cases);
+
+    // Même chose pour le joueur 2
+    cases = playable_cases(game_state, 2);
+    current = cases;
+    while (current != NULL)
+    {
+        if(game_state->board->cases[current->pos->x][current->pos->y] == game_state->last_case)
+        {
+            list_t *current_possibility = current->possibilities;
+            while (current_possibility != NULL)
+            {
+                if (game_state->board->pieces[current_possibility->value.x][current_possibility->value.y] == 1)
+                {
+                    score += 10;
+                }
+                current_possibility = current_possibility->next;
+            }
+        }
+
+        current = current->next;
+    }
+    free_l_path(cases);
+
+    return score;
 }
 
 /**
@@ -288,20 +349,6 @@ game_state_t *copy_game_state(game_state_t *game_state)
     copy->captured_pieces[2] = game_state->captured_pieces[2];
     copy->board = copy_board(game_state->board);
     return copy;
-}
-
-l_path_t *free_l_path(l_path_t *l_path)
-{
-    l_path_t *tmp = l_path;
-    while (tmp != NULL)
-    {
-        l_path_t *next = tmp->next;
-        free_list(tmp->possibilities);
-        free(tmp->pos);
-        free(tmp);
-        tmp = next;
-    }
-    return NULL;
 }
 
 int min_max(game_state_t *game_state, int depth)
@@ -445,7 +492,7 @@ input_t *best_move(game_state_t *game_state)
         list_t *current_possibility = current->possibilities;
         while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
         {
-            int res = min_max(game_state, 2);
+            int res = min_max(game_state, 3);
             if (res >= max)
             {
                 max = res;

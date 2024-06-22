@@ -108,44 +108,36 @@ pos_t center_position(list_t *L)
  */
 list_t *list_empty_cases(board_t *board)
 {
-    list_t *list_empty = malloc(sizeof(list_t));
-
-    if (list_empty == NULL)
-    {
-        fprintf(stderr, "Erreur d'allocation de mémoire\n");
-        return NULL;
-    }
-
-    board_t *current = board;
+    list_t *res = NULL;
     int i, j;
-
     for (i = 0; i < GRID_SIZE; i++)
     {
         for (j = 0; j < GRID_SIZE; j++)
         {
-            if (current->pieces[i][j] == 0)
+            if (board->pieces[i][j] == 0)
             {
-                list_t *new_list_empty = malloc(sizeof(list_t));
-                if (new_list_empty == NULL)
+                // Ajouter un élément à la liste
+                list_t *nouveau = malloc(sizeof(list_t));
+                if (nouveau == NULL)
                 {
                     fprintf(stderr, "Erreur d'allocation de mémoire\n");
-                    return NULL;
+                    exit(EXIT_FAILURE);
                 }
-                pos_t *pos = malloc(sizeof(pos_t));
-                if (pos == NULL)
-                {
-                    fprintf(stderr, "Erreur d'allocation de mémoire\n");
-                    return NULL;
-                }
-                pos->x = i;
-                pos->y = j;
-                new_list_empty->value = *pos;
-                new_list_empty->next = NULL;
-                list_empty->next = new_list_empty;
+
+                // Ajouter la position
+                pos_t pos;
+                pos.x = i;
+                pos.y = j;
+                nouveau->value = pos;
+
+                // Ajouter à la liste
+                nouveau->next = res;
+                res = nouveau;
             }
         }
     }
-    return list_empty;
+
+    return res;
 }
 
 int max(int a, int b)
@@ -204,6 +196,56 @@ l_path_t *playable_cases(game_state_t *game_state, int player)
     return res;
 }
 
+// Fonction qui renvoie une position la plus proche d'un pion ennemi parmi une liste de positions
+pos_t closest_enemy(list_t *cases, game_state_t *game_state)
+{
+    list_t *current = cases;
+    pos_t closest;
+    closest.x = -1;
+    closest.y = -1;
+    int min_distance = 1000;
+    while (current != NULL)
+    {
+        int i, j;
+        for (i = 0; i < GRID_SIZE; i++)
+        {
+            for (j = 0; j < GRID_SIZE; j++)
+            {
+                if (game_state->board->pieces[i][j] == 3 - game_state->player) // Petit tricks
+                {
+                    int distance = abs(i - current->value.x) + abs(j - current->value.y);
+                    if (distance < min_distance)
+                    {
+                        min_distance = distance;
+                        closest.x = current->value.x;
+                        closest.y = current->value.y;
+                    }
+                }
+            }
+        }
+        current = current->next;
+    }
+    return closest;
+}
+
+void bird_placement(game_state_t *game_state, input_t *input)
+{
+    // Stratégie appliquée : placer l'oiseau sur la case
+    pos_t pos_bird = closest_enemy(input->possible_moves, game_state);
+    if (pos_bird.x == -1 && pos_bird.y == -1)
+    {
+        pos_bird = center_position(input->possible_moves);
+    }
+
+    // Placement de l'oiseau
+    input->selected_case_1->x = pos_bird.x;
+    input->selected_case_1->y = pos_bird.y;
+    input->selected_case_2->x = -1;
+    input->selected_case_2->y = -1;
+
+    game_logic(game_state, input);
+}
+
 l_path_t *free_l_path(l_path_t *l_path)
 {
     l_path_t *tmp = l_path;
@@ -223,6 +265,15 @@ int evaluate(game_state_t *game_state)
 {
     int score = 0;
 
+    if (game_state->winner == 2)
+    {
+        score = 1000;
+    }
+    else if (game_state->winner == 1)
+    {
+        score = -1000;
+    }
+
     // Comptage des pièces sur le plateau
     int i, j;
     for (i = 0; i < GRID_SIZE; i++)
@@ -231,11 +282,11 @@ int evaluate(game_state_t *game_state)
         {
             if (game_state->board->pieces[i][j] == 1)
             {
-                score += 1;
+                score += 100;
             }
             else if (game_state->board->pieces[i][j] == 2)
             {
-                score -= 1;
+                score -= 100;
             }
         }
     }
@@ -245,18 +296,18 @@ int evaluate(game_state_t *game_state)
     l_path_t *current = cases;
     while (current != NULL)
     {
-        if(game_state->board->cases[current->pos->x][current->pos->y] == game_state->last_case)
+        if (game_state->board->cases[current->pos->x][current->pos->y] == game_state->last_case)
         {
             list_t *current_possibility = current->possibilities;
             while (current_possibility != NULL)
             {
                 if (game_state->board->pieces[current_possibility->value.x][current_possibility->value.y] == 2)
                 {
-                    if(game_state->board->daimyo_2->x == current_possibility->value.x && game_state->board->daimyo_2->y == current_possibility->value.y)
+                    if (game_state->board->daimyo_2->x == current_possibility->value.x && game_state->board->daimyo_2->y == current_possibility->value.y)
                     {
                         score -= 200; // Si le daimyo est menacé c'est encore pire
                     }
-                    score -= 10;
+                    score -= 5; // Forcer l' aggression
                 }
                 current_possibility = current_possibility->next;
             }
@@ -271,14 +322,14 @@ int evaluate(game_state_t *game_state)
     current = cases;
     while (current != NULL)
     {
-        if(game_state->board->cases[current->pos->x][current->pos->y] == game_state->last_case)
+        if (game_state->board->cases[current->pos->x][current->pos->y] == game_state->last_case)
         {
             list_t *current_possibility = current->possibilities;
             while (current_possibility != NULL)
             {
                 if (game_state->board->pieces[current_possibility->value.x][current_possibility->value.y] == 1)
                 {
-                    if(game_state->board->daimyo_1->x == current_possibility->value.x && game_state->board->daimyo_1->y == current_possibility->value.y)
+                    if (game_state->board->daimyo_1->x == current_possibility->value.x && game_state->board->daimyo_1->y == current_possibility->value.y)
                     {
                         score += 200; // Si le daimyo est menacé c'est lezzgo
                     }
@@ -404,14 +455,28 @@ int min_max(game_state_t *game_state, int depth)
                 }
                 else
                 {
-                    free_list(input->possible_moves);
-                    input->possible_moves = list_bird_possible_moves(copy);
-                    // Prendre la case la plus proche du centre
-                    pos_t center = center_position(input->possible_moves);
-                    input->selected_case_1->x = center.x;
-                    input->selected_case_1->y = center.y;
-                    input->selected_case_2->x = -1;
-                    input->selected_case_2->y = -1;
+                    if (game_state->captured_pieces[game_state->player] > 0) // Restaurer un pion si possible.
+                    {
+                        list_t *empty_cases = list_empty_cases(copy->board);
+                        pos_t center = center_position(empty_cases);
+                        input->selected_case_1->x = center.x;
+                        input->selected_case_1->y = center.y;
+                        input->selected_case_2->x = -1;
+                        input->selected_case_2->y = -1;
+                        free_list(empty_cases);
+                    }
+                    else
+                    {
+                        input->selected_case_1->x = current->pos->x;
+                        input->selected_case_1->y = current->pos->y;
+                        input->selected_case_2->x = -1;
+                        input->selected_case_2->y = -1;
+                        game_logic(copy, input); // Prendre le focus dans la fonction...
+                        input->selected_case_1->x = current->pos->x;
+                        input->selected_case_1->y = current->pos->y;
+                        input->selected_case_2->x = current_possibility->value.x;
+                        input->selected_case_2->y = current_possibility->value.y;
+                    }
                     game_logic(copy, input); // Jouer le coup
                 }
             }
@@ -444,14 +509,7 @@ int min_max(game_state_t *game_state, int depth)
             // Placement de l'oiseau
             if (copy->phase == 1)
             {
-                // L'oiseau est placé sur la case la plus proche du centre
-                free_list(input->possible_moves);
-                input->possible_moves = list_bird_possible_moves(copy);
-                pos_t center = center_position(input->possible_moves);
-                input->selected_case_1->x = center.x;
-                input->selected_case_1->y = center.y;
-
-                game_logic(copy, input); // Jouer le coup
+                bird_placement(copy, input);
             }
 
             int res = min_max(copy, depth - 1);
@@ -522,7 +580,6 @@ input_t *best_move(game_state_t *game_state)
         current = current->next;
     }
     cases = free_l_path(cases);
-    fprintf(stderr, "Meilleur coup : %d %d -> %d %d\n", best_move->selected_case_1->x, best_move->selected_case_1->y, best_move->selected_case_2->x, best_move->selected_case_2->y);
     return best_move;
 }
 
@@ -540,18 +597,7 @@ void play_opponent(game_state_t *game_state)
     // Placement de l'oiseau
     if (game_state->phase == 1)
     {
-        // L'oiseau est placé sur la case la plus proche du centre
-        free_list(best->possible_moves);
-        best->possible_moves = list_bird_possible_moves(game_state);
-        pos_t center = center_position(best->possible_moves);
-        best->selected_case_1->x = center.x;
-        best->selected_case_1->y = center.y;
-        best->selected_case_2->x = -1;
-        best->selected_case_2->y = -1;
-
-        game_logic(game_state, best); // Jouer le coup
-
-        // A remplacer par une fonction qui pourra être ajustée
+        bird_placement(game_state, best);
     }
 
     // Libération de la mémoire

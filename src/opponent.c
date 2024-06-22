@@ -290,7 +290,21 @@ game_state_t *copy_game_state(game_state_t *game_state)
     return copy;
 }
 
-int min_max(game_state_t *game_state, int depth, bool is_max)
+l_path_t *free_l_path(l_path_t *l_path)
+{
+    l_path_t *tmp = l_path;
+    while (tmp != NULL)
+    {
+        l_path_t *next = tmp->next;
+        free_list(tmp->possibilities);
+        free(tmp->pos);
+        free(tmp);
+        tmp = next;
+    }
+    return NULL;
+}
+
+int min_max(game_state_t *game_state, int depth)
 {
     // Création de l'input
     input_t *input = malloc(sizeof(input_t));
@@ -301,19 +315,52 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
     {
         return score;
     }
-    if (is_max) // Joueur Maximisant.
-    {
-        int best = -1000;
-        l_path_t *cases = playable_cases(game_state, 1);
-        l_path_t *current = cases;
-        while (current != NULL) // Pour tous les coups
-        {
-            list_t *current_possibility = current->possibilities;
-            while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
-            {
-                // Copier la situation du jeu
-                game_state_t *copy = copy_game_state(game_state);
 
+    int best;
+
+    if (game_state->player == 2) // Bot = max
+    {
+        best = -1000;
+    }
+    else // Joueur = min
+    {
+        best = 1000;
+    }
+    l_path_t *cases = playable_cases(game_state, game_state->player);
+    l_path_t *current = cases;
+    while (current != NULL) // Pour tous les coups
+    {
+        list_t *current_possibility = current->possibilities;
+        while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
+        {
+            // Copier la situation du jeu
+            game_state_t *copy = copy_game_state(game_state);
+
+            // Si le joueur est bloqué, Restaurer le pion au plus proche du centre
+            if (copy->player_blocked)
+            {
+                if (copy->player == 1) // Exception si c'est le joueur adverse, on ne veut surtout pas ça (pire situation)
+                {
+                    cases = free_l_path(cases);
+                    free_game_state(copy);
+                    free_input(input);
+                    return -999;
+                }
+                else
+                {
+                    free_list(input->possible_moves);
+                    input->possible_moves = list_bird_possible_moves(copy);
+                    // Prendre la case la plus proche du centre
+                    pos_t center = center_position(input->possible_moves);
+                    input->selected_case_1->x = center.x;
+                    input->selected_case_1->y = center.y;
+                    input->selected_case_2->x = -1;
+                    input->selected_case_2->y = -1;
+                    game_logic(copy, input); // Jouer le coup
+                }
+            }
+            else // Situation normale
+            {
                 // Mettre l'input à jour
                 input->selected_case_1->x = current->pos->x;
                 input->selected_case_1->y = current->pos->y;
@@ -324,106 +371,55 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
 
                 if (copy->winner == 2) // L'ia gagne
                 {
+                    free_game_state(copy);
                     return 1000;
                 }
                 else if (copy->winner == 1) // L'ia perd
                 {
+                    free_game_state(copy);
                     return -1000;
                 }
+            }
 
-                // Placement de l'oiseau
-                if (copy->phase == 1)
-                {
-                    // L'oiseau est placé sur la case la plus proche du centre
-                    input->possible_moves = list_bird_possible_moves(copy);
-                    pos_t center = center_position(input->possible_moves);
-                    input->selected_case_1->x = center.x;
-                    input->selected_case_1->y = center.y;
+            // Placement de l'oiseau
+            if (copy->phase == 1)
+            {
+                // L'oiseau est placé sur la case la plus proche du centre
+                free_list(input->possible_moves);
+                input->possible_moves = list_bird_possible_moves(copy);
+                pos_t center = center_position(input->possible_moves);
+                input->selected_case_1->x = center.x;
+                input->selected_case_1->y = center.y;
 
-                    game_logic(copy, input); // Jouer le coup
-                }
+                game_logic(copy, input); // Jouer le coup
+            }
 
-                int res = min_max(copy, depth - 1, !is_max);
+            int res = min_max(copy, depth - 1);
+            if (game_state->player == 2) // Bot = max
+            {
                 best = max(best, res);
-
-                // Libération de la mémoire
-                free_game_state(copy);
-
-                // Passage au prochain mouvement possible
-                current_possibility = current_possibility->next;
             }
-
-            // Passage au prochain coup
-            current = current->next;
-        }
-
-        return best;
-    }
-    else // Description de la pire situation
-    {
-        int best = 1000;
-        l_path_t *cases = playable_cases(game_state, 2);
-        l_path_t *current = cases;
-        while (current != NULL) // Pour tous les coups
-        {
-            list_t *current_possibility = current->possibilities;
-            while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
+            else // Joueur = min
             {
-                // Copier la situation du jeu
-                game_state_t *copy = copy_game_state(game_state);
-
-                // Mettre l'input à jour
-                input->selected_case_1->x = current->pos->x;
-                input->selected_case_1->y = current->pos->y;
-                input->selected_case_2->x = current_possibility->value.x;
-                input->selected_case_2->y = current_possibility->value.y;
-
-                game_logic(copy, input); // Jouer le coup
-
-                if (copy->winner == 2) // L'ia gagne
-                {
-                    return 1000;
-                }
-                else if (copy->winner == 1) // L'ia perd
-                {
-                    return -1000;
-                }
-
-                // Placement de l'oiseau
-                if (copy->phase == 1)
-                {
-                    // L'oiseau est placé sur la case la plus proche du centre
-                    input->possible_moves = list_bird_possible_moves(copy);
-                    pos_t center = center_position(input->possible_moves);
-                    input->selected_case_1->x = center.x;
-                    input->selected_case_1->y = center.y;
-
-                    game_logic(copy, input); // Jouer le coup
-                }
-
-                int res = min_max(copy, depth - 1, !is_max);
                 best = min(best, res);
-
-                // Libération de la mémoire
-                free_game_state(copy);
-
-                // Passage au prochain mouvement possible
-                current_possibility = current_possibility->next;
             }
 
-            // Passage au prochain coup
-            current = current->next;
+            free_game_state(copy);
+
+            // Passage au prochain mouvement possible
+            current_possibility = current_possibility->next;
         }
 
-        return best;
+        // Passage au prochain coup
+        current = current->next;
     }
-
-    // Libération de la mémoire.
+    cases = free_l_path(cases);
     free_input(input);
+    return best;
 }
 
 /**
- * @brief Fonction qui retourne le meilleur coup à jouer pour l'IA
+ * @brief Fonction qui retourne le meilleur coup à jouer pour l'IA (sans tenir compte de l'oiseau)
  *
  * @param game_state Etat du jeu
  */
@@ -432,6 +428,7 @@ input_t *best_move(game_state_t *game_state)
     // Lister tous les coups possibles
     l_path_t *cases = playable_cases(game_state, game_state->player);
     l_path_t *current = cases;
+
     input_t *best_move = malloc(sizeof(input_t));
     best_move->selected_case_1 = malloc(sizeof(pos_t));
     best_move->selected_case_2 = malloc(sizeof(pos_t));
@@ -448,7 +445,7 @@ input_t *best_move(game_state_t *game_state)
         list_t *current_possibility = current->possibilities;
         while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
         {
-            int res = min_max(game_state, 2, true);
+            int res = min_max(game_state, 2);
             if (res >= max)
             {
                 max = res;
@@ -468,11 +465,15 @@ input_t *best_move(game_state_t *game_state)
     return best_move;
 }
 
+/**
+ * @brief Fonction qui joue le coup de l'adversaire
+ *
+ * @param game_state Etat du jeu
+ */
 void play_opponent(game_state_t *game_state)
 {
     input_t *best = best_move(game_state);
 
-    // Le premier coup doit être donné  AVANT !
     game_logic(game_state, best);
 
     // Placement de l'oiseau
@@ -485,7 +486,7 @@ void play_opponent(game_state_t *game_state)
         best->selected_case_1->y = center.y;
         best->selected_case_2->x = -1;
         best->selected_case_2->y = -1;
-        
+
         game_logic(game_state, best); // Jouer le coup
     }
 

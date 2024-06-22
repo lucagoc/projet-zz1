@@ -162,7 +162,6 @@ bool is_pos_empty(pos_t position, board_t *board)
  */
 int is_pos_occupied(pos_t position, board_t *board)
 {
-    fprintf(stderr, "Position demandée %d %d\n", position.x, position.y);
     return board->pieces[position.x][position.y];
 }
 
@@ -217,7 +216,6 @@ bool is_move_valid_play(pos_t destination, board_t *board, input_t *input, int p
 {
     if (!is_pos_valid(destination) || is_pos_occupied(destination, board) == player)
     {
-        fprintf(stderr, "Mouvement invalide (1)\n");
         return false;
     }
     else
@@ -546,13 +544,6 @@ bool is_player_blocked(game_state_t *game_state, int player)
  */
 void game_logic(game_state_t *game_state, input_t *input)
 {
-    /******************************************* MODE DEBUG *****************************/
-    fprintf(stderr, "Coup demandé %d %d -> %d %d\n", input->selected_case_1->x, input->selected_case_1->y, input->selected_case_2->x, input->selected_case_2->y);
-    if(game_state->phase == 1){
-        fprintf(stderr, "Mode oiseaux\n");
-    }
-
-
     int winner = who_wins(game_state->board);
     if (winner != 0)
     {
@@ -564,19 +555,22 @@ void game_logic(game_state_t *game_state, input_t *input)
     {
         if (game_state->player_blocked)
         {
-            if ((input->selected_case_1->x < -1 || input->selected_case_1->x > 6) && game_state->captured_pieces[game_state->player] != 0) // Un peu sale
+            if ((input->selected_case_1->x < -1 || input->selected_case_1->x > 6) && game_state->captured_pieces[game_state->player] != 0)
             {
                 return;
             }
             else
             {
-                if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == 0 && game_state->captured_pieces[game_state->player] != 0 && game_state->board->bird->x != input->selected_case_1->x && game_state->board->bird->y != input->selected_case_1->y)
+                if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == 0 && game_state->captured_pieces[game_state->player] > 0 && game_state->board->bird->x != input->selected_case_1->x && game_state->board->bird->y != input->selected_case_1->y)
                 {
-                    game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] = game_state->player;
-                    game_state->captured_pieces[game_state->player]--;
-                    game_state->phase = 1;
+                    game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] = game_state->player;   // Restauratiopn du pion
+                    game_state->last_case = game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y]; // Actualisation dernière case
+                    game_state->captured_pieces[game_state->player] = game_state->captured_pieces[game_state->player] - 1;  // Suppression dans le nombre de pièces capturées
+                    game_state->phase = 1;                                                                                  // Mode oiseau
+                    input->selected_case_1->x = -1;
+                    input->selected_case_1->y = -1;
                 }
-                else if(game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player)
+                else if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player)
                 {
                     input->selected_case_1->x = -1;
                     input->selected_case_1->y = -1;
@@ -614,13 +608,10 @@ void game_logic(game_state_t *game_state, input_t *input)
                         // Déplacer le pion (Exception si c'est le bot)
                         if (game_state->player == 2 || is_move_valid_play(*input->selected_case_2, game_state->board, input, game_state->player))
                         {
-                            fprintf(stderr, "Mouvement valide !");
                             move_piece(*input->selected_case_1, *input->selected_case_2, game_state);
                             game_state->last_case = game_state->board->cases[input->selected_case_2->x][input->selected_case_2->y];
 
                             game_state->phase = 1;
-                            input->possible_moves = free_list(input->possible_moves);
-                            input->possible_moves = list_bird_possible_moves(game_state);
                         }
                         else
                         {
@@ -644,11 +635,6 @@ void game_logic(game_state_t *game_state, input_t *input)
                         {
                             input->possible_moves = list_rhonin_possible_moves(*input->selected_case_1, game_state->board, game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y], game_state->player);
                         }
-                        else if (game_state->phase == 1)
-                        {
-                            input->possible_moves = list_bird_possible_moves(game_state);
-                            print_list(input->possible_moves);
-                        }
                     }
                 }
                 else
@@ -670,20 +656,22 @@ void game_logic(game_state_t *game_state, input_t *input)
                     input->possible_moves = free_list(input->possible_moves);
                     game_state->round++;
 
-                    bool player_1_blocked = is_player_blocked(game_state, 1);
+                    bool player_blocked = is_player_blocked(game_state, game_state->player);
 
-                    if (is_player_partially_blocked(game_state, game_state->player) && !player_1_blocked)
+                    if (is_player_partially_blocked(game_state, game_state->player) && !player_blocked)
                     {
                         // Changement de joueur
                         fprintf(stderr, "Joueur %d bloqué partiellement, changement de joueur\n", game_state->player);
                         game_state->player = game_state->player == 1 ? 2 : 1;
+                        game_state->last_case = 0;
                         game_state->player_blocked = true;
                     }
                     else
                     {
-                        if (player_1_blocked)
+                        if (player_blocked)
                         {
                             game_state->player_blocked = true;
+                            game_state->last_case = 0;
                             fprintf(stderr, "Joueur %d bloqué totalement\n", game_state->player);
                         }
                     }
@@ -706,13 +694,18 @@ void game_logic(game_state_t *game_state, input_t *input)
             }
         }
     }
+    if (game_state->phase == 1) // Recalcul des mouvements possibles
+    {
+        free_list(input->possible_moves);
+        input->possible_moves = list_bird_possible_moves(game_state);
+    }
 }
-
 
 // Fonction logique du jeu, en prenant compte un adversaire qui joue avec min-max
 void game_logic_2(game_state_t *game_state, input_t *input)
 {
-    if(game_state->player == 1){
+    if (game_state->player == 1)
+    {
         game_logic(game_state, input);
     }
     else // Adversaire qui joue avec min-max

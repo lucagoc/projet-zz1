@@ -27,12 +27,11 @@ void free_input(input_t *input)
 {
     if (input->possible_moves != NULL)
     {
-        free_list(input->possible_moves);
+        input->possible_moves = free_list(input->possible_moves);
     }
 
     free(input->selected_case_1);
     free(input->selected_case_2);
-    free(input->possible_moves);
     free(input);
 }
 

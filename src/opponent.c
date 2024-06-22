@@ -335,7 +335,7 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
                 if (copy->phase == 1)
                 {
                     // L'oiseau est placé sur la case la plus proche du centre
-                    input->possible_moves = list_bird_possible_moves(game_state->board);
+                    input->possible_moves = list_bird_possible_moves(copy);
                     pos_t center = center_position(input->possible_moves);
                     input->selected_case_1->x = center.x;
                     input->selected_case_1->y = center.y;
@@ -393,7 +393,7 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
                 if (copy->phase == 1)
                 {
                     // L'oiseau est placé sur la case la plus proche du centre
-                    input->possible_moves = list_bird_possible_moves(game_state->board);
+                    input->possible_moves = list_bird_possible_moves(copy);
                     pos_t center = center_position(input->possible_moves);
                     input->selected_case_1->x = center.x;
                     input->selected_case_1->y = center.y;
@@ -427,12 +427,15 @@ int min_max(game_state_t *game_state, int depth, bool is_max)
  *
  * @param game_state Etat du jeu
  */
-pos_t *best_move(game_state_t *game_state)
+input_t *best_move(game_state_t *game_state)
 {
     // Lister tous les coups possibles
     l_path_t *cases = playable_cases(game_state, game_state->player);
     l_path_t *current = cases;
-    pos_t *best_move = malloc(sizeof(pos_t));
+    input_t *best_move = malloc(sizeof(input_t));
+    best_move->selected_case_1 = malloc(sizeof(pos_t));
+    best_move->selected_case_2 = malloc(sizeof(pos_t));
+    best_move->possible_moves = NULL;
 
     int max = -1000;
 
@@ -442,7 +445,6 @@ pos_t *best_move(game_state_t *game_state)
     }
     while (current != NULL) // Pour tous les coups
     {
-        fprintf(stderr, "j'y suis !");
         list_t *current_possibility = current->possibilities;
         while (current_possibility != NULL) // Pour tous les mouvements possibles pour ce coup
         {
@@ -450,8 +452,10 @@ pos_t *best_move(game_state_t *game_state)
             if (res >= max)
             {
                 max = res;
-                best_move->x = current->pos->x;
-                best_move->y = current->pos->y;
+                best_move->selected_case_1->x = current->pos->x;
+                best_move->selected_case_1->y = current->pos->y;
+                best_move->selected_case_2->x = current_possibility->value.x;
+                best_move->selected_case_2->y = current_possibility->value.y;
             }
 
             current_possibility = current_possibility->next;
@@ -460,33 +464,31 @@ pos_t *best_move(game_state_t *game_state)
         // Passage au prochain coup
         current = current->next;
     }
-
+    fprintf(stderr, "Meilleur coup : %d %d -> %d %d\n", best_move->selected_case_1->x, best_move->selected_case_1->y, best_move->selected_case_2->x, best_move->selected_case_2->y);
     return best_move;
 }
 
 void play_opponent(game_state_t *game_state)
 {
-    pos_t *best = best_move(game_state);
-    input_t *input = malloc(sizeof(input_t));
-    init_input(input);
-    input->selected_case_1->x = best->x;
-    input->selected_case_1->y = best->y;
+    input_t *best = best_move(game_state);
 
-    game_logic(game_state, input);
+    // Le premier coup doit être donné  AVANT !
+    game_logic(game_state, best);
 
     // Placement de l'oiseau
     if (game_state->phase == 1)
     {
         // L'oiseau est placé sur la case la plus proche du centre
-        input->possible_moves = list_bird_possible_moves(game_state->board);
-        pos_t center = center_position(input->possible_moves);
-        input->selected_case_1->x = center.x;
-        input->selected_case_1->y = center.y;
-
-        game_logic(game_state, input); // Jouer le coup
+        best->possible_moves = list_bird_possible_moves(game_state);
+        pos_t center = center_position(best->possible_moves);
+        best->selected_case_1->x = center.x;
+        best->selected_case_1->y = center.y;
+        best->selected_case_2->x = -1;
+        best->selected_case_2->y = -1;
+        
+        game_logic(game_state, best); // Jouer le coup
     }
 
     // Libération de la mémoire
-    free(input);
     free(best);
 }

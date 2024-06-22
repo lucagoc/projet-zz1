@@ -243,25 +243,15 @@ bool is_move_valid_play(pos_t destination, board_t *board, input_t *input, int p
  */
 list_t *concat_list(list_t *list1, list_t *list2)
 {
-    if (list2 == NULL)
-    {
-        return list1;
-    }
-    else if (list1 == NULL)
-    {
+    if (list1 == NULL)
         return list2;
-    }
-    else
+    list_t *temp = list1;
+    while (temp->next != NULL)
     {
-        list_t *current = list2;
-        while (current->next != NULL)
-        {
-            current = current->next;
-        }
-        current->next = list1;
+        temp = temp->next;
     }
-
-    return list2;
+    temp->next = list2;
+    return list1;
 }
 
 /*
@@ -275,19 +265,26 @@ list_t *concat_list(list_t *list1, list_t *list2)
  * @return list_t* Liste des mouvements possibles
  * @return NULL Si aucun mouvement possible ou si la case est déjà visitée
  */
-list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step, int player, int **previous_tab) {
-    if (is_pos_valid(position) && previous_tab[position.x][position.y] == 0 && 
-        (position.x != board->bird->x || position.y != board->bird->y) && 
-        is_pos_occupied(position, board) != player) {
-        
-        if (step == 0 && is_move_valid(position, position, board, player)) {
+list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step, int player, int **previous_tab)
+{
+    if (is_pos_valid(position) && previous_tab[position.x][position.y] == 0 &&
+        (position.x != board->bird->x || position.y != board->bird->y) &&
+        is_pos_occupied(position, board) != player)
+    {
+
+        if (step == 0 && is_move_valid(position, position, board, player))
+        {
             list_t *new_move = (list_t *)malloc(sizeof(list_t));
             new_move->value = position;
             new_move->next = NULL;
             return new_move;
-        } else if (step == 0 || is_pos_occupied(position, board) != 0) {
+        }
+        else if (step == 0 || is_pos_occupied(position, board) != 0)
+        {
             return NULL;
-        } else {
+        }
+        else
+        {
             previous_tab[position.x][position.y] = 1;
 
             list_t *possible_moves_list = NULL;
@@ -311,7 +308,9 @@ list_t *list_rhonin_possible_moves_aux(pos_t position, board_t *board, int step,
             previous_tab[position.x][position.y] = 0;
             return possible_moves_list;
         }
-    } else {
+    }
+    else
+    {
         return NULL;
     }
 }
@@ -338,20 +337,30 @@ list_t *list_rhonin_possible_moves(pos_t position, board_t *board, int step, int
     }
 
     list_t *res = NULL;
-    // Déplacement vers le haut;
-    res = concat_list(res, list_rhonin_possible_moves_aux((pos_t){position.x, position.y - 1}, board, step - 1, player, previous_moves));
+    list_t *temp_res = NULL;
+
+    // Déplacement vers le haut
+    temp_res = list_rhonin_possible_moves_aux((pos_t){position.x, position.y - 1}, board, step - 1, player, previous_moves);
+    res = concat_list(res, temp_res);
+
     // Déplacement vers le bas
-    res = concat_list(res, list_rhonin_possible_moves_aux((pos_t){position.x, position.y + 1}, board, step - 1, player, previous_moves));
+    temp_res = list_rhonin_possible_moves_aux((pos_t){position.x, position.y + 1}, board, step - 1, player, previous_moves);
+    res = concat_list(res, temp_res);
+
     // Déplacement vers la gauche
-    res = concat_list(res, list_rhonin_possible_moves_aux((pos_t){position.x - 1, position.y}, board, step - 1, player, previous_moves));
+    temp_res = list_rhonin_possible_moves_aux((pos_t){position.x - 1, position.y}, board, step - 1, player, previous_moves);
+    res = concat_list(res, temp_res);
+
     // Déplacement vers la droite
-    res = concat_list(res, list_rhonin_possible_moves_aux((pos_t){position.x + 1, position.y}, board, step - 1, player, previous_moves));
+    temp_res = list_rhonin_possible_moves_aux((pos_t){position.x + 1, position.y}, board, step - 1, player, previous_moves);
+    res = concat_list(res, temp_res);
 
     for (int i = 0; i < GRID_SIZE; i++)
     {
         free(previous_moves[i]);
     }
     free(previous_moves);
+
     return res;
 }
 
@@ -495,6 +504,7 @@ bool is_player_partially_blocked(game_state_t *game_state, int player)
                 list_t *possible_moves = list_rhonin_possible_moves((pos_t){i, j}, game_state->board, game_state->board->cases[i][j], player);
                 if (possible_moves != NULL)
                 {
+                    possible_moves = free_list(possible_moves);
                     return false;
                 }
                 possible_moves = free_list(possible_moves);
@@ -618,8 +628,8 @@ void game_logic(game_state_t *game_state, input_t *input)
                     {
                         // Calcul des mouvements possibles
                         input->possible_moves = free_list(input->possible_moves);
-                        // Si c'est un rhonin
                         
+                        // Si c'est un rhonin
                         if (game_state->board->pieces[input->selected_case_1->x][input->selected_case_1->y] == game_state->player && game_state->phase == 0)
                         {
                             input->possible_moves = list_rhonin_possible_moves(*input->selected_case_1, game_state->board, game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y], game_state->player);
@@ -674,16 +684,12 @@ void game_logic(game_state_t *game_state, input_t *input)
         }
         else
         {
-            // Clear de la liste
-            if (input->possible_moves != NULL)
-            {
-                input->possible_moves = free_list(input->possible_moves);
-            }
+            input->possible_moves = free_list(input->possible_moves);
         }
     }
     if (game_state->phase == 1) // Recalcul des mouvements possibles
     {
-        free_list(input->possible_moves);
+        input->possible_moves = free_list(input->possible_moves);
         input->possible_moves = list_bird_possible_moves(game_state);
     }
 }

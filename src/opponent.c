@@ -368,6 +368,7 @@ int min_max(game_state_t *game_state, int depth)
     int score = evaluate(game_state);
     if (depth == 0)
     {
+        free_input(input);
         return score;
     }
 
@@ -426,12 +427,16 @@ int min_max(game_state_t *game_state, int depth)
 
                 if (copy->winner == 2) // L'ia gagne
                 {
+                    cases = free_l_path(cases);
                     free_game_state(copy);
+                    free_input(input);
                     return 1000;
                 }
                 else if (copy->winner == 1) // L'ia perd
                 {
+                    cases = free_l_path(cases);
                     free_game_state(copy);
+                    free_input(input);
                     return -1000;
                 }
             }
@@ -516,6 +521,7 @@ input_t *best_move(game_state_t *game_state)
         // Passage au prochain coup
         current = current->next;
     }
+    cases = free_l_path(cases);
     fprintf(stderr, "Meilleur coup : %d %d -> %d %d\n", best_move->selected_case_1->x, best_move->selected_case_1->y, best_move->selected_case_2->x, best_move->selected_case_2->y);
     return best_move;
 }

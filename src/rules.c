@@ -550,7 +550,6 @@ void game_logic(game_state_t *game_state, input_t *input)
     if (winner != 0)
     {
         game_state->winner = winner;
-        printf("Joueur %d a gagné\n", who_wins(game_state->board));
         return;
     }
     else
@@ -569,6 +568,8 @@ void game_logic(game_state_t *game_state, input_t *input)
                     game_state->last_case = game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y]; // Actualisation dernière case
                     game_state->captured_pieces[game_state->player] = game_state->captured_pieces[game_state->player] - 1;  // Suppression dans le nombre de pièces capturées
                     game_state->phase = 1;                                                                                  // Mode oiseau
+                    game_state->last_case = game_state->board->cases[input->selected_case_1->x][input->selected_case_1->y];
+                    game_state->player_blocked = false;
                     input->selected_case_1->x = -1;
                     input->selected_case_1->y = -1;
                 }

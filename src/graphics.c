@@ -255,6 +255,20 @@ void draw_logo(ui_t *ui)
 }
 
 /**
+ * @brief Rendu de l'indicateur de l'IA
+ *
+ * @param ui Interface utilisateur
+ */
+void draw_computing(ui_t *ui)
+{
+    SDL_Rect computing_rect = {ui->screen_w / 2 - 275, ui->screen_h / 2 - 50, 550, 100};
+    SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 128);
+    SDL_Rect logo_rect = {ui->screen_w / 2 - 225, ui->screen_h / 2 - 25, 450, 50};
+    SDL_RenderFillRect(ui->renderer, &computing_rect);
+    SDL_RenderCopy(ui->renderer, ui->textures[10], NULL, &logo_rect);
+}
+
+/**
  * @brief Rendu de l'indicateur de joueur
  *
  * @param ui Interface utilisateur
@@ -369,5 +383,9 @@ void draw(ui_t *ui, game_state_t *game_state, input_t *input)
     {
         draw_victory(ui);
         return;
+    }
+    if(game_state->player == 2)
+    {
+        draw_computing(ui);
     }
 }

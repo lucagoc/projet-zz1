@@ -23,8 +23,8 @@ struct ui_s
     SDL_Renderer *renderer;             // Rendu SDL
     SDL_Window *window;                 // Fenêtre SDL
     SDL_Event event;                    // Évènement SDL
-    SDL_Texture *textures[10];          // Textures
-    SDL_Texture *textures_pause[10];    // Textures pour la pause
+    SDL_Texture *textures[11];          // Textures
+    SDL_Texture *textures_pause[4];    // Textures pour la pause
 
     int screen_w;          // Largeur de l'écran
     int screen_h;          // Hauteur de l'écran

@@ -114,6 +114,7 @@ void unload_textures(ui_t *ui)
     SDL_DestroyTexture(ui->textures[7]);
     SDL_DestroyTexture(ui->textures[8]);
     SDL_DestroyTexture(ui->textures[9]);
+    SDL_DestroyTexture(ui->textures[10]);
 
     SDL_DestroyTexture(ui->textures_pause[0]);
     SDL_DestroyTexture(ui->textures_pause[1]);
@@ -190,7 +191,7 @@ SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color c
  * @param renderer Renderer SDL
  * @param window Fenêtre SDL
  */
-void load_textures(SDL_Texture *textures[10], SDL_Texture *textures_pause[10], SDL_Renderer *renderer, SDL_Window *window)
+void load_textures(SDL_Texture *textures[11], SDL_Texture *textures_pause[4], SDL_Renderer *renderer, SDL_Window *window)
 {
     /* Assets d'images */
     // textures[0] = load_texture_from_image("assets/board/board.png", window, renderer);
@@ -205,6 +206,7 @@ void load_textures(SDL_Texture *textures[10], SDL_Texture *textures_pause[10], S
 
     /* Assets de texte */
     textures[8] = render_text("Mana", "assets/otf/metal_lord.otf", (SDL_Color){255, 255, 255, 255}, 48, renderer);
+    textures[10] = render_text("L 'ordinateur pense...", "assets/otf/metal_lord.otf", (SDL_Color){255, 255, 255, 255}, 48, renderer);
 
     /* --------------------------------------------- MENU PAUSE --------------------------------------------- */
     textures_pause[0] = load_texture_from_image("assets/image_menu/menu_pause.png", window, renderer);
